@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Compile org.eventb.texteditor.feature" default="main">
+	<target name="main">
+		<ant antfile="build.xml" dir="../org.eventb.texttools" target="build.jars"/>
+		<ant antfile="build.xml" dir="../org.eventb.texteditor.ui" target="build.jars"/>
+	</target>
+</project>

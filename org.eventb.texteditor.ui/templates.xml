@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<templates>
+
+<!--
+<template
+	id=""
+	name=""
+	description=""
+	context="org.eventb.texteditor."
+	enabled=""
+	></template>
+
+contexts:
+org.eventb.texteditor.anywhere
+org.eventb.texteditor.machine
+org.eventb.texteditor.events
+org.eventb.texteditor.context
+-->
+
+<!--
+ ######## MACHINE context ######## 
+-->
+<template
+	id="machine"
+	name="machine"
+	description="Basic machine structure"
+	context="org.eventb.texteditor.machine"
+	enabled="true"
+	>machine ${Machine_Name}&#xD;variables ${var}&#xD;invariants @${inv1} ${var} : ${type}&#xD;events&#xD;&#x9;event INITIALISATION&#xD;&#x9;then&#xD;&#x9;&#x9;@${act1} ${var} := ${value}&#xD;&#x9;end&#xD;&#xD;&#x9;event ${Eventname}&#xD;&#x9;end&#xD;&#xD;end</template>
+
+<!--
+ ######## CONTEXT context ######## 
+-->
+<template
+	id="context"
+	name="context"
+	description="Basic context structure"
+	context="org.eventb.texteditor.context"
+	enabled="true"
+	>context ${Context_Name}&#xD;&#xD;end</template>
+
+<!--
+ ######## EVENT context ######## 
+-->
+
+<template
+	id="event_minimal"
+	name="eventstructure (minimal)"
+	description="Basic event structure"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>event ${Eventname}&#xD;&#x9;&#x9;then @${act1} ${var}:=${param}&#xD;&#x9;end</template>
+
+<template
+	id="event_parameter"
+	name="eventstructure (with parameter)"
+	description="Event (with parameter) structure"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>event ${Eventname}&#xD;&#x9;&#x9;any ${param}&#xD;&#x9;&#x9;where @${guard} ${param} : ${type}&#xD;&#x9;&#x9;then @${act1} ${var}:=${param}&#xD;&#x9;end&#xD;</template>
+
+<template
+	id="event_full"
+	name="eventstructure (complete)"
+	description="Complete event structure"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>event ${Eventname}&#xD;&#x9;&#x9;refines ${RefinedEvent}&#xD;&#x9;&#x9;any ${param}&#xD;&#x9;&#x9;where @${guard} ${param} : ${type}&#xD;&#x9;&#x9;with @${y} ${param} = ${y}&#xD;&#x9;&#x9;then @${act1} ${var}:=${param}&#xD;&#x9;end</template>
+
+<template
+	id="where"
+	name="where"
+	description="Create a guards block"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>where&#x9;&#xD;@${grd} ${predicate}&#x9;</template>
+
+<template
+	id="with"
+	name="with"
+	description="Create a witnesses block"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>with&#x9;&#xD;@${variable} ${predicate}&#x9;</template>
+
+<template
+	id="then"
+	name="then"
+	description="Create a action block"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>then&#x9;&#xD;@${act} ${assignment}&#x9;</template>
+
+<template
+	id="guard"
+	name="guard"
+	description="Create a new guard"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>@${grd} ${predicate}&#x9;</template>
+
+<template
+	id="assignment_becomes_equal"
+	name="assignment_equal"
+	description="Create a new 'becomes equal' assignment"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>@${act} ${var} := ${value}&#x9;</template>
+
+<template
+	id="assignment_becomes_such"
+	name="assignment_such"
+	description="Create a new 'becomes such that' assignment"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>@${act} ${var} :| ${value}&#x9;</template>
+
+<template
+	id="assignment_becomes_member"
+	name="assignment_member"
+	description="Create a new 'becomes member of' assignment"
+	context="org.eventb.texteditor.events"
+	enabled="true"
+	>@${act} ${var} :: ${value}&#x9;</template>
+
+
+<!--
+ ######## ANYWHERE context ######## 
+-->
+
+<template
+	id="equivalence1"
+	name="equivalence"
+	description="Equivalence: &#x21D4; ${P}"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x21D4; ${P}</template>
+<template
+	id="equivalence2"
+	name="equivalence"
+	description="Equivalence: ${P1} &#x21D4; ${P2}"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${P1} &#x21D4; ${P2}</template>
+
+<template
+	id="implication1"
+	name="implication"
+	description="Implication: &#x21D2; ${P}"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x21D2; ${P}</template>
+<template
+	id="implication2"
+	name="implication"
+	description="Implication: ${P1} &#x21D2; ${P2}"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${P1} &#x21D2; ${P2}</template>
+
+<template
+	id="and1"
+	name="and_predicate"
+	description="Logical and: &#x2227; ${P}"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2227; ${P}</template>
+<template
+	id="and2"
+	name="and_predicate"
+	description="Logical and: ${P1} &#x2227; ${P2}"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${P1} &#x2227; ${P2}</template>
+
+<template
+	id="or1"
+	name="or_predicate"
+	description="Logical or: ${P1} &#x2228; ${P2}"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${P1} &#x2228; ${P2}</template>
+<template
+	id="or2"
+	name="or_predicate"
+	description="Logical or: &#x2228; ${P}"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2228; ${P}</template>
+
+<template
+	id="not"
+	name="not"
+	description="Not: &#x00AC; ${P1}"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x00AC; ${P1}</template>
+
+<template
+	id="true_predicate"
+	name="true_predicate"
+	description="Predicate true: &#x22A4;"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x22A4;</template>
+
+<template
+	id="false_predicate"
+	name="false_predicate"
+	description="Predicate false: &#x22A5;"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x22A5;</template>
+
+<template
+	id="forall1"
+	name="forall"
+	description="For all predicate"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2200; ${var} &#x00B7; ${var}</template>
+<template
+	id="forall2"
+	name="forall"
+	description="For all predicate (with type)"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2200; ${var} &#x00B7; ${var} &#x2208; ${set}</template>
+<template
+	id="forall3"
+	name="forall"
+	description="For all predicate (with type and implication)"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2200; ${var} &#x00B7; ${var} &#x2208; ${set} &#x21D2; ${P}</template>
+
+<template
+	id="exists1"
+	name="exists"
+	description="Exists predicate"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2203; ${var} &#x00B7; ${var}</template>
+<template
+	id="exists2"
+	name="exists"
+	description="Exists predicate (with type)"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2203; ${var} &#x00B7; ${var} &#x2208; ${set}</template>
+<template
+	id="exists3"
+	name="exists"
+	description="Exists predicate (with type and implication)"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2203; ${var} &#x00B7; ${var} &#x2208; ${set} &#x21D2; ${P}</template>
+
+<template
+	id="relation1"
+	name="relation"
+	description="Relation expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2203; ${E}</template>
+<template
+	id="relation2"
+	name="relation"
+	description="Relation expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#x2203; ${E2}</template>
+
+<template
+	id="total_relation1"
+	name="totalRelation"
+	description="Total relation expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#xE100; ${E}</template>
+<template
+	id="total_relation2"
+	name="totalRelation"
+	description="Total relation expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#xE100; ${E2}</template>
+
+<template
+	id="surjective_relation1"
+	name="surjectiveRelation"
+	description="Total relation expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#xE101; ${E}</template>
+<template
+	id="surjective_relation2"
+	name="surjectiveRelation"
+	description="Surjective relation expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#xE101; ${E2}</template>
+
+<template
+	id="surjective_total_relation1"
+	name="surjectiveTotalRelation"
+	description="Surjective total relation expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#xE102; ${E}</template>
+<template
+	id="surjective_total_relation2"
+	name="surjectiveTotalRelation"
+	description="Surjective total relation expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#xE102; ${E2}</template>
+
+<template
+	id="partial_function1"
+	name="partialFunction"
+	description="Partial function expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x21F8; ${E}</template>
+<template
+	id="partial_function2"
+	name="partialFunction"
+	description="Partial function expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#x21F8; ${E2}</template>
+
+<template
+	id="total_function1"
+	name="totalFunction"
+	description="Total function expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2192; ${E}</template>
+<template
+	id="total_function2"
+	name="totalFunction"
+	description="Total function expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#x2192; ${E2}</template>
+
+<template
+	id="partial_injection1"
+	name="partialInjection"
+	description="Partial injection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2914; ${E}</template>
+<template
+	id="partial_injection2"
+	name="partialInjection"
+	description="Partial injection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#x2914; ${E2}</template>
+
+<template
+	id="total_injection1"
+	name="totalInjection"
+	description="Total injection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x21A3; ${E}</template>
+<template
+	id="total_injection2"
+	name="totalInjection"
+	description="Total injection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#x21A3; ${E2}</template>
+
+<template
+	id="partial_surjection1"
+	name="partialSurjection"
+	description="Partial surjection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2900; ${E}</template>
+<template
+	id="partial_surjection2"
+	name="partialSurjection"
+	description="Partial surjection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#x2900; ${E2}</template>
+
+<template
+	id="total_surjection1"
+	name="totalSurjection"
+	description="Total surjection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x21A0; ${E}</template>
+<template
+	id="total_surjection2"
+	name="totalSurjection"
+	description="Total surjection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#x21A0; ${E2}</template>
+
+<template
+	id="bijection1"
+	name="bijection"
+	description="Bijection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>&#x2916; ${E}</template>
+<template
+	id="bijection2"
+	name="bijection"
+	description="Bijection expression"
+	context="org.eventb.texteditor.anywhere"
+	enabled="true"
+	>${E1} &#x2916; ${E2}</template>
+
+</templates>

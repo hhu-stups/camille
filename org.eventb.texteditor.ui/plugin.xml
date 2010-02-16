@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="eventb_texteditor"
+         name="EventB Texteditor"
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eventb.texteditor.ui.editor.EventBTextEditor"
+            default="true"
+            id="org.eventb.texteditor.ui.texteditor"
+            name="Camille Text Editor">
+         <contentTypeBinding
+               contentTypeId="org.eventb.core.machineFile">
+         </contentTypeBinding>
+         <contentTypeBinding
+               contentTypeId="org.eventb.core.contextFile">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+   <extension
+         id="syntaxerror"
+         name="Syntax Error"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+   </extension>
+   <extension
+         id="eventb.templates"
+         name="EventB TextEditor Templates"
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            class="org.eclipse.jface.text.templates.TemplateContextType"
+            id="org.eventb.texteditor.machine"
+            name="Machine Context">
+      </contextType>
+      <contextType
+            class="org.eclipse.jface.text.templates.TemplateContextType"
+            id="org.eventb.texteditor.events"
+            name="Events Context">
+      </contextType>
+      <contextType
+            class="org.eclipse.jface.text.templates.TemplateContextType"
+            id="org.eventb.texteditor.context"
+            name="Context Context">
+      </contextType>
+      <contextType
+            class="org.eclipse.jface.text.templates.TemplateContextType"
+            id="org.eventb.texteditor.formula"
+            name="Formula Context">
+      </contextType>
+      <contextType
+            class="org.eclipse.jface.text.templates.TemplateContextType"
+            id="org.eventb.texteditor.anywhere"
+            name="Anywhere Context">
+      </contextType>
+      <include
+            file="templates.xml">
+      </include>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eventb.texteditor.ui.preferences"
+            class="org.eventb.texteditor.ui.preferences.HighlightingPreferencePage"
+            id="org.eventb.texteditor.ui.preferences.HighlightingPreferencePage"
+            name="Syntax Highlighting">
+      </page>
+      <page
+            category="org.eventb.ui.preferences.eventB"
+            class="org.eventb.texteditor.ui.preferences.TextEditorPreferencePage"
+            id="org.eventb.texteditor.ui.preferences"
+            name="Camille TextEditor">
+      </page>
+      <page
+            category="org.eventb.texteditor.ui.preferences"
+            class="org.eventb.texteditor.ui.preferences.TemplatePrefPage"
+            id="org.eventb.texteditor.ui.preferences.TemplatePreferences"
+            name="Templates">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eventb.texteditor.ui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eventb.texteditor.ui.editor.actions.FormatHandler"
+            description="Formats the Event-B text representation"
+            id="org.eventb.texteditor.command.format"
+            name="Format">
+      </command>
+   </extension>
+   <extension point="org.eclipse.ui.menus">
+    <menuContribution locationURI="popup:#texteditor.context.menu?after=additions">
+        <command
+              commandId="org.eventb.texteditor.command.format"
+              label="Format"
+              mnemonic="F"
+              tooltip="Reformats the Event-B text representation with the default formatting">
+        </command>
+     </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eventb.texteditor.command.format"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+F">
+      </key>
+   </extension>
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eventb.texteditor.ui.editor.actions.InsertHandler"
+            commandId="org.eventb.ui.edit.insert">
+          <activeWhen>
+             <with
+                   variable="activeEditorId">
+                   <equals
+                         value="org.eventb.texteditor.ui.texteditor">
+                   </equals>
+             </with>
+          </activeWhen>
+      </handler>
+   </extension>
+   
+</plugin>
