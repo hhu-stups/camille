@@ -18,21 +18,18 @@ import org.eventb.texttools.model.texttools.TextRange;
 
 import de.be4.eventb.core.parser.BException;
 import de.be4.eventb.core.parser.EventBParser;
-import de.be4.eventb.core.parser.node.Node;
 import de.be4.eventb.core.parser.node.Start;
 
 public class TransformationVisitorTest extends TestCase {
 
 	public void testMachineWithVariablesAndComments() throws BException {
-		final String input = "machine Test variables\n" + "varA, varB,\n"
+		final String input = "machine Test variables\n" + "varA  varB\n"
 				+ "/*varC\n" + "comment*/" + "varC\n" + "end";
 		final Start rootNode = parseInput(input, false);
 
 		final TransformationVisitor visitor = new TransformationVisitor();
 		final IDocument document = new Document(input);
 		final Machine machine = visitor.transform(rootNode, document);
-
-		Node n;
 
 		assertEquals("Test", machine.getName());
 		assertEquals(0, machine.getRefinesNames().size());
@@ -46,11 +43,11 @@ public class TransformationVisitorTest extends TestCase {
 		assertEquals("varA", variable.getName());
 
 		variable = variables.get(1);
-		assertNull(variable.getComment());
+		assertEquals("varC\n" + "comment", variable.getComment());
 		assertEquals("varB", variable.getName());
 
 		variable = variables.get(2);
-		assertEquals("varC\n" + "comment", variable.getComment());
+		assertNull(variable.getComment());
 		assertEquals("varC", variable.getName());
 	}
 
@@ -72,12 +69,12 @@ public class TransformationVisitorTest extends TestCase {
 		assertEquals(2, invariants.size());
 
 		Invariant invariant = invariants.get(0);
-		assertNull(invariant.getComment());
+		assertEquals("inv2\n" + "comment", invariant.getComment());
 		assertEquals("inv1", invariant.getName());
 		assertEquals("1=1", invariant.getPredicate());
 
 		invariant = invariants.get(1);
-		assertEquals("inv2\n" + "comment", invariant.getComment());
+		assertNull(invariant.getComment());
 		assertEquals("inv2", invariant.getName());
 		assertEquals("2=2", invariant.getPredicate());
 	}
@@ -112,7 +109,7 @@ public class TransformationVisitorTest extends TestCase {
 	}
 
 	public void testMachineWithEvents() throws BException {
-		final String input = "machine Test\n" + "refines MacA, MacB\n"
+		final String input = "machine Test\n" + "refines MacA MacB\n"
 				+ "events\n" + "ordinary event evt1\n" + "any a\n"
 				+ "where @grd1 a=1\n" + "then\n" + "@act1 a≔1\n" + "end\n"
 				+ "\n" + "anticipated event evt2\n" + "refines evtAbstract\n"
@@ -159,7 +156,7 @@ public class TransformationVisitorTest extends TestCase {
 
 	public void testEventRefinement() throws BException {
 		final String input = "machine Test\n" + "events\n" + "event evt1\n"
-				+ "end\n" + "\n" + "event evt2\n" + "refines evtX, evtY\n"
+				+ "end\n" + "\n" + "event evt2\n" + "refines evtX evtY\n"
 				+ "end\n" + "event evt3\n" + "extends evtZ\n" + "end\n" + "end";
 		final Start rootNode = parseInput(input, false);
 
