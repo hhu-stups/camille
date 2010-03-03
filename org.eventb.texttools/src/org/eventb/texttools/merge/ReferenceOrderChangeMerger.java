@@ -38,14 +38,19 @@ public class ReferenceOrderChangeMerger extends DefaultMerger {
 				leftEvent.getRefines().clear();
 				leftEvent.getRefines().addAll(
 						EcoreUtil.copyAll(rightEvent.getRefines()));
-			} else if (element instanceof Machine
-					&& theDiff.getReference().getName().equals(
-							Constants.REFINES)) {
+			} else if (element instanceof Machine) {
 				Machine leftMachine = (Machine) element;
 				Machine rightMachine = (Machine) theDiff.getRightElement();
-				leftMachine.getRefines().clear();
-				leftMachine.getRefines().addAll(
-						EcoreUtil.copyAll(rightMachine.getRefines()));
+				if (theDiff.getReference().getName().equals(Constants.REFINES)) {
+					leftMachine.getRefines().clear();
+					leftMachine.getRefines().addAll(
+							EcoreUtil.copyAll(rightMachine.getRefines()));
+				} else if (theDiff.getReference().getName().equals(
+						Constants.SEES)) {
+					leftMachine.getSees().clear();
+					leftMachine.getSees().addAll(
+							EcoreUtil.copyAll(rightMachine.getSees()));
+				}
 			} else if (element instanceof Context
 					&& theDiff.getReference().getName().equals(
 							Constants.EXTENDS)) {
