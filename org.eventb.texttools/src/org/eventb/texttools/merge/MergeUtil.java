@@ -71,4 +71,30 @@ public class MergeUtil {
 		}
 	}
 
+	/**
+	 * Makes rightTarget a child of element, potentially displacing rightTarget.
+	 * 
+	 * @return true if a copy was performed
+	 */
+	static boolean rodinCopy(EObject element, EObject leftTarget,
+			EObject rightTarget) {
+
+		if (leftTarget instanceof Machine || rightTarget instanceof Machine) {
+			// only case: refines attribute of a machine
+			copyMachineRef((Machine) element, (Machine) leftTarget,
+					(Machine) rightTarget);
+			return true;
+		} else if (leftTarget instanceof Context
+				|| rightTarget instanceof Context) {
+			copyContextRef(element, (Context) leftTarget, (Context) rightTarget);
+			return true;
+		} else if (leftTarget instanceof Event || rightTarget instanceof Event) {
+			copyEventRef((Event) element, (Event) leftTarget,
+					(Event) rightTarget);
+			return true;
+		}
+
+		return false;
+	}
+
 }

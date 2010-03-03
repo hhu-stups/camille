@@ -100,7 +100,7 @@ public class ModelMerge {
 		// See setResourceFile() for Bug info
 
 		// First find the file extension
-		String path = oldVersion.eResource().getURI().path();
+		String path = oldVersion.getURI().path();
 		String extension = path.substring(path.lastIndexOf('.'));
 		File tmpFileNew = null;
 

@@ -20,9 +20,6 @@ import org.eclipse.emf.compare.util.EFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eventb.emf.core.context.Context;
-import org.eventb.emf.core.machine.Event;
-import org.eventb.emf.core.machine.Machine;
 
 public class ReferenceChangeRightTargetMerger extends DefaultMerger {
 
@@ -33,20 +30,10 @@ public class ReferenceChangeRightTargetMerger extends DefaultMerger {
 		final EObject leftTarget = theDiff.getLeftTarget();
 		final EObject rightTarget = theDiff.getRightTarget();
 
-		if (leftTarget instanceof Machine || rightTarget instanceof Machine) {
-			// only case: refines attribute of a machine
-			MergeUtil.copyMachineRef((Machine) element, (Machine) leftTarget,
-					(Machine) rightTarget);
-		} else if (leftTarget instanceof Context
-				|| rightTarget instanceof Context) {
-			MergeUtil.copyContextRef(element, (Context) leftTarget,
-					(Context) rightTarget);
-		} else if (leftTarget instanceof Event || rightTarget instanceof Event) {
-			MergeUtil.copyEventRef((Event) element, (Event) leftTarget,
-					(Event) rightTarget);
-		} else {
+		boolean applied = MergeUtil.rodinCopy(element, leftTarget, rightTarget);
+
+		if (!applied)
 			originalApplyInOrigin();
-		}
 	}
 
 	public void originalApplyInOrigin() {
