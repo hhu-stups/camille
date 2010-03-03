@@ -102,10 +102,12 @@ public class ModelMerge {
 		// First find the file extension
 		String path = oldVersion.getURI().path();
 		String extension = path.substring(path.lastIndexOf('.'));
+		String projectName = oldVersion.getURI().segment(1);
 		File tmpFileNew = null;
 
 		if (newVersion.eResource() == null) {
 			tmpFileNew = setResourceFile(newVersion, extension);
+			// setRodinResource(newVersion, extension, projectName);
 		}
 
 		matchOptions.put(MatchOptions.OPTION_PROGRESS_MONITOR, subMonitor
@@ -128,8 +130,8 @@ public class ModelMerge {
 		}
 
 		// cleanup tmp files
+		EcoreUtil.remove(newVersion);
 		if (tmpFileNew != null) {
-			EcoreUtil.remove(newVersion);
 			tmpFileNew.delete();
 		}
 	}
@@ -165,10 +167,10 @@ public class ModelMerge {
 			URI uri = URI.createFileURI(tmpFile.getAbsolutePath());
 			// XMLResourceImpl resource = new XMLResourceImpl(uri);
 			RodinResource resource = new RodinResource();
+			resource.setURI(URI.createPlatformResourceURI(projectPath + "/"
+					+ tmpFile.getName(), true));
 			resource.eSetDeliver(true);
 			resource.getContents().add(element);
-			resource.setURI(URI.createPlatformPluginURI(projectPath + "/"
-					+ tmpFile.getName(), true));
 			return tmpFile;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
