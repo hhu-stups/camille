@@ -8,6 +8,11 @@ import org.eclipse.emf.compare.diff.merge.DefaultMerger;
 import org.eclipse.emf.compare.diff.metamodel.ReferenceOrderChange;
 import org.eclipse.emf.compare.util.EFactory;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eventb.emf.core.context.Context;
+import org.eventb.emf.core.machine.Event;
+import org.eventb.emf.core.machine.Machine;
+import org.eventb.texttools.Constants;
 
 public class ReferenceOrderChangeMerger extends DefaultMerger {
 	/**
@@ -23,6 +28,34 @@ public class ReferenceOrderChangeMerger extends DefaultMerger {
 
 		// (mj) START
 		if (leftTarget.size() == 0) {
+
+			// Handle Event Refinement changed
+			if (element instanceof Event
+					&& theDiff.getReference().getName().equals(
+							Constants.REFINES)) {
+				Event leftEvent = (Event) element;
+				Event rightEvent = (Event) theDiff.getRightElement();
+				leftEvent.getRefines().clear();
+				leftEvent.getRefines().addAll(
+						EcoreUtil.copyAll(rightEvent.getRefines()));
+			} else if (element instanceof Machine
+					&& theDiff.getReference().getName().equals(
+							Constants.REFINES)) {
+				Machine leftMachine = (Machine) element;
+				Machine rightMachine = (Machine) theDiff.getRightElement();
+				leftMachine.getRefines().clear();
+				leftMachine.getRefines().addAll(
+						EcoreUtil.copyAll(rightMachine.getRefines()));
+			} else if (element instanceof Context
+					&& theDiff.getReference().getName().equals(
+							Constants.EXTENDS)) {
+				Context leftContext = (Context) element;
+				Context rightContext = (Context) theDiff.getRightElement();
+				leftContext.getExtends().clear();
+				leftContext.getExtends().addAll(
+						EcoreUtil.copyAll(rightContext.getExtends()));
+			}
+
 			super.applyInOrigin();
 			return;
 		}
