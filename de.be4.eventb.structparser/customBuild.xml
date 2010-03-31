@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<project name="EventBParser" default="sablecc-parser" basedir=".">
+	
+	<property name="enable_debug" value="true"/>
+
+	<property name="dir.src" location="src" />
+	<property name="dir.src_test" location="src_test" />
+	<property name="dir.src_generated" location="src_generated" />
+
+	<property name="dir.temp" location="temp" />
+	<property name="dir.temp.src" location="${dir.temp}\src" />
+	<property name="dir.temp.classes" location="${dir.temp}\classes" />
+	<property name="dir.release" location="release"/>
+	
+	<property name="file.release.jar" location="${dir.release}\EventBParser.jar" />
+	<property name="file.parseraspects.jar" location="lib/ParserAspects.jar" />
+	<property name="file.aspectjrt.jar" location="lib/aspectjrt.jar" />
+
+	<taskdef name="sablecc" classname="org.sablecc.ant.taskdef.Sablecc" classpath="lib/ext/sablecc-anttask.jar" />
+	
+	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties" classpath="lib/ext/aspectjtools.jar" />
+
+	<target name="init">
+		<mkdir dir="${dir.temp.classes}" />
+		<mkdir dir="${dir.temp.src}" />
+		<mkdir dir="${dir.release}" />
+	</target>
+
+	<target name="clean">
+		<delete >
+			<fileset dir="${dir.src_generated}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="sablecc-parser" depends="clean">
+		<echo message="Regenerating EventBParser sources..." />
+		<java jar="lib/ext/sablecc.jar" fork="true" failonerror="true">
+			<arg value="-d"/>
+			<arg value="src_generated"/>
+			<arg value="${basedir}/EventBParser.sablecc"/>
+
+		</java>
+	</target>
+
+	<target name="compile" depends="init,sablecc-parser" description="">
+	    <iajc
+	    	fork="true"
+	    	destdir="${dir.temp.classes}"
+	    	source="1.5"
+	    	sourceRootCopyFilter="**/*.java,**/.svn/*"
+	    	inpathDirCopyFilter="**/*.java,**/.svn/*" >
+	    	<sourceroots>
+	    		<pathelement location="src_generated"/>
+	        	<pathelement location="src"/>
+			</sourceroots>
+	    	<inpath>
+				<pathelement location="${file.parseraspects.jar}" />
+	    	</inpath>
+	        <classpath>
+				<pathelement location="${file.aspectjrt.jar}" />
+	        </classpath>
+	    </iajc>
+	</target>
+
+    <target name="jar" depends="init,compile" description="">
+		<jar basedir="${dir.temp.classes}" destfile="${file.release.jar}" >
+			<manifest>
+				<attribute name="Built-By" value="${user.name} "/>
+				<attribute name="Built-On" value="${TODAY} "/>
+				<attribute name="Main-Class" value="de.be4.eventb.core.parser.EventBParser"/>
+			</manifest>
+		</jar>
+    	
+		<delete dir="${dir.temp.classes}" />
+    </target>
+
+	<target name="dist" depends="jar" >
+		<copy file="${file.aspectjrt.jar}" todir="${dir.release}" />
+		<delete dir="${dir.temp}" />
+	</target>
+	
+	<target name="release" depends="clean,dist"/>
+</project>
