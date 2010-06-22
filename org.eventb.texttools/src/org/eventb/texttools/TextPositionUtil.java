@@ -11,8 +11,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAnnotation;
-import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eventb.emf.core.Annotation;
 import org.eventb.emf.core.EventBObject;
@@ -22,14 +20,14 @@ import org.eventb.texttools.model.texttools.TexttoolsFactory;
 
 public class TextPositionUtil {
 	/**
-	 * Source key for the {@link EAnnotation} containing {@link TextRange}.
+	 * Source key for the {@link Annotation} containing {@link TextRange}.
 	 */
 	public static final String ANNOTATION_TEXTRANGE = "http://emf.eventb.org/models/core/texttools/TextRange";
 
 	/**
 	 * <p>
 	 * Extracts a {@link TextRange} object from the annotations of the given
-	 * {@link EModelElement}. The <code>contents</code> attribute of the
+	 * {@link EventBObject}. The <code>contents</code> attribute of the
 	 * annotation is search for an object of type {@link TextRange} and the
 	 * first one found is returned.
 	 * </p>
@@ -82,7 +80,7 @@ public class TextPositionUtil {
 
 	/**
 	 * <p>
-	 * Gets the position annotation of the given {@link EModelElement} and if
+	 * Gets the position annotation of the given {@link EventBObject} and if
 	 * it's not <code>null</code> the given {@link TextRange} is attached to it
 	 * under the given key.
 	 * </p>
@@ -156,16 +154,16 @@ public class TextPositionUtil {
 
 	/**
 	 * Extracts a {@link TextRange} for a substring from the given
-	 * {@link EModelElement}'s annotations. The given key is used to find the
+	 * {@link EventBObject}'s annotations. The given key is used to find the
 	 * correct {@link TextRange} for the substring.
 	 * 
-	 * @see #addInternalPosition(EModelElement, String, TextRange)
+	 * @see #addInternalPosition(EventBObject, String, TextRange)
 	 * @param emfElement
 	 *            Parent element with a position annotation.
 	 * @param key
 	 *            Key which has been used to store the position information.
 	 * @return The relevant {@link TextRange} if available. Returns
-	 *         <code>null</code> if the {@link EModelElement} has no position
+	 *         <code>null</code> if the {@link EventBObject} has no position
 	 *         annotation or if this annotation didn't contain matching key.
 	 */
 	public static TextRange getInternalPosition(final EventBObject emfElement,

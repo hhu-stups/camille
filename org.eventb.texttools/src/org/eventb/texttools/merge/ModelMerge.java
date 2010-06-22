@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
+import org.eventb.emf.core.Annotation;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
 import org.eventb.emf.core.Extension;
 import org.eventb.emf.formulas.BFormula;
@@ -49,7 +50,7 @@ import org.eventb.texttools.TextPositionUtil;
  * (right version) and merges the right into the left. This means it takes all
  * changes from the right and applies them to the left. During this process it
  * preserves those elements that are not part of the core model and have been
- * added as {@link Extension}s or {@link EAnnotation}s.
+ * added as {@link Extension}s or {@link Annotation}s or {@link EAnnotation}s.
  * </p>
  */
 public class ModelMerge {
@@ -251,12 +252,23 @@ public class ModelMerge {
 
 			/*
 			 * The original model may contain arbitrary annotations which we
-			 * didn't create or handle.
+			 * didn't create or handle. Ignore EAnnotations containing
+			 * Textranges
 			 */
 			if (leftElement instanceof EAnnotation
 					&& !TextPositionUtil.ANNOTATION_TEXTRANGE
 							.equals(((EAnnotation) leftElement).getSource())) {
 				return true;
+			}
+			/*
+			 * With eventb.emf v3.1.0 EAnnotations where replaced by
+			 * Annotations. Ignore Annotations containing Textranges
+			 */
+			if (leftElement instanceof Annotation
+					&& !TextPositionUtil.ANNOTATION_TEXTRANGE
+							.equals(((Annotation) leftElement).getSource())) {
+				return true;
+
 			}
 
 			/*
@@ -267,8 +279,6 @@ public class ModelMerge {
 				return true;
 			}
 		}
-
 		return false;
 	}
-
 }
