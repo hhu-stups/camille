@@ -9,7 +9,6 @@ package org.eventb.texttools.formulas;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EModelElement;
 import org.eventb.emf.core.EventBCommentedExpressionElement;
 import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
 import org.eventb.emf.core.EventBObject;
@@ -21,17 +20,13 @@ public class MachineResolveSwitch extends MachineSwitch<Boolean> {
 	private final List<FormulaParseException> exceptions = new ArrayList<FormulaParseException>();
 
 	@Override
-	public Boolean caseEModelElement(final EModelElement object) {
-		return true;
-	}
-
-	@Override
 	public Boolean caseEventBObject(final EventBObject object) {
 		return true;
 	}
 
 	@Override
-	public Boolean caseEventBNamedCommentedPredicateElement(final EventBNamedCommentedPredicateElement object) {
+	public Boolean caseEventBNamedCommentedPredicateElement(
+			final EventBNamedCommentedPredicateElement object) {
 		try {
 			FormulaResolver.resolve(object);
 		} catch (final FormulaParseException e) {
@@ -43,7 +38,8 @@ public class MachineResolveSwitch extends MachineSwitch<Boolean> {
 	}
 
 	@Override
-	public Boolean caseEventBCommentedExpressionElement(final EventBCommentedExpressionElement object) {
+	public Boolean caseEventBCommentedExpressionElement(
+			final EventBCommentedExpressionElement object) {
 		try {
 			FormulaResolver.resolve(object);
 		} catch (final FormulaParseException e) {

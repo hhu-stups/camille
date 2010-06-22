@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eventb.emf.core.EventBCommented;
@@ -315,7 +314,8 @@ public class TransformationVisitor extends DepthFirstAdapter {
 		}
 	}
 
-	private void handleLabeledPredicate(final EventBNamedCommentedPredicateElement newNode,
+	private void handleLabeledPredicate(
+			final EventBNamedCommentedPredicateElement newNode,
 			final Node node, final TFormula predicate, final TLabel name,
 			final LinkedList<TComment> comments, final boolean store) {
 		handleNamedAndCommented(newNode, node, name, comments, store);
@@ -379,7 +379,7 @@ public class TransformationVisitor extends DepthFirstAdapter {
 	}
 
 	private void storePosition(final String keyString,
-			final EModelElement emfParent, final TextRange range) {
+			final EventBObject emfParent, final TextRange range) {
 		if (keyString == null) {
 			return;
 		}
@@ -390,7 +390,7 @@ public class TransformationVisitor extends DepthFirstAdapter {
 	}
 
 	private void storePosition(final String keyString,
-			final EModelElement emfParent, final IToken token) {
+			final EventBObject emfParent, final IToken token) {
 		storePosition(keyString, emfParent, createTextRange(token));
 	}
 

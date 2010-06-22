@@ -9,7 +9,6 @@ package org.eventb.texttools.formulas;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EModelElement;
 import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
 import org.eventb.emf.core.EventBObject;
 import org.eventb.emf.core.context.util.ContextSwitch;
@@ -19,17 +18,13 @@ public class ContextResolveSwitch extends ContextSwitch<Boolean> {
 	private final List<FormulaParseException> exceptions = new ArrayList<FormulaParseException>();
 
 	@Override
-	public Boolean caseEModelElement(final EModelElement object) {
-		return true;
-	}
-
-	@Override
 	public Boolean caseEventBObject(final EventBObject object) {
 		return true;
 	}
 
 	@Override
-	public Boolean caseEventBNamedCommentedPredicateElement(final EventBNamedCommentedPredicateElement object) {
+	public Boolean caseEventBNamedCommentedPredicateElement(
+			final EventBNamedCommentedPredicateElement object) {
 		try {
 			FormulaResolver.resolve(object);
 		} catch (final FormulaParseException e) {

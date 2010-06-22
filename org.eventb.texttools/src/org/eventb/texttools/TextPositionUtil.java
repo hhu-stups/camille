@@ -14,8 +14,9 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EcoreFactory;
+import org.eventb.emf.core.Annotation;
 import org.eventb.emf.core.EventBObject;
+import org.eventb.emf.core.impl.CoreFactoryImpl;
 import org.eventb.texttools.model.texttools.TextRange;
 import org.eventb.texttools.model.texttools.TexttoolsFactory;
 
@@ -39,10 +40,10 @@ public class TextPositionUtil {
 	 * @param annotation
 	 * @return
 	 */
-	public static TextRange getTextRange(final EModelElement element) {
+	public static TextRange getTextRange(final EventBObject element) {
 		if (element != null) {
-			final EAnnotation annotation = element
-					.getEAnnotation(ANNOTATION_TEXTRANGE);
+			final Annotation annotation = element
+					.getAnnotation(ANNOTATION_TEXTRANGE);
 
 			if (annotation != null) {
 				final EList<EObject> contents = annotation.getContents();
@@ -58,20 +59,19 @@ public class TextPositionUtil {
 		return null;
 	}
 
-	public static void annotatePosition(final EModelElement element,
+	public static void annotatePosition(final EventBObject element,
 			final TextRange range) {
 		if (range != null) {
-			final EAnnotation annotation = EcoreFactory.eINSTANCE
-					.createEAnnotation();
-			annotation.setEModelElement(element);
+			final Annotation annotation = CoreFactoryImpl.eINSTANCE
+					.createAnnotation();
+			annotation.setEventBObject(element);
 			annotation.setSource(TextPositionUtil.ANNOTATION_TEXTRANGE);
 			annotation.getContents().add(range);
-
-			element.getEAnnotations().add(annotation);
+			element.getAnnotations().add(annotation);
 		}
 	}
 
-	public static void annotatePosition(final EModelElement element,
+	public static void annotatePosition(final EventBObject element,
 			final int startPos, final int length) {
 		final TextRange range = TexttoolsFactory.eINSTANCE.createTextRange();
 		range.setOffset(startPos);
@@ -106,7 +106,7 @@ public class TextPositionUtil {
 	 *            retrieve the position later. So it's helpful to use the string
 	 *            itself.
 	 */
-	public static void addInternalPosition(final EModelElement emfElement,
+	public static void addInternalPosition(final EventBObject emfElement,
 			final String key, final TextRange range) {
 		Assert.isNotNull(emfElement);
 		Assert.isNotNull(range);
@@ -137,7 +137,7 @@ public class TextPositionUtil {
 	 * @param newKey
 	 * @param newRange
 	 */
-	public static void replaceInternalPosition(final EModelElement emfElement,
+	public static void replaceInternalPosition(final EventBObject emfElement,
 			final String oldKey, final String newKey, final TextRange newRange) {
 		Assert.isNotNull(emfElement);
 		Assert.isNotNull(oldKey);
@@ -168,7 +168,7 @@ public class TextPositionUtil {
 	 *         <code>null</code> if the {@link EModelElement} has no position
 	 *         annotation or if this annotation didn't contain matching key.
 	 */
-	public static TextRange getInternalPosition(final EModelElement emfElement,
+	public static TextRange getInternalPosition(final EventBObject emfElement,
 			final String key) {
 		Assert.isNotNull(emfElement);
 		Assert.isNotNull(key);
