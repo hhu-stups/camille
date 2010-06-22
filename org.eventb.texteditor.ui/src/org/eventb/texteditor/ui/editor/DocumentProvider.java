@@ -119,9 +119,18 @@ public class DocumentProvider extends FileDocumentProvider {
 
 		// load content as stream
 		InputStream stream;
+
+		/* prefer \n as the line delimiter */
+		String lineDelimiter = document.getLegalLineDelimiters()[0];
+		for (int i = 1; i < document.getLegalLineDelimiters().length; i++) {
+			if (document.getLegalLineDelimiters()[i].equals("\n")) {
+				lineDelimiter = "\n";
+				break;
+			}
+		}
+
 		try {
-			stream = createContentStream(resource, encoding, document
-					.getLegalLineDelimiters()[0]);
+			stream = createContentStream(resource, encoding, lineDelimiter);
 		} catch (final IOException e) {
 			// IGNORE
 			return false;

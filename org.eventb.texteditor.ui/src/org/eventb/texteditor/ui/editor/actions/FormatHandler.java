@@ -58,9 +58,17 @@ public class FormatHandler extends AbstractHandler {
 				if (document != null) {
 					final String remberedContent = document.get();
 
+					/* prefer \n as the line delimiter */
+					String lineDelimiter = document.getLegalLineDelimiters()[0];
+					for (int i = 1; i < document.getLegalLineDelimiters().length; i++) {
+						if (document.getLegalLineDelimiters()[i].equals("\n")) {
+							lineDelimiter = "\n";
+							break;
+						}
+					}
+
 					final StringBuilder buffer = new StringBuilder();
-					new PrettyPrinter(buffer,
-							document.getLegalLineDelimiters()[0], null)
+					new PrettyPrinter(buffer, lineDelimiter, null)
 							.prettyPrint(parseResult.astRoot);
 
 					final String newContent = buffer.toString();
