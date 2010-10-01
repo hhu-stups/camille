@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+   <extension-point id="org.eventb.texttools.syntaxExtension" name="syntaxExtension" schema="schema/org.eventb.texttools.syntaxExtension.exsd"/>
    <extension
          point="org.rodinp.core.attributeTypes">
       <attributeType
@@ -12,6 +13,11 @@
             id="text_lastmodified"
             kind="long"
             name="Text LastModified">
+      </attributeType>
+      <attributeType
+            id="syntax_extensions"
+            kind="string"
+            name="syntaxExtensions">
       </attributeType>
    </extension>
    <extension

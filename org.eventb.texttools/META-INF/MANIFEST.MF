@@ -15,11 +15,13 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.5.0,3.6.0)",
  org.eclipse.emf.compare.match;bundle-version="[1.0.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eventb.texttools,
+Export-Package: de.be4.eventb.core.parser.node,
+ org.eventb.texttools,
  org.eventb.texttools.formulas,
  org.eventb.texttools.merge,
  org.eventb.texttools.model.texttools,
- org.eventb.texttools.prettyprint
+ org.eventb.texttools.prettyprint,
+ org.eventb.texttools.syntaxExtension
 Bundle-ClassPath: lib/aspectjrt.jar,
  lib/EventBParser.jar,
  .

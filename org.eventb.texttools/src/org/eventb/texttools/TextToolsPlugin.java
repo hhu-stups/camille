@@ -23,7 +23,9 @@ public class TextToolsPlugin extends Plugin {
 			.getStringAttrType(PLUGIN_ID + ".text_representation");
 	public static final IAttributeType.Long TYPE_LASTMODIFIED = RodinCore
 			.getLongAttrType(PLUGIN_ID + ".text_lastmodified");
-
+	public static final IAttributeType.String TYPE_USESEXTENSION = RodinCore
+			.getStringAttrType(PLUGIN_ID + ".syntax_extensions");
+	
 	// The shared instance
 	private static TextToolsPlugin plugin;
 

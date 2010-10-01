@@ -8,6 +8,7 @@ package org.eventb.texttools;
 
 import org.eclipse.jface.text.IDocument;
 import org.eventb.emf.core.EventBObject;
+import org.eventb.texttools.extensions.ExtendedEventB;
 import org.eventb.texttools.internal.parsing.TransformationVisitor;
 
 import de.be4.eventb.core.parser.BException;
@@ -21,9 +22,13 @@ import de.hhu.stups.sablecc.patch.SourcePositions;
 import de.hhu.stups.sablecc.patch.SourcecodeRange;
 
 public class Parser {
+	
+	private final Boolean allowSynatxExtensions = false;
+	
 	private final EventBParser parser = new EventBParser();
 	private final TransformationVisitor transformer = new TransformationVisitor();
-
+	
+	
 	/**
 	 * Parses the content of the given {@link IDocument}.
 	 * 
@@ -37,16 +42,33 @@ public class Parser {
 	 */
 	public <T extends EventBObject> T parse(final IDocument document)
 			throws ParseException {
+		
 		if (document == null) {
 			throw new IllegalArgumentException(
 					"Parser may not be called without input document");
 		}
 
-		final String input = document.get();
+		
+		String input;
+		ExtendedEventB extendedEventB = null;
+		if (allowSynatxExtensions){
+			extendedEventB = ExtendedEventB.createFromInput(document.get());
+			input = extendedEventB.getPlainEventBCode();
+		}else{
+			input = document.get();
+		}
+		
 
 		try {
 			final Start rootNode = parser.parse(input, false);
-			return transformer.<T>transform(rootNode, document);
+			T transform = transformer.<T>transform(rootNode, document);
+			
+			if (allowSynatxExtensions && extendedEventB != null){
+				extendedEventB.assignElements((EventBObject)transform);
+				extendedEventB.runSyntaxExtensions();
+			}
+			
+			return transform;
 		} catch (final BException e) {
 			final Exception cause = e.getCause();
 

@@ -31,6 +31,8 @@ import org.eventb.texttools.prettyprint.PrettyPrinter;
 
 public class PersistenceHelper {
 
+	public static final Boolean DEBUG = false;
+	
 	public static IResource getIResource(final Resource resource) {
 		final URI uri = resource.getURI();
 		if (uri.isPlatformResource()) {
@@ -99,12 +101,35 @@ public class PersistenceHelper {
 		}
 		timeAttribute.setValue(timeStamp);
 	}
+	
+	
+	public static void addUsesAnnotation(final EventBElement element,
+			final String usesStatements) {
+		final EMap<String, Attribute> attributes = element.getAttributes();
+		Attribute usesAttribute = attributes.get(TextToolsPlugin.TYPE_USESEXTENSION.getId());
+		if (usesAttribute == null) {
+			usesAttribute = CoreFactory.eINSTANCE.createAttribute();
+			usesAttribute.setType(AttributeType.STRING);
+			attributes.put(TextToolsPlugin.TYPE_USESEXTENSION.getId(),
+					usesAttribute);
+		}
+		usesAttribute.setValue(usesStatements); 
+
+	}
+	
 
 	private static void mergeComponents(final EventBNamedCommentedComponentElement oldVersion,
 			final EventBNamedCommentedComponentElement newVersion, final IProgressMonitor monitor) {
 		try {
+			long time0 = System.currentTimeMillis();
 			final ModelMerge merge = new ModelMerge(oldVersion, newVersion);
+			long time1 = System.currentTimeMillis();
 			merge.applyChanges(monitor);
+			long time2 = System.currentTimeMillis();
+			if (DEBUG){
+				System.out.println("new ModelMerge: " + (time1-time0));
+				System.out.println("merge.applyChanges: " + (time2-time1));
+			}
 		} catch (final InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,7 +140,14 @@ public class PersistenceHelper {
 			final EventBNamedCommentedComponentElement newVersion, final IProgressMonitor monitor) {
 		final EventBNamedCommentedComponentElement component = getComponent(resource);
 		if (component != null) {
+			// FIXME Hier stimmt die Reihenfolge noch
+			long start = System.currentTimeMillis();
 			mergeComponents(component, newVersion, monitor);
+			long end = System.currentTimeMillis();
+			if (DEBUG){
+				System.out.println("Time to merge components: "  + (end-start));
+			}
+			// Hier stimmt die Reihenfolge in component nicht mehr
 		} else {
 			resource.getContents().add(newVersion);
 		}
