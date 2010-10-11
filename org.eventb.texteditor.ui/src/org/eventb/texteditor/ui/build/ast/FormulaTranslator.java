@@ -20,10 +20,10 @@ import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
 import org.eventb.emf.core.context.Context;
 import org.eventb.emf.core.machine.Action;
 import org.eventb.emf.core.machine.Machine;
-import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.texteditor.ui.editor.EventBTextEditor;
 import org.eventb.texttools.TextPositionUtil;
 import org.eventb.texttools.model.texttools.TextRange;
+import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 public class FormulaTranslator {
 	private IDocument document;
@@ -60,8 +60,7 @@ public class FormulaTranslator {
 		final String input = predicate.getPredicate();
 
 		if (input != null) {
-			final String translatedInput = Text2EventBMathTranslator
-					.translate(input);
+			final String translatedInput = RodinKeyboardPlugin.getDefault().translate(input);
 
 			if (!input.equals(translatedInput)) {
 				// replace in emf node
@@ -78,8 +77,7 @@ public class FormulaTranslator {
 		final String input = expression.getExpression();
 
 		if (input != null) {
-			final String translatedInput = Text2EventBMathTranslator
-					.translate(input);
+			final String translatedInput = RodinKeyboardPlugin.getDefault().translate(input);
 
 			if (!input.equals(translatedInput)) {
 				// replace in emf node
@@ -96,8 +94,7 @@ public class FormulaTranslator {
 		final String input = action.getAction();
 
 		if (input != null) {
-			final String translatedInput = Text2EventBMathTranslator
-					.translate(input);
+			final String translatedInput = RodinKeyboardPlugin.getDefault().translate(input);
 
 			if (!input.equals(translatedInput)) {
 				// replace in emf node
