@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Camille Texteditor
 Bundle-SymbolicName: org.eventb.texteditor.ui;singleton:=true
-Bundle-Version: 2.0.0
+Bundle-Version: 2.0.1
 Bundle-Localization: plugin
 Bundle-Activator: org.eventb.texteditor.ui.TextEditorPlugin$Implementation
 Require-Bundle: org.eventb.texttools;bundle-version="2.0.0";visibility:=reexport,
- org.eventb.emf.formulas;bundle-version="[1.0.3,1.1.0]";visibility:=reexport,
- org.eventb.emf.persistence;bundle-version="[1.2.0,2.1.0]";visibility:=reexport,
+ org.eventb.emf.formulas;bundle-version="[1.2.0,1.3.0)";visibility:=reexport,
+ org.eventb.emf.persistence;bundle-version="[2.2.0,2.3.0)";visibility:=reexport,
  org.eventb.ui;bundle-version="[2.0.0,3.0.0)";visibility:=reexport,
  org.eclipse.jface.text;bundle-version="[3.6.0,3.7.0)";visibility:=reexport,
  org.eclipse.emf.edit.ui;bundle-version="[2.5.0,3.0.0)",
