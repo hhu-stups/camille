@@ -8,7 +8,6 @@ package org.eventb.texttools;
 
 import org.eclipse.jface.text.IDocument;
 import org.eventb.emf.core.EventBObject;
-import org.eventb.texttools.extensions.ExtendedEventB;
 import org.eventb.texttools.internal.parsing.TransformationVisitor;
 
 import de.be4.eventb.core.parser.BException;
@@ -22,13 +21,12 @@ import de.hhu.stups.sablecc.patch.SourcePositions;
 import de.hhu.stups.sablecc.patch.SourcecodeRange;
 
 public class Parser {
-	
+
 	private final Boolean allowSynatxExtensions = false;
-	
+
 	private final EventBParser parser = new EventBParser();
 	private final TransformationVisitor transformer = new TransformationVisitor();
-	
-	
+
 	/**
 	 * Parses the content of the given {@link IDocument}.
 	 * 
@@ -42,32 +40,20 @@ public class Parser {
 	 */
 	public <T extends EventBObject> T parse(final IDocument document)
 			throws ParseException {
-		
+
 		if (document == null) {
 			throw new IllegalArgumentException(
 					"Parser may not be called without input document");
 		}
 
-		
 		String input;
-		ExtendedEventB extendedEventB = null;
-		if (allowSynatxExtensions){
-			extendedEventB = ExtendedEventB.createFromInput(document.get());
-			input = extendedEventB.getPlainEventBCode();
-		}else{
-			input = document.get();
-		}
-		
+
+		input = document.get();
 
 		try {
 			final Start rootNode = parser.parse(input, false);
-			T transform = transformer.<T>transform(rootNode, document);
-			
-			if (allowSynatxExtensions && extendedEventB != null){
-				extendedEventB.assignElements((EventBObject)transform);
-				extendedEventB.runSyntaxExtensions();
-			}
-			
+			T transform = transformer.<T> transform(rootNode, document);
+
 			return transform;
 		} catch (final BException e) {
 			final Exception cause = e.getCause();
@@ -77,8 +63,8 @@ public class Parser {
 				final Token token = ex.getToken();
 
 				throw new ParseException(
-						adjustMessage(ex.getLocalizedMessage()), token
-								.getLine() - 1, token.getPos() - 1, token
+						adjustMessage(ex.getLocalizedMessage()),
+						token.getLine() - 1, token.getPos() - 1, token
 								.getText().length());
 			}
 			if (cause instanceof EventBLexerException) {
@@ -86,8 +72,8 @@ public class Parser {
 				final String lastText = ex.getLastText();
 
 				throw new ParseException(
-						adjustMessage(ex.getLocalizedMessage()), ex
-								.getLastLine() - 1, ex.getLastPos() - 1,
+						adjustMessage(ex.getLocalizedMessage()),
+						ex.getLastLine() - 1, ex.getLastPos() - 1,
 						lastText.length());
 			}
 
@@ -97,17 +83,18 @@ public class Parser {
 				final SourcePositions positions = parser.getSourcePositions();
 
 				if (range != null && positions != null) {
-					throw new ParseException(adjustMessage(ex
-							.getLocalizedMessage()), positions
-							.getBeginLine(range) - 1, positions
-							.getBeginColumn(range) - 1, positions
-							.getRangeString(range).length());
+					throw new ParseException(
+							adjustMessage(ex.getLocalizedMessage()),
+							positions.getBeginLine(range) - 1,
+							positions.getBeginColumn(range) - 1, positions
+									.getRangeString(range).length());
 				} else {
 					final Token token = ex.getToken();
 					if (token != null) {
-						throw new ParseException(adjustMessage(ex
-								.getLocalizedMessage()), token.getLine() - 1,
-								token.getPos() - 1, token.getText().length());
+						throw new ParseException(
+								adjustMessage(ex.getLocalizedMessage()),
+								token.getLine() - 1, token.getPos() - 1, token
+										.getText().length());
 					}
 				}
 			}

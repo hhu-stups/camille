@@ -32,12 +32,12 @@ import org.eventb.texttools.prettyprint.PrettyPrinter;
 public class PersistenceHelper {
 
 	public static final Boolean DEBUG = false;
-	
+
 	public static IResource getIResource(final Resource resource) {
 		final URI uri = resource.getURI();
 		if (uri.isPlatformResource()) {
-			return ResourcesPlugin.getWorkspace().getRoot().findMember(
-					uri.toPlatformString(true));
+			return ResourcesPlugin.getWorkspace().getRoot()
+					.findMember(uri.toPlatformString(true));
 		}
 
 		return null;
@@ -101,34 +101,35 @@ public class PersistenceHelper {
 		}
 		timeAttribute.setValue(timeStamp);
 	}
-	
-	
+
 	public static void addUsesAnnotation(final EventBElement element,
 			final String usesStatements) {
 		final EMap<String, Attribute> attributes = element.getAttributes();
-		Attribute usesAttribute = attributes.get(TextToolsPlugin.TYPE_USESEXTENSION.getId());
+		Attribute usesAttribute = attributes
+				.get(TextToolsPlugin.TYPE_USESEXTENSION.getId());
 		if (usesAttribute == null) {
 			usesAttribute = CoreFactory.eINSTANCE.createAttribute();
 			usesAttribute.setType(AttributeType.STRING);
 			attributes.put(TextToolsPlugin.TYPE_USESEXTENSION.getId(),
 					usesAttribute);
 		}
-		usesAttribute.setValue(usesStatements); 
+		usesAttribute.setValue(usesStatements);
 
 	}
-	
 
-	private static void mergeComponents(final EventBNamedCommentedComponentElement oldVersion,
-			final EventBNamedCommentedComponentElement newVersion, final IProgressMonitor monitor) {
+	private static void mergeComponents(
+			final EventBNamedCommentedComponentElement oldVersion,
+			final EventBNamedCommentedComponentElement newVersion,
+			final IProgressMonitor monitor) {
 		try {
 			long time0 = System.currentTimeMillis();
 			final ModelMerge merge = new ModelMerge(oldVersion, newVersion);
 			long time1 = System.currentTimeMillis();
 			merge.applyChanges(monitor);
 			long time2 = System.currentTimeMillis();
-			if (DEBUG){
-				System.out.println("new ModelMerge: " + (time1-time0));
-				System.out.println("merge.applyChanges: " + (time2-time1));
+			if (DEBUG) {
+				System.out.println("new ModelMerge: " + (time1 - time0));
+				System.out.println("merge.applyChanges: " + (time2 - time1));
 			}
 		} catch (final InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -137,15 +138,17 @@ public class PersistenceHelper {
 	}
 
 	public static void mergeRootElement(final Resource resource,
-			final EventBNamedCommentedComponentElement newVersion, final IProgressMonitor monitor) {
+			final EventBNamedCommentedComponentElement newVersion,
+			final IProgressMonitor monitor) {
 		final EventBNamedCommentedComponentElement component = getComponent(resource);
 		if (component != null) {
 			// FIXME Hier stimmt die Reihenfolge noch
 			long start = System.currentTimeMillis();
 			mergeComponents(component, newVersion, monitor);
 			long end = System.currentTimeMillis();
-			if (DEBUG){
-				System.out.println("Time to merge components: "  + (end-start));
+			if (DEBUG) {
+				System.out
+						.println("Time to merge components: " + (end - start));
 			}
 			// Hier stimmt die Reihenfolge in component nicht mehr
 		} else {
@@ -212,9 +215,11 @@ public class PersistenceHelper {
 		return null;
 	}
 
-	private static EventBNamedCommentedComponentElement getComponent(final Resource resource) {
+	private static EventBNamedCommentedComponentElement getComponent(
+			final Resource resource) {
 		final EList<EObject> contents = resource.getContents();
-		if (contents.size() > 0 && contents.get(0) instanceof EventBNamedCommentedComponentElement) {
+		if (contents.size() > 0
+				&& contents.get(0) instanceof EventBNamedCommentedComponentElement) {
 			return (EventBNamedCommentedComponentElement) contents.get(0);
 		}
 
@@ -224,7 +229,7 @@ public class PersistenceHelper {
 	/**
 	 * Extracts the timestamp of the latest saved text representation from the
 	 * EMF and returns it.
-	 *
+	 * 
 	 * @param resource
 	 * @return timestamp or <code>-1</code> if none is found
 	 */
@@ -257,7 +262,7 @@ public class PersistenceHelper {
 	 * Checks if the text representation saved in the EMF is up-to-date. The
 	 * timestamps in the EMF and of the underlying file are compared for this
 	 * decision.
-	 *
+	 * 
 	 * @param resource
 	 * @return <code>true</code> if there was no external change and the text
 	 *         representation is still up-to-date
@@ -284,8 +289,10 @@ public class PersistenceHelper {
 				return true;
 			}
 		} catch (final CoreException e) {
-			TextToolsPlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, TextToolsPlugin.PLUGIN_ID,
+			TextToolsPlugin
+					.getDefault()
+					.getLog()
+					.log(new Status(IStatus.ERROR, TextToolsPlugin.PLUGIN_ID,
 							"Error checking file timestamps", e));
 		}
 

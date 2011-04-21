@@ -29,6 +29,7 @@ import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 import org.eventb.emf.core.Annotation;
@@ -94,8 +95,11 @@ public class ModelMerge {
 		final SubMonitor subMonitor = SubMonitor.convert(monitor,
 				"Analyzing model changes", 4);
 
+		// Fucking EMF and Eclipse reinventing the fucking wheel!!!
+		URI uri = URI.createURI(resource.getLocationURI().toString());
+		Resource resources = new ResourceImpl(uri);
 		final IMatchEngine matchEngine = MatchService
-				.getBestMatchEngine(resource.getFileExtension());
+				.getBestMatchEngine(resources);
 
 		// Workaround to make sure the models have an associated resource
 		// See setResourceFile() for Bug info
@@ -111,41 +115,41 @@ public class ModelMerge {
 			// setRodinResource(newVersion, extension, projectName);
 		}
 
-		matchOptions.put(MatchOptions.OPTION_PROGRESS_MONITOR, subMonitor
-				.newChild(1));
-		
+		matchOptions.put(MatchOptions.OPTION_PROGRESS_MONITOR,
+				subMonitor.newChild(1));
+
 		long timeStart = System.currentTimeMillis();
-		
+
 		final MatchModel matchModel = matchEngine.contentMatch(oldVersion,
 				newVersion, matchOptions);
-		
+
 		long timeMatch = System.currentTimeMillis();
-				
+
 		final DiffModel diff = getDiffModel(matchModel, subMonitor.newChild(2));
-		
+
 		long timeDiff = System.currentTimeMillis();
-				
+
 		final EList<DiffElement> ownedElements = diff.getOwnedElements();
-		
+
 		if (ownedElements.size() > 0) {
 			// MergeService
 			// .merge(new ArrayList<DiffElement>(ownedElements), false);
 			MergeService.merge(ownedElements, false);
 
-			matchOptions.put(MatchOptions.OPTION_PROGRESS_MONITOR, subMonitor
-					.newChild(1));
+			matchOptions.put(MatchOptions.OPTION_PROGRESS_MONITOR,
+					subMonitor.newChild(1));
 			subMonitor.worked(1);
 		}
 		long timeMerge = System.currentTimeMillis();
 
-		if (PersistenceHelper.DEBUG){
+		if (PersistenceHelper.DEBUG) {
 			System.out.println("*** applyChanges() ****");
-			System.out.println("  contentMatch: " + (timeMatch-timeStart));
-			System.out.println("  getDiffModel: " + (timeDiff-timeMatch));
-			System.out.println("         merge: " + (timeMerge-timeDiff));
+			System.out.println("  contentMatch: " + (timeMatch - timeStart));
+			System.out.println("  getDiffModel: " + (timeDiff - timeMatch));
+			System.out.println("         merge: " + (timeMerge - timeDiff));
 			System.out.println();
 		}
-		
+
 		// cleanup tmp files
 		EcoreUtil.remove(newVersion);
 		if (tmpFileNew != null) {

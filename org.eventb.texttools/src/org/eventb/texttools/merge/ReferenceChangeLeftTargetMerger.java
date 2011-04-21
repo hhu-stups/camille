@@ -5,10 +5,8 @@ import java.util.Iterator;
 import org.eclipse.emf.compare.EMFComparePlugin;
 import org.eclipse.emf.compare.FactoryException;
 import org.eclipse.emf.compare.diff.merge.DefaultMerger;
-import org.eclipse.emf.compare.diff.merge.service.MergeService;
 import org.eclipse.emf.compare.diff.metamodel.DiffElement;
 import org.eclipse.emf.compare.diff.metamodel.ReferenceChangeLeftTarget;
-import org.eclipse.emf.compare.diff.metamodel.ReferenceOrderChange;
 import org.eclipse.emf.compare.diff.metamodel.ResourceDependencyChange;
 import org.eclipse.emf.compare.util.EFactory;
 import org.eclipse.emf.ecore.EObject;
@@ -28,6 +26,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * @author <a href="mailto:laurent.goubet@obeo.fr">Laurent Goubet</a>
  */
 public class ReferenceChangeLeftTargetMerger extends DefaultMerger {
+
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -38,6 +37,10 @@ public class ReferenceChangeLeftTargetMerger extends DefaultMerger {
 		final ReferenceChangeLeftTarget theDiff = (ReferenceChangeLeftTarget) this.diff;
 		final EObject element = theDiff.getLeftElement();
 		final EObject leftTarget = theDiff.getRightTarget();
+		System.out.println("ReferenceChangeLeftTargetMerger.applyInOrigin");
+		System.out.println("  element: " + element);
+		System.out.println("  leftTarget: " + leftTarget);
+
 		try {
 			if (leftTarget != null) {
 				EFactory.eRemove(element, theDiff.getReference().getName(),
@@ -77,43 +80,49 @@ public class ReferenceChangeLeftTargetMerger extends DefaultMerger {
 		super.applyInOrigin();
 	}
 
+	@Override
+	public void undoInTarget() {
+		throw new RuntimeException();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * 
 	 * @see org.eclipse.emf.compare.diff.merge.DefaultMerger#undoInTarget()
 	 */
-	@Override
-	public void undoInTarget() {
-		final ReferenceChangeLeftTarget theDiff = (ReferenceChangeLeftTarget) this.diff;
-		final EObject element = theDiff.getRightElement();
-		final EObject leftTarget = theDiff.getRightTarget();
-		final EObject rightTarget = theDiff.getLeftTarget();
-		// FIXME respect ordering!
-		final EObject copiedValue = MergeService.getCopier(diff)
-				.copyReferenceValue(theDiff.getReference(), element,
-						leftTarget, rightTarget);
-
-		// we should now have a look for AddReferencesLinks needing this object
-		final Iterator<EObject> siblings = getDiffModel().eAllContents();
-		while (siblings.hasNext()) {
-			final DiffElement op = (DiffElement) siblings.next();
-			if (op instanceof ReferenceChangeLeftTarget) {
-				final ReferenceChangeLeftTarget link = (ReferenceChangeLeftTarget) op;
-				// now if I'm in the target References I should put my copy in
-				// the origin
-				if (link.getReference().equals(
-						theDiff.getReference().getEOpposite())
-						&& link.getLeftTarget().equals(element)) {
-					removeFromContainer(link);
-				}
-			} else if (op instanceof ReferenceOrderChange) {
-				final ReferenceOrderChange link = (ReferenceOrderChange) op;
-				if (link.getReference().equals(theDiff.getReference())) {
-					// FIXME respect ordering!
-					link.getRightTarget().add(copiedValue);
-				}
-			}
-		}
-		super.undoInTarget();
-	}
+	// @Override
+	// public void undoInTarget() {
+	// final ReferenceChangeLeftTarget theDiff = (ReferenceChangeLeftTarget)
+	// this.diff;
+	// final EObject element = theDiff.getRightElement();
+	// final EObject leftTarget = theDiff.getRightTarget();
+	// final EObject rightTarget = theDiff.getLeftTarget();
+	// // FIXME respect ordering!
+	// final EObject copiedValue = MergeService.getCopier(diff)
+	// .copyReferenceValue(theDiff.getReference(), element,
+	// leftTarget, rightTarget);
+	//
+	// // we should now have a look for AddReferencesLinks needing this object
+	// final Iterator<EObject> siblings = getDiffModel().eAllContents();
+	// while (siblings.hasNext()) {
+	// final DiffElement op = (DiffElement) siblings.next();
+	// if (op instanceof ReferenceChangeLeftTarget) {
+	// final ReferenceChangeLeftTarget link = (ReferenceChangeLeftTarget) op;
+	// // now if I'm in the target References I should put my copy in
+	// // the origin
+	// if (link.getReference().equals(
+	// theDiff.getReference().getEOpposite())
+	// && link.getLeftTarget().equals(element)) {
+	// removeFromContainer(link);
+	// }
+	// } else if (op instanceof ReferenceOrderChange) {
+	// final ReferenceOrderChange link = (ReferenceOrderChange) op;
+	// if (link.getReference().equals(theDiff.getReference())) {
+	// // FIXME respect ordering!
+	// link.getRightTarget().add(copiedValue);
+	// }
+	// }
+	// }
+	// super.undoInTarget();
+	// }
 }

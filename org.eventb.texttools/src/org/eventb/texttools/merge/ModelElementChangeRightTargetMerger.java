@@ -1,6 +1,7 @@
 package org.eventb.texttools.merge;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.emf.compare.EMFComparePlugin;
 import org.eclipse.emf.compare.FactoryException;
@@ -24,6 +25,9 @@ public class ModelElementChangeRightTargetMerger extends DefaultMerger {
 		final ModelElementChangeRightTarget theDiff = (ModelElementChangeRightTarget) this.diff;
 		final EObject origin = theDiff.getLeftParent();
 		final EObject element = theDiff.getRightElement();
+		System.out.println("ModelElementChangeRightTargetMerger.applyInOrigin");
+		System.out.println("  element: " + element);
+		System.out.println("  origin: " + origin);
 
 		// Scenarios where we need to handle special:
 		// Machine sees Context
@@ -61,13 +65,26 @@ public class ModelElementChangeRightTargetMerger extends DefaultMerger {
 		final EReference ref = element.eContainmentFeature();
 		if (ref != null) {
 			try {
-				EFactory.eAdd(origin, ref.getName(), newOne);
+				int elementIndex = -1;
+				if (ref.isMany()) {
+					Object containmentRefVal = element.eContainer().eGet(ref);
+					if (containmentRefVal instanceof List) {
+						List listVal = (List) containmentRefVal;
+						elementIndex = listVal.indexOf(element);
+					}
+				}
+				EFactory.eAdd(origin, ref.getName(), newOne, elementIndex);
 				setXMIID(newOne, getXMIID(element));
 			} catch (final FactoryException e) {
 				EMFComparePlugin.log(e, true);
 			}
-		} else {
+		} else if (origin == null && getDiffModel().getLeftRoots().size() > 0) {
+			getDiffModel().getLeftRoots().get(0).eResource().getContents()
+					.add(newOne);
+		} else if (origin != null) {
 			origin.eResource().getContents().add(newOne);
+		} else {
+			// FIXME Throw exception : couldn't merge this
 		}
 		// we should now have a look for AddReferencesLinks needing this object
 		final Iterator<EObject> siblings = getDiffModel().eAllContents();
@@ -99,13 +116,14 @@ public class ModelElementChangeRightTargetMerger extends DefaultMerger {
 	 */
 	@Override
 	public void undoInTarget() {
-		final ModelElementChangeRightTarget theDiff = (ModelElementChangeRightTarget) this.diff;
-		final EObject element = theDiff.getRightElement();
-		final EObject parent = theDiff.getRightElement().eContainer();
-		EcoreUtil.remove(element);
-		// now removes all the dangling references
-		removeDanglingReferences(parent);
-		super.undoInTarget();
+		throw new RuntimeException();
+		// final ModelElementChangeRightTarget theDiff =
+		// (ModelElementChangeRightTarget) this.diff;
+		// final EObject element = theDiff.getRightElement();
+		// final EObject parent = theDiff.getRightElement().eContainer();
+		// EcoreUtil.remove(element);
+		// // now removes all the dangling references
+		// removeDanglingReferences(parent);
+		// super.undoInTarget();
 	}
-
 }

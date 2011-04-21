@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.emf.compare.EMFComparePlugin;
 import org.eclipse.emf.compare.FactoryException;
+import org.eclipse.emf.compare.diff.merge.DefaultMerger;
 import org.eclipse.emf.compare.diff.metamodel.ReferenceOrderChange;
 import org.eclipse.emf.compare.util.EFactory;
 import org.eclipse.emf.ecore.EObject;
@@ -24,14 +25,17 @@ public class ReferenceOrderChangeMerger extends DefaultMerger {
 		final ReferenceOrderChange theDiff = (ReferenceOrderChange) this.diff;
 		final EObject element = theDiff.getLeftElement();
 		final List<EObject> leftTarget = theDiff.getLeftTarget();
+		System.out.println("ReferenceOrderChangeMerger.applyInOrigin");
+		System.out.println("  element: " + element);
+		System.out.println("  leftTarget: " + leftTarget);
 
 		// (mj) START
 		if (leftTarget.size() == 0) {
 
 			// Handle Event Refinement changed
 			if (element instanceof Event
-					&& theDiff.getReference().getName().equals(
-							Constants.REFINES)) {
+					&& theDiff.getReference().getName()
+							.equals(Constants.REFINES)) {
 				Event leftEvent = (Event) element;
 				Event rightEvent = (Event) theDiff.getRightElement();
 				leftEvent.getRefines().clear();
@@ -44,15 +48,15 @@ public class ReferenceOrderChangeMerger extends DefaultMerger {
 					leftMachine.getRefines().clear();
 					leftMachine.getRefines().addAll(
 							EcoreUtil.copyAll(rightMachine.getRefines()));
-				} else if (theDiff.getReference().getName().equals(
-						Constants.SEES)) {
+				} else if (theDiff.getReference().getName()
+						.equals(Constants.SEES)) {
 					leftMachine.getSees().clear();
 					leftMachine.getSees().addAll(
 							EcoreUtil.copyAll(rightMachine.getSees()));
 				}
 			} else if (element instanceof Context
-					&& theDiff.getReference().getName().equals(
-							Constants.EXTENDS)) {
+					&& theDiff.getReference().getName()
+							.equals(Constants.EXTENDS)) {
 				Context leftContext = (Context) element;
 				Context rightContext = (Context) theDiff.getRightElement();
 				leftContext.getExtends().clear();
@@ -66,8 +70,7 @@ public class ReferenceOrderChangeMerger extends DefaultMerger {
 		// (mj) END
 
 		try {
-			EFactory
-					.eSet(element, theDiff.getReference().getName(), leftTarget);
+			EFactory.eSet(element, theDiff.getReference().getName(), leftTarget);
 		} catch (final FactoryException e) {
 			EMFComparePlugin.log(e, true);
 		}
@@ -81,16 +84,19 @@ public class ReferenceOrderChangeMerger extends DefaultMerger {
 	 */
 	@Override
 	public void undoInTarget() {
-		final ReferenceOrderChange theDiff = (ReferenceOrderChange) this.diff;
-		final EObject element = theDiff.getRightElement();
-		final List<EObject> rightTarget = theDiff.getRightTarget();
-		try {
-			EFactory.eSet(element, theDiff.getReference().getName(),
-					rightTarget);
-		} catch (final FactoryException e) {
-			EMFComparePlugin.log(e, true);
-		}
-		super.undoInTarget();
+		throw new RuntimeException();
+
+		// final ReferenceOrderChange theDiff = (ReferenceOrderChange)
+		// this.diff;
+		// final EObject element = theDiff.getRightElement();
+		// final List<EObject> rightTarget = theDiff.getRightTarget();
+		// try {
+		// EFactory.eSet(element, theDiff.getReference().getName(),
+		// rightTarget);
+		// } catch (final FactoryException e) {
+		// EMFComparePlugin.log(e, true);
+		// }
+		// super.undoInTarget();
 	}
 
 }
