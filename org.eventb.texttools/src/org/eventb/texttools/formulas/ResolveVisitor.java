@@ -30,6 +30,8 @@ import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISimpleVisitor;
@@ -95,173 +97,173 @@ public class ResolveVisitor implements ISimpleVisitor {
 		idToEClass.put(Formula.BTRUE, FormulasPackage.eINSTANCE.getTRUTH());
 		idToEClass.put(Formula.FALSE, FormulasPackage.eINSTANCE.getFALSE());
 		idToEClass.put(Formula.BFALSE, FormulasPackage.eINSTANCE.getFALSITY());
-		idToEClass.put(Formula.EMPTYSET, FormulasPackage.eINSTANCE
-				.getEMPTYSET());
-		idToEClass.put(Formula.KPRED, FormulasPackage.eINSTANCE
-				.getPredExpression());
-		idToEClass.put(Formula.KSUCC, FormulasPackage.eINSTANCE
-				.getSuccExpression());
+		idToEClass.put(Formula.EMPTYSET,
+				FormulasPackage.eINSTANCE.getEMPTYSET());
+		idToEClass.put(Formula.KPRED,
+				FormulasPackage.eINSTANCE.getPredExpression());
+		idToEClass.put(Formula.KSUCC,
+				FormulasPackage.eINSTANCE.getSuccExpression());
 
 		// Unary operators:
 		// KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID,
 		// KMIN, KMAX, CONVERSE, UNMINUS
 		// NOT, KFINITE, KBOOL
-		idToEClass.put(Formula.KCARD, FormulasPackage.eINSTANCE
-				.getCardExpression());
-		idToEClass.put(Formula.POW, FormulasPackage.eINSTANCE
-				.getPowExpression());
-		idToEClass.put(Formula.POW1, FormulasPackage.eINSTANCE
-				.getPow1Expression());
-		idToEClass.put(Formula.KUNION, FormulasPackage.eINSTANCE
-				.getKUnionExpression());
-		idToEClass.put(Formula.KINTER, FormulasPackage.eINSTANCE
-				.getKIntersectionExpression());
-		idToEClass.put(Formula.KDOM, FormulasPackage.eINSTANCE
-				.getDomainExpression());
-		idToEClass.put(Formula.KRAN, FormulasPackage.eINSTANCE
-				.getRangeExpression());
-		idToEClass.put(Formula.KPRJ1, FormulasPackage.eINSTANCE
-				.getPrj1Expression());
-		idToEClass.put(Formula.KPRJ1_GEN, FormulasPackage.eINSTANCE
-				.getPrj1GenExpression());
-		idToEClass.put(Formula.KPRJ2, FormulasPackage.eINSTANCE
-				.getPrj2Expression());
-		idToEClass.put(Formula.KPRJ2_GEN, FormulasPackage.eINSTANCE
-				.getPrj2GenExpression());
-		idToEClass.put(Formula.KID, FormulasPackage.eINSTANCE
-				.getIdentityExpression());
-		idToEClass.put(Formula.KID_GEN, FormulasPackage.eINSTANCE
-				.getIdentityGenExpression());
-		idToEClass.put(Formula.KMIN, FormulasPackage.eINSTANCE
-				.getMinExpression());
-		idToEClass.put(Formula.KMAX, FormulasPackage.eINSTANCE
-				.getMaxExpression());
-		idToEClass.put(Formula.CONVERSE, FormulasPackage.eINSTANCE
-				.getInverseExpression());
-		idToEClass.put(Formula.UNMINUS, FormulasPackage.eINSTANCE
-				.getUnaryMinusExpression());
+		idToEClass.put(Formula.KCARD,
+				FormulasPackage.eINSTANCE.getCardExpression());
+		idToEClass.put(Formula.POW,
+				FormulasPackage.eINSTANCE.getPowExpression());
+		idToEClass.put(Formula.POW1,
+				FormulasPackage.eINSTANCE.getPow1Expression());
+		idToEClass.put(Formula.KUNION,
+				FormulasPackage.eINSTANCE.getKUnionExpression());
+		idToEClass.put(Formula.KINTER,
+				FormulasPackage.eINSTANCE.getKIntersectionExpression());
+		idToEClass.put(Formula.KDOM,
+				FormulasPackage.eINSTANCE.getDomainExpression());
+		idToEClass.put(Formula.KRAN,
+				FormulasPackage.eINSTANCE.getRangeExpression());
+		idToEClass.put(Formula.KPRJ1,
+				FormulasPackage.eINSTANCE.getPrj1Expression());
+		idToEClass.put(Formula.KPRJ1_GEN,
+				FormulasPackage.eINSTANCE.getPrj1GenExpression());
+		idToEClass.put(Formula.KPRJ2,
+				FormulasPackage.eINSTANCE.getPrj2Expression());
+		idToEClass.put(Formula.KPRJ2_GEN,
+				FormulasPackage.eINSTANCE.getPrj2GenExpression());
+		idToEClass.put(Formula.KID,
+				FormulasPackage.eINSTANCE.getIdentityExpression());
+		idToEClass.put(Formula.KID_GEN,
+				FormulasPackage.eINSTANCE.getIdentityGenExpression());
+		idToEClass.put(Formula.KMIN,
+				FormulasPackage.eINSTANCE.getMinExpression());
+		idToEClass.put(Formula.KMAX,
+				FormulasPackage.eINSTANCE.getMaxExpression());
+		idToEClass.put(Formula.CONVERSE,
+				FormulasPackage.eINSTANCE.getInverseExpression());
+		idToEClass.put(Formula.UNMINUS,
+				FormulasPackage.eINSTANCE.getUnaryMinusExpression());
 		idToEClass
 				.put(Formula.NOT, FormulasPackage.eINSTANCE.getNotPredicate());
-		idToEClass.put(Formula.KFINITE, FormulasPackage.eINSTANCE
-				.getFinitePredicate());
-		idToEClass.put(Formula.KBOOL, FormulasPackage.eINSTANCE
-				.getBoolExpression());
+		idToEClass.put(Formula.KFINITE,
+				FormulasPackage.eINSTANCE.getFinitePredicate());
+		idToEClass.put(Formula.KBOOL,
+				FormulasPackage.eINSTANCE.getBoolExpression());
 
 		// Binary operators: EQUAL, NOTEQUAL, LT, LE, GT, GE, IN, NOTIN, SUBSET,
 		// NOTSUBSET, SUBSETEQ, NOTSUBSETEQ, MAPSTO, REL, TREL, SREL, STREL,
 		// PFUN, TFUN, PINJ, TINJ, PSUR, TSUR, TBIJ, SETMINUS, CPROD, DPROD,
 		// PPROD, DOMRES, DOMSUB, RANRES, RANSUB, UPTO, MINUS, DIV, MOD, EXPN,
 		// FUNIMAGE, RELIMAGE, LIMP, LEQV
-		idToEClass.put(Formula.EQUAL, FormulasPackage.eINSTANCE
-				.getEqualPredicate());
-		idToEClass.put(Formula.NOTEQUAL, FormulasPackage.eINSTANCE
-				.getNotEqualPredicate());
+		idToEClass.put(Formula.EQUAL,
+				FormulasPackage.eINSTANCE.getEqualPredicate());
+		idToEClass.put(Formula.NOTEQUAL,
+				FormulasPackage.eINSTANCE.getNotEqualPredicate());
 		idToEClass
 				.put(Formula.LT, FormulasPackage.eINSTANCE.getLessPredicate());
-		idToEClass.put(Formula.LE, FormulasPackage.eINSTANCE
-				.getLessEqualPredicate());
-		idToEClass.put(Formula.GT, FormulasPackage.eINSTANCE
-				.getGreaterPredicate());
-		idToEClass.put(Formula.GE, FormulasPackage.eINSTANCE
-				.getGreaterEqualPredicate());
-		idToEClass.put(Formula.IN, FormulasPackage.eINSTANCE
-				.getBelongPredicate());
-		idToEClass.put(Formula.NOTIN, FormulasPackage.eINSTANCE
-				.getNotBelongPredicate());
-		idToEClass.put(Formula.SUBSET, FormulasPackage.eINSTANCE
-				.getSubsetStrictPredicate());
-		idToEClass.put(Formula.NOTSUBSET, FormulasPackage.eINSTANCE
-				.getNotSubsetStrictPredicate());
-		idToEClass.put(Formula.SUBSETEQ, FormulasPackage.eINSTANCE
-				.getSubsetPredicate());
-		idToEClass.put(Formula.NOTSUBSETEQ, FormulasPackage.eINSTANCE
-				.getNotSubsetPredicate());
-		idToEClass.put(Formula.MAPSTO, FormulasPackage.eINSTANCE
-				.getMapletExpression());
-		idToEClass.put(Formula.REL, FormulasPackage.eINSTANCE
-				.getRelationExpression());
-		idToEClass.put(Formula.TREL, FormulasPackage.eINSTANCE
-				.getTotalRelationExpression());
-		idToEClass.put(Formula.SREL, FormulasPackage.eINSTANCE
-				.getSurjectiveRelationExpression());
+		idToEClass.put(Formula.LE,
+				FormulasPackage.eINSTANCE.getLessEqualPredicate());
+		idToEClass.put(Formula.GT,
+				FormulasPackage.eINSTANCE.getGreaterPredicate());
+		idToEClass.put(Formula.GE,
+				FormulasPackage.eINSTANCE.getGreaterEqualPredicate());
+		idToEClass.put(Formula.IN,
+				FormulasPackage.eINSTANCE.getBelongPredicate());
+		idToEClass.put(Formula.NOTIN,
+				FormulasPackage.eINSTANCE.getNotBelongPredicate());
+		idToEClass.put(Formula.SUBSET,
+				FormulasPackage.eINSTANCE.getSubsetStrictPredicate());
+		idToEClass.put(Formula.NOTSUBSET,
+				FormulasPackage.eINSTANCE.getNotSubsetStrictPredicate());
+		idToEClass.put(Formula.SUBSETEQ,
+				FormulasPackage.eINSTANCE.getSubsetPredicate());
+		idToEClass.put(Formula.NOTSUBSETEQ,
+				FormulasPackage.eINSTANCE.getNotSubsetPredicate());
+		idToEClass.put(Formula.MAPSTO,
+				FormulasPackage.eINSTANCE.getMapletExpression());
+		idToEClass.put(Formula.REL,
+				FormulasPackage.eINSTANCE.getRelationExpression());
+		idToEClass.put(Formula.TREL,
+				FormulasPackage.eINSTANCE.getTotalRelationExpression());
+		idToEClass.put(Formula.SREL,
+				FormulasPackage.eINSTANCE.getSurjectiveRelationExpression());
 		idToEClass.put(Formula.STREL, FormulasPackage.eINSTANCE
 				.getTotalSurjectiveRelationExpression());
-		idToEClass.put(Formula.PFUN, FormulasPackage.eINSTANCE
-				.getPartialFunctionExpression());
-		idToEClass.put(Formula.TFUN, FormulasPackage.eINSTANCE
-				.getTotalFunctionExpression());
-		idToEClass.put(Formula.PINJ, FormulasPackage.eINSTANCE
-				.getPartialInjectionExpression());
-		idToEClass.put(Formula.TINJ, FormulasPackage.eINSTANCE
-				.getTotalInjectionExpression());
-		idToEClass.put(Formula.PSUR, FormulasPackage.eINSTANCE
-				.getPartialSurjectionExpression());
-		idToEClass.put(Formula.TSUR, FormulasPackage.eINSTANCE
-				.getTotalSurjectionExpression());
-		idToEClass.put(Formula.TBIJ, FormulasPackage.eINSTANCE
-				.getTotalBijectionExpression());
-		idToEClass.put(Formula.SETMINUS, FormulasPackage.eINSTANCE
-				.getSetSubtractionExpression());
-		idToEClass.put(Formula.CPROD, FormulasPackage.eINSTANCE
-				.getCartesianProductExpression());
-		idToEClass.put(Formula.DPROD, FormulasPackage.eINSTANCE
-				.getDirectProductExpression());
-		idToEClass.put(Formula.DOMRES, FormulasPackage.eINSTANCE
-				.getDomainRestrictionExpression());
-		idToEClass.put(Formula.DOMSUB, FormulasPackage.eINSTANCE
-				.getDomainSubtractionExpression());
-		idToEClass.put(Formula.RANRES, FormulasPackage.eINSTANCE
-				.getRangeRestrictionExpression());
-		idToEClass.put(Formula.RANSUB, FormulasPackage.eINSTANCE
-				.getRangeSubtractionExpression());
-		idToEClass.put(Formula.UPTO, FormulasPackage.eINSTANCE
-				.getUptoExpression());
-		idToEClass.put(Formula.MINUS, FormulasPackage.eINSTANCE
-				.getSubtractExpression());
-		idToEClass.put(Formula.DIV, FormulasPackage.eINSTANCE
-				.getDivisionExpression());
-		idToEClass.put(Formula.MOD, FormulasPackage.eINSTANCE
-				.getModuloExpression());
-		idToEClass.put(Formula.EXPN, FormulasPackage.eINSTANCE
-				.getExponentiationExpression());
-		idToEClass.put(Formula.FUNIMAGE, FormulasPackage.eINSTANCE
-				.getFunctionExpression());
-		idToEClass.put(Formula.RELIMAGE, FormulasPackage.eINSTANCE
-				.getImageExpression());
-		idToEClass.put(Formula.LIMP, FormulasPackage.eINSTANCE
-				.getImplicationPredicate());
-		idToEClass.put(Formula.LEQV, FormulasPackage.eINSTANCE
-				.getEquivalencePredicate());
+		idToEClass.put(Formula.PFUN,
+				FormulasPackage.eINSTANCE.getPartialFunctionExpression());
+		idToEClass.put(Formula.TFUN,
+				FormulasPackage.eINSTANCE.getTotalFunctionExpression());
+		idToEClass.put(Formula.PINJ,
+				FormulasPackage.eINSTANCE.getPartialInjectionExpression());
+		idToEClass.put(Formula.TINJ,
+				FormulasPackage.eINSTANCE.getTotalInjectionExpression());
+		idToEClass.put(Formula.PSUR,
+				FormulasPackage.eINSTANCE.getPartialSurjectionExpression());
+		idToEClass.put(Formula.TSUR,
+				FormulasPackage.eINSTANCE.getTotalSurjectionExpression());
+		idToEClass.put(Formula.TBIJ,
+				FormulasPackage.eINSTANCE.getTotalBijectionExpression());
+		idToEClass.put(Formula.SETMINUS,
+				FormulasPackage.eINSTANCE.getSetSubtractionExpression());
+		idToEClass.put(Formula.CPROD,
+				FormulasPackage.eINSTANCE.getCartesianProductExpression());
+		idToEClass.put(Formula.DPROD,
+				FormulasPackage.eINSTANCE.getDirectProductExpression());
+		idToEClass.put(Formula.DOMRES,
+				FormulasPackage.eINSTANCE.getDomainRestrictionExpression());
+		idToEClass.put(Formula.DOMSUB,
+				FormulasPackage.eINSTANCE.getDomainSubtractionExpression());
+		idToEClass.put(Formula.RANRES,
+				FormulasPackage.eINSTANCE.getRangeRestrictionExpression());
+		idToEClass.put(Formula.RANSUB,
+				FormulasPackage.eINSTANCE.getRangeSubtractionExpression());
+		idToEClass.put(Formula.UPTO,
+				FormulasPackage.eINSTANCE.getUptoExpression());
+		idToEClass.put(Formula.MINUS,
+				FormulasPackage.eINSTANCE.getSubtractExpression());
+		idToEClass.put(Formula.DIV,
+				FormulasPackage.eINSTANCE.getDivisionExpression());
+		idToEClass.put(Formula.MOD,
+				FormulasPackage.eINSTANCE.getModuloExpression());
+		idToEClass.put(Formula.EXPN,
+				FormulasPackage.eINSTANCE.getExponentiationExpression());
+		idToEClass.put(Formula.FUNIMAGE,
+				FormulasPackage.eINSTANCE.getFunctionExpression());
+		idToEClass.put(Formula.RELIMAGE,
+				FormulasPackage.eINSTANCE.getImageExpression());
+		idToEClass.put(Formula.LIMP,
+				FormulasPackage.eINSTANCE.getImplicationPredicate());
+		idToEClass.put(Formula.LEQV,
+				FormulasPackage.eINSTANCE.getEquivalencePredicate());
 
 		// Multi operand predicates/expressions
-		idToEClass.put(Formula.BUNION, FormulasPackage.eINSTANCE
-				.getUnionExpression());
-		idToEClass.put(Formula.BINTER, FormulasPackage.eINSTANCE
-				.getIntersectionExpression());
-		idToEClass.put(Formula.BCOMP, FormulasPackage.eINSTANCE
-				.getBackwardCompositionExpression());
-		idToEClass.put(Formula.FCOMP, FormulasPackage.eINSTANCE
-				.getForwardCompositionExpression());
-		idToEClass.put(Formula.OVR, FormulasPackage.eINSTANCE
-				.getRelationalOverridingExpression());
-		idToEClass.put(Formula.PLUS, FormulasPackage.eINSTANCE
-				.getAddExpression());
-		idToEClass.put(Formula.MUL, FormulasPackage.eINSTANCE
-				.getMulExpression());
-		idToEClass.put(Formula.LAND, FormulasPackage.eINSTANCE
-				.getAndPredicate());
+		idToEClass.put(Formula.BUNION,
+				FormulasPackage.eINSTANCE.getUnionExpression());
+		idToEClass.put(Formula.BINTER,
+				FormulasPackage.eINSTANCE.getIntersectionExpression());
+		idToEClass.put(Formula.BCOMP,
+				FormulasPackage.eINSTANCE.getBackwardCompositionExpression());
+		idToEClass.put(Formula.FCOMP,
+				FormulasPackage.eINSTANCE.getForwardCompositionExpression());
+		idToEClass.put(Formula.OVR,
+				FormulasPackage.eINSTANCE.getRelationalOverridingExpression());
+		idToEClass.put(Formula.PLUS,
+				FormulasPackage.eINSTANCE.getAddExpression());
+		idToEClass.put(Formula.MUL,
+				FormulasPackage.eINSTANCE.getMulExpression());
+		idToEClass.put(Formula.LAND,
+				FormulasPackage.eINSTANCE.getAndPredicate());
 		idToEClass.put(Formula.LOR, FormulasPackage.eINSTANCE.getOrPredicate());
-		idToEClass.put(Formula.SETEXT, FormulasPackage.eINSTANCE
-				.getSetExpression());
-		idToEClass.put(Formula.KPARTITION, FormulasPackage.eINSTANCE
-				.getPartitionPredicate());
+		idToEClass.put(Formula.SETEXT,
+				FormulasPackage.eINSTANCE.getSetExpression());
+		idToEClass.put(Formula.KPARTITION,
+				FormulasPackage.eINSTANCE.getPartitionPredicate());
 
 		// Quantifiers:
 		// FORALL, EXISTS
-		idToEClass.put(Formula.FORALL, FormulasPackage.eINSTANCE
-				.getForallPredicate());
-		idToEClass.put(Formula.EXISTS, FormulasPackage.eINSTANCE
-				.getExistPredicate());
+		idToEClass.put(Formula.FORALL,
+				FormulasPackage.eINSTANCE.getForallPredicate());
+		idToEClass.put(Formula.EXISTS,
+				FormulasPackage.eINSTANCE.getExistPredicate());
 		// cannot decide QUNION and QINTER here
 	}
 
@@ -413,8 +415,8 @@ public class ResolveVisitor implements ISimpleVisitor {
 	}
 
 	public void visitBinaryExpression(final BinaryExpression expression) {
-		handleTwoChildren(expression, expression.getLeft(), expression
-				.getRight());
+		handleTwoChildren(expression, expression.getLeft(),
+				expression.getRight());
 	}
 
 	public void visitBinaryPredicate(final BinaryPredicate predicate) {
@@ -714,13 +716,29 @@ public class ResolveVisitor implements ISimpleVisitor {
 			final String message = "Unknown Rodin formula type: ["
 					+ formula.getTag() + "] " + formula.toString();
 
-			TextToolsPlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, TextToolsPlugin.PLUGIN_ID,
+			TextToolsPlugin
+					.getDefault()
+					.getLog()
+					.log(new Status(IStatus.ERROR, TextToolsPlugin.PLUGIN_ID,
 							message));
 
 			throw new UnsupportedOperationException(message);
 		}
 
 		return eClass;
+	}
+
+	public void visitExtendedExpression(ExtendedExpression expression) {
+		System.out
+				.println("##################################### mean visitor: visitExtendedExpression");
+		// TODO Auto-generated method stub
+
+	}
+
+	public void visitExtendedPredicate(ExtendedPredicate predicate) {
+		System.out
+				.println("##################################### mean visitor: visitExtendedPredicate");
+		// TODO Auto-generated method stub
+
 	}
 }
