@@ -33,7 +33,15 @@
       <mergerprovider
             fileExtension="bum,buc"
             mergerProviderClass="org.eventb.texttools.merge.MergerProvider"
-            priority="high">
+            priority="highest">
       </mergerprovider>
+   </extension>
+   <extension
+         point="org.eclipse.emf.compare.diff.engine">
+      <diffengine
+            engineClass="org.eventb.texttools.diff.EventBDiffEngine"
+            label="Event-B Difference Engine"
+            priority="highest">
+      </diffengine>
    </extension>
 </plugin>

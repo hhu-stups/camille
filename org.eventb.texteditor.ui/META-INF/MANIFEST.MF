@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Camille Texteditor
 Bundle-SymbolicName: org.eventb.texteditor.ui;singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Bundle-Activator: org.eventb.texteditor.ui.TextEditorPlugin$Implementation
 Require-Bundle: org.eventb.texttools;bundle-version="2.0.0";visibility:=reexport,
