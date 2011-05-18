@@ -208,6 +208,8 @@ public class ResolveVisitor implements ISimpleVisitor {
 				FormulasPackage.eINSTANCE.getCartesianProductExpression());
 		idToEClass.put(Formula.DPROD,
 				FormulasPackage.eINSTANCE.getDirectProductExpression());
+		idToEClass.put(Formula.PPROD,
+				FormulasPackage.eINSTANCE.getParallelProductExpression());
 		idToEClass.put(Formula.DOMRES,
 				FormulasPackage.eINSTANCE.getDomainRestrictionExpression());
 		idToEClass.put(Formula.DOMSUB,
