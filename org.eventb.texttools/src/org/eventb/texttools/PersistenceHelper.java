@@ -29,6 +29,13 @@ import org.eventb.emf.core.EventBNamedCommentedComponentElement;
 import org.eventb.texttools.merge.ModelMerge;
 import org.eventb.texttools.prettyprint.PrettyPrinter;
 
+import de.be4.eventb.core.parser.BException;
+import de.be4.eventb.core.parser.EventBParser;
+import de.be4.eventb.core.parser.node.AContextParseUnit;
+import de.be4.eventb.core.parser.node.AMachineParseUnit;
+import de.be4.eventb.core.parser.node.PParseUnit;
+import de.be4.eventb.core.parser.node.Start;
+
 public class PersistenceHelper {
 
 	public static final Boolean DEBUG = false;
@@ -168,7 +175,42 @@ public class PersistenceHelper {
 			// we should find a text representation in the EMF
 			final String text = getTextAnnotation(resource);
 
-			if (text != null) {
+
+			/* workaround for Bug #3305107 
+			 * 
+			 * When a machine- or contextfile is renamed the lastmodified date does not change.
+			 * Since isTextUptodate() compares timestamps only, it returns true for renamed files.
+			 * */
+			boolean namesMatch = true;
+			final EventBNamedCommentedComponentElement rootElement = getComponent(resource);
+			if (rootElement != null) {
+				final EventBParser parser = new EventBParser();
+				try {
+					Start start = parser.parse(text, false);
+					System.out.println(start);
+					PParseUnit pParseUnit = start.getPParseUnit();
+					String parsedName = null;
+					if (pParseUnit instanceof AMachineParseUnit){
+						parsedName = ((AMachineParseUnit)start.getPParseUnit()).getName().getText();
+					}
+					if (pParseUnit instanceof AContextParseUnit){
+						parsedName = ((AContextParseUnit)start.getPParseUnit()).getName().getText();
+					}
+					
+					if (parsedName != null){
+						if (!parsedName.equals(rootElement.getName())){
+							namesMatch = false;
+							System.err.println("Conflicting names of ParseUnit! Expected name: '" + rootElement.getName() + "' actual name: '" + parsedName + "'! Prettyprinting unit...");
+						}
+					}
+				} catch (BException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			/* End of woraround */
+			
+			if (text != null && namesMatch) {
 				return text;
 			}
 		}
@@ -270,6 +312,10 @@ public class PersistenceHelper {
 	private static boolean isTextUptodate(final Resource resource) {
 		final long textTimestamp = getTextTimestamp(resource);
 
+		if (true){
+			//return false;
+		}
+		
 		try {
 			final IResource file = getIResource(resource);
 			// refresh to get latest timestamp

@@ -125,7 +125,7 @@ public class EventBReferencesCheck extends ReferencesCheck {
 	public List<UnmatchElement> filterUnmatchedElements(List<UnmatchElement> unmatched) {
 		final List<UnmatchElement> filteredUnmatched = new ArrayList<UnmatchElement>(unmatched.size());
 		for (UnmatchElement element : unmatched) {
-			if (!shouldBeIgnoredAllowContainment(element.getElement().eContainmentFeature())) {
+			if (element.getElement().eContainmentFeature() == null || !shouldBeIgnoredAllowContainment(element.getElement().eContainmentFeature())) {
 				filteredUnmatched.add(element);
 			}
 		}
