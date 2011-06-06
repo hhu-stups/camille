@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.texteditor.feature"
       label="Camille TextEditor"
-      version="2.1.3"
+      version="2.1.4"
       provider-name="Heinrich-Heine University Dusseldorf"
       plugin="org.eventb.texteditor.ui">
 
@@ -10,7 +10,9 @@
       A text editor for the Rodin platform to edit Event-B models
 -----------------------------------------------------------
 Release History:
-2.1.3 - Bigfix release for Bug #3305107 (NPE after renaming a machine)
+2.1.4 - Be more generous regarding Rodin compatibility
+2.1.3 - Bigfix release for Bug #3305107 (NPE after renaming a
+machine)
 2.1.0.beta - Rodin 2.1.1 release compatible with EventB-EMF Framework
 3.3.0 
 (emf-compare 1.1.2)
