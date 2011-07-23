@@ -70,7 +70,10 @@ public class ReferenceOrderChangeMerger extends DefaultMerger {
 		// (mj) END
 
 		try {
-			EFactory.eSet(element, theDiff.getReference().getName(), leftTarget);
+			if (theDiff.getReference().isMany()){
+				//leftTarget is a List!
+				EFactory.eSet(element, theDiff.getReference().getName(), leftTarget);
+			}
 		} catch (final FactoryException e) {
 			EMFComparePlugin.log(e, true);
 		}
