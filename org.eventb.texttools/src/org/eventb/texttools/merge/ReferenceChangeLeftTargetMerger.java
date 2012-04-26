@@ -12,6 +12,7 @@ import org.eclipse.emf.compare.util.EFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eventb.texttools.PersistenceHelper;
 
 /**
  * Merger for an {@link ReferenceChangeLeftTarget} operation.<br/>
@@ -37,9 +38,11 @@ public class ReferenceChangeLeftTargetMerger extends DefaultMerger {
 		final ReferenceChangeLeftTarget theDiff = (ReferenceChangeLeftTarget) this.diff;
 		final EObject element = theDiff.getLeftElement();
 		final EObject leftTarget = theDiff.getRightTarget();
-		System.out.println("ReferenceChangeLeftTargetMerger.applyInOrigin");
-		System.out.println("  element: " + element);
-		System.out.println("  leftTarget: " + leftTarget);
+		if (PersistenceHelper.DEBUG) {
+			System.out.println("ReferenceChangeLeftTargetMerger.applyInOrigin");
+			System.out.println("  element: " + element);
+			System.out.println("  leftTarget: " + leftTarget);
+		}
 
 		try {
 			if (leftTarget != null) {

@@ -13,6 +13,7 @@ import org.eventb.emf.core.context.Context;
 import org.eventb.emf.core.machine.Event;
 import org.eventb.emf.core.machine.Machine;
 import org.eventb.texttools.Constants;
+import org.eventb.texttools.PersistenceHelper;
 
 public class ReferenceOrderChangeMerger extends DefaultMerger {
 	/**
@@ -25,9 +26,11 @@ public class ReferenceOrderChangeMerger extends DefaultMerger {
 		final ReferenceOrderChange theDiff = (ReferenceOrderChange) this.diff;
 		final EObject element = theDiff.getLeftElement();
 		final List<EObject> leftTarget = theDiff.getLeftTarget();
-		System.out.println("ReferenceOrderChangeMerger.applyInOrigin");
-		System.out.println("  element: " + element);
-		System.out.println("  leftTarget: " + leftTarget);
+		if (PersistenceHelper.DEBUG) {
+			System.out.println("ReferenceOrderChangeMerger.applyInOrigin");
+			System.out.println("  element: " + element);
+			System.out.println("  leftTarget: " + leftTarget);
+		}
 
 		// (mj) START
 		if (leftTarget.size() == 0) {

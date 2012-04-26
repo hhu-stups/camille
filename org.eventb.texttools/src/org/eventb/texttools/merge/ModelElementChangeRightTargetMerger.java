@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eventb.emf.core.context.Context;
 import org.eventb.emf.core.machine.Event;
 import org.eventb.emf.core.machine.Machine;
+import org.eventb.texttools.PersistenceHelper;
 
 public class ModelElementChangeRightTargetMerger extends DefaultMerger {
 
@@ -25,9 +26,11 @@ public class ModelElementChangeRightTargetMerger extends DefaultMerger {
 		final ModelElementChangeRightTarget theDiff = (ModelElementChangeRightTarget) this.diff;
 		final EObject origin = theDiff.getLeftParent();
 		final EObject element = theDiff.getRightElement();
-		System.out.println("ModelElementChangeRightTargetMerger.applyInOrigin");
-		System.out.println("  element: " + element);
-		System.out.println("  origin: " + origin);
+		if (PersistenceHelper.DEBUG){
+			System.out.println("ModelElementChangeRightTargetMerger.applyInOrigin");
+			System.out.println("  element: " + element);
+			System.out.println("  origin: " + origin);
+		}
 
 		// Scenarios where we need to handle special:
 		// Machine sees Context

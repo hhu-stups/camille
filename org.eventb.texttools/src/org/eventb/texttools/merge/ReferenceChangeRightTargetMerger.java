@@ -16,6 +16,7 @@ import org.eclipse.emf.compare.diff.metamodel.ReferenceChangeRightTarget;
 import org.eclipse.emf.compare.diff.metamodel.ReferenceOrderChange;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eventb.texttools.PersistenceHelper;
 
 public class ReferenceChangeRightTargetMerger extends DefaultMerger {
 
@@ -25,13 +26,17 @@ public class ReferenceChangeRightTargetMerger extends DefaultMerger {
 		final EObject element = theDiff.getLeftElement();
 		final EObject leftTarget = theDiff.getLeftTarget();
 		final EObject rightTarget = theDiff.getRightTarget();
-		System.out.println("ReferenceChangeRightTargetMerger.applyInOrigin");
-		System.out.println("  element: " + element);
-		System.out.println("  leftTarget: " + leftTarget);
-		System.out.println("  rightTarget: " + rightTarget);
 
 		boolean applied = MergeUtil.rodinCopy(element, leftTarget, rightTarget);
-		System.out.println("  Applied: " + applied);
+		
+		if (PersistenceHelper.DEBUG) {
+			System.out.println("ReferenceChangeRightTargetMerger.applyInOrigin");
+			System.out.println("  element: " + element);
+			System.out.println("  leftTarget: " + leftTarget);
+			System.out.println("  rightTarget: " + rightTarget);
+			System.out.println("  Applied: " + applied);
+		}
+
 
 		if (!applied)
 			originalApplyInOrigin();
