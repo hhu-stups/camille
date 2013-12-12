@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.util.EcoreUtil.CrossReferencer;
 import org.eventb.emf.core.CorePackage;
+import org.eventb.emf.core.machine.MachinePackage;
 
 public class EventBReferencesCheck extends ReferencesCheck {
 
@@ -86,10 +87,13 @@ public class EventBReferencesCheck extends ReferencesCheck {
 		ignore = ignore || reference.isContainer();
 		ignore = ignore || reference.eContainer().equals(EcorePackage.eINSTANCE.getEGenericType());
 		String name = reference.getName();
+		ignore = ignore || MachinePackage.eINSTANCE.getMachine_Refines() == reference;
 		ignore = ignore || "refines".equals(name);
 		ignore = ignore || "sees".equals(name);
 		ignore = ignore || "extends".equals(name);
 		ignore = ignore || "annotations".equals(name);
+		ignore = ignore || "extensions".equals(name);	//ADDED
+		ignore = ignore || "attributes".equals(name);	//ADDED
 		ignore = ignore || reference.eContainer().equals(CorePackage.eINSTANCE.getAnnotation());
 
 		return ignore;
