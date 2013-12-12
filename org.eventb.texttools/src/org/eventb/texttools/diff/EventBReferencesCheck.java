@@ -87,7 +87,7 @@ public class EventBReferencesCheck extends ReferencesCheck {
 		ignore = ignore || reference.isContainer();
 		ignore = ignore || reference.eContainer().equals(EcorePackage.eINSTANCE.getEGenericType());
 		String name = reference.getName();
-		ignore = ignore || MachinePackage.eINSTANCE.getMachine_Refines() == reference;
+		// ignore = ignore || MachinePackage.eINSTANCE.getMachine_Refines() == reference;   //Would this be a better way to check references rather than comparing names?
 		ignore = ignore || "refines".equals(name);
 		ignore = ignore || "sees".equals(name);
 		ignore = ignore || "extends".equals(name);
