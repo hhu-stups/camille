@@ -1,0 +1,18 @@
+targetRepositories = ["http://rodin-b-sharp.sourceforge.net/core-updates/","http://download.eclipse.org/releases/indigo/","http://rodin-b-sharp.sourceforge.net/updates"]		// ps Repository with Target Definition File
+
+groupID			=	"org.eventb.texteditor"
+categoryDescriptions	=	[["org.eventb.texteditor.feature": "camille"],["org.eventb.texteditor.feature": "camille"]]		// label and descriptions of the features
+
+
+apply from: 'tycho_build.gradle'
+
+// Local tasks
+task deleteOldArtifacts(type: Delete) {
+  	String updateSite = workspacePath+'updatesite'
+	delete updateSite
+}
+
+task collectArtifacts(type:Copy) {
+	    from groupID+'.repository/target/repository/'
+	    into 'updatesite'
+}

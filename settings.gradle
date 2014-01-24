@@ -1,0 +1,1 @@
+include 'org.eventb.texteditor.feature','org.eventb.texteditor.ui','org.eventb.texttools'
