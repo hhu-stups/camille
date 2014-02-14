@@ -60,7 +60,14 @@ public class PersistenceHelper {
 			 * Try to set timestamp to the same as in the annotation. Setting on
 			 * both Resource and IResource to be save.
 			 */
-			final long textTimestamp = getTextTimestamp(resource);
+			//final long textTimestamp = getTextTimestamp(resource);
+			// TODO: Workaround for save bug. The method getTextTimestamp
+			// returns in some cases -1 (no time annotation exists). I noticed
+			// that many different instances of the same resource exist. Some
+			// are annotated, the others not.
+			long textTimestamp = getTextTimestamp(resource);
+			if(textTimestamp == -1)
+				textTimestamp = System.currentTimeMillis();
 			resource.setTimeStamp(textTimestamp);
 			getIResource(resource).setLocalTimeStamp(textTimestamp);
 		} catch (final IOException e) {
