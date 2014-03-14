@@ -61,13 +61,14 @@ public class PersistenceHelper {
 			 * both Resource and IResource to be save.
 			 */
 			//final long textTimestamp = getTextTimestamp(resource);
-			// TODO: Workaround for save bug. The method getTextTimestamp
-			// returns in some cases -1 (no time annotation exists). I noticed
-			// that many different instances of the same resource exist. Some
-			// are annotated, the others not.
+			// REMOVED WORKAROUND BELOW: a better fix is to not ignore attributes in EventBReferencesCheck
+			// --- TODO: Workaround for save bug. The method getTextTimestamp
+			// --- returns in some cases -1 (no time annotation exists). I noticed
+			// --- that many different instances of the same resource exist. Some
+			// --- are annotated, the others not.
 			long textTimestamp = getTextTimestamp(resource);
-			if(textTimestamp == -1)
-				textTimestamp = System.currentTimeMillis();
+//			if(textTimestamp == -1)
+//				textTimestamp = System.currentTimeMillis();
 			resource.setTimeStamp(textTimestamp);
 			getIResource(resource).setLocalTimeStamp(textTimestamp);
 		} catch (final IOException e) {
