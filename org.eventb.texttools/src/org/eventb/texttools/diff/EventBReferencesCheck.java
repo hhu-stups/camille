@@ -92,8 +92,8 @@ public class EventBReferencesCheck extends ReferencesCheck {
 		ignore = ignore || "sees".equals(name);
 		ignore = ignore || "extends".equals(name);
 		ignore = ignore || "annotations".equals(name);
-		ignore = ignore || "extensions".equals(name);	//ADDED
-		ignore = ignore || "attributes".equals(name);	//ADDED
+		ignore = ignore || "extensions".equals(name);
+		//ignore = ignore || "attributes".equals(name);	//Cannot ignore generic attributes since camille timestamp is an attribute
 		ignore = ignore || reference.eContainer().equals(CorePackage.eINSTANCE.getAnnotation());
 
 		return ignore;
