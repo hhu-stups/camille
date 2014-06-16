@@ -6,9 +6,9 @@ Bundle-Version: 3.0.0.qualifier
 Bundle-Localization: plugin
 Bundle-Activator: org.eventb.texteditor.ui.TextEditorPlugin$Implementation
 Require-Bundle: org.eventb.texttools;bundle-version="[2.0.0,3.1.0)";visibility:=reexport,
- org.eventb.emf.formulas;bundle-version="[1.2.0,2.0.0)";visibility:=reexport,
+ org.eventb.emf.formulas;bundle-version="[1.2.0,2.0.0)",
  org.eventb.emf.persistence;bundle-version="[3.1.0,4.0.0)";visibility:=reexport,
- org.eventb.ui;bundle-version="[2.0.0,3.1.0)";visibility:=reexport,
+ org.eventb.ui;bundle-version="[3.0.0,4.0.0)";visibility:=reexport,
  org.eclipse.jface.text;bundle-version="[3.6.0,4.0.0)";visibility:=reexport,
  org.eclipse.emf.edit.ui;bundle-version="[2.5.0,3.0.0)",
  org.eventb.core.ast;bundle-version="[3.0.0,4.0.0)",
