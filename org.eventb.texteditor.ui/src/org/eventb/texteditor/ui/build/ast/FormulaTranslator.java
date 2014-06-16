@@ -23,7 +23,7 @@ import org.eventb.emf.core.machine.Machine;
 import org.eventb.texteditor.ui.editor.EventBTextEditor;
 import org.eventb.texttools.TextPositionUtil;
 import org.eventb.texttools.model.texttools.TextRange;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 public class FormulaTranslator {
 	private IDocument document;
@@ -60,7 +60,7 @@ public class FormulaTranslator {
 		final String input = predicate.getPredicate();
 
 		if (input != null) {
-			final String translatedInput = RodinKeyboardPlugin.getDefault().translate(input);
+			final String translatedInput = RodinKeyboardUIPlugin.getDefault().translate(input);
 
 			if (!input.equals(translatedInput)) {
 				// replace in emf node
@@ -77,7 +77,7 @@ public class FormulaTranslator {
 		final String input = expression.getExpression();
 
 		if (input != null) {
-			final String translatedInput = RodinKeyboardPlugin.getDefault().translate(input);
+			final String translatedInput = RodinKeyboardUIPlugin.getDefault().translate(input);
 
 			if (!input.equals(translatedInput)) {
 				// replace in emf node
@@ -94,7 +94,7 @@ public class FormulaTranslator {
 		final String input = action.getAction();
 
 		if (input != null) {
-			final String translatedInput = RodinKeyboardPlugin.getDefault().translate(input);
+			final String translatedInput = RodinKeyboardUIPlugin.getDefault().translate(input);
 
 			if (!input.equals(translatedInput)) {
 				// replace in emf node

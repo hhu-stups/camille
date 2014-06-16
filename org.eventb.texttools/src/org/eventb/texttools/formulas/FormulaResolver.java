@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.emf.core.EventBCommentedExpressionElement;
 import org.eventb.emf.core.EventBElement;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
@@ -73,23 +72,26 @@ public class FormulaResolver {
 	public static void resolve(final EventBCommentedExpressionElement emfExpr)
 			throws FormulaParseException {
 		final String expression = emfExpr.getExpression();
-		resolve(emfExpr, expression, formulaFactory.parseExpression(expression,
-				LanguageVersion.V2, emfExpr), FormulaType.Expression);
+		resolve(emfExpr, expression,
+				formulaFactory.parseExpression(expression, emfExpr),
+				FormulaType.Expression);
 	}
 
-	public static void resolve(final EventBNamedCommentedPredicateElement emfPredicate)
+	public static void resolve(
+			final EventBNamedCommentedPredicateElement emfPredicate)
 			throws FormulaParseException {
 		final String predicate = emfPredicate.getPredicate();
-		resolve(emfPredicate, predicate, formulaFactory.parsePredicate(
-				predicate, LanguageVersion.V2, emfPredicate),
+		resolve(emfPredicate, predicate,
+				formulaFactory.parsePredicate(predicate, emfPredicate),
 				FormulaType.Predicate);
 	}
 
 	public static void resolve(final Action emfAction)
 			throws FormulaParseException {
 		final String action = emfAction.getAction();
-		resolve(emfAction, action, formulaFactory.parseAssignment(action,
-				LanguageVersion.V2, emfAction), FormulaType.Assignment);
+		resolve(emfAction, action,
+				formulaFactory.parseAssignment(action, emfAction),
+				FormulaType.Assignment);
 	}
 
 	private static void resolve(final EventBElement emfExpr,
