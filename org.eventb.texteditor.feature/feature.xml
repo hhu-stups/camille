@@ -159,24 +159,6 @@ Inc. in the United States, other countries, or both.
       <discovery label="Rodin Update Site" url="http://rodin-b-sharp.sourceforge.net/updates"/>
    </url>
 
-   <requires>
-      <import plugin="org.eventb.texttools" version="2.0.0" match="compatible"/>
-      <import plugin="org.eventb.emf.formulas" version="1.2.0" match="compatible"/>
-      <import plugin="org.eventb.emf.persistence" version="3.1.0" match="compatible"/>
-      <import plugin="org.eventb.ui" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.jface.text" version="3.6.0" match="compatible"/>
-      <import plugin="org.eclipse.emf.edit.ui" version="2.5.0" match="compatible"/>
-      <import plugin="org.eventb.core.ast" version="3.0.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.editors" version="3.8.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.ide" version="3.8.2" match="compatible"/>
-      <import plugin="org.rodinp.keyboard.ui" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.emf.compare" version="1.2.2" match="compatible"/>
-      <import plugin="org.eclipse.emf.compare.diff" version="1.2.2" match="compatible"/>
-      <import plugin="org.eclipse.emf.compare.match" version="1.2.2" match="compatible"/>
-      <import plugin="org.eclipse.core.resources" version="3.8.1" match="compatible"/>
-   </requires>
-
    <plugin
          id="org.eventb.texteditor.ui"
          download-size="0"
