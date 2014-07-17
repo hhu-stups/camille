@@ -48,21 +48,14 @@ public class EventBAttributesCheck extends AttributesCheck {
 		//ignore contents of string 2 string map entries (e.g. in RodinInternalDetails)
 		// FIXME: make this more specific to RodinInternalDetails
 		ignore = ignore || (container instanceof ENamedElement && "StringToStringMapEntry".equals(((ENamedElement) container).getName()));
-
 		//ignore contents of Annotations
 		// FIXME: make this more specific to RodinInternalDetails
 		ignore = ignore || container.equals(CorePackage.eINSTANCE.getAnnotation());
 		//ignore reference (instead, the derived attribute 'name' will be shown)
 		ignore = ignore || attribute.equals(CorePackage.eINSTANCE.getEventBElement_Reference());
-		//ignore generated and local generated attributes as these must be preserved
-		ignore = ignore || attribute.equals(CorePackage.eINSTANCE.getEventBElement_Generated());	//ADDED
-		ignore = ignore || attribute.equals(CorePackage.eINSTANCE.getEventBElement_LocalGenerated());	//ADDED
 		//ignore attributes of Abstract Extension
 		ignore = ignore || container.equals(CorePackage.eINSTANCE.getAbstractExtension());
-		//ignore attributes of Extension
-		ignore = ignore || container.equals(CorePackage.eINSTANCE.getExtension());	//ADDED
 
-		
 		return ignore;
 
 	}

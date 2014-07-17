@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Camille Texteditor
 Bundle-SymbolicName: org.eventb.texteditor.ui;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.0.1.qualifier
 Bundle-Localization: plugin
 Bundle-Activator: org.eventb.texteditor.ui.TextEditorPlugin$Implementation
 Require-Bundle: org.eventb.texttools;bundle-version="[2.0.0,3.1.0)";visibility:=reexport,
@@ -14,7 +14,8 @@ Require-Bundle: org.eventb.texttools;bundle-version="[2.0.0,3.1.0)";visibility:=
  org.eventb.core.ast;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.ui.editors;bundle-version="[3.8.0,4.0.0)",
  org.eclipse.ui.ide;bundle-version="[3.8.2,4.0.0)",
- org.rodinp.keyboard.ui;bundle-version="[2.0.0,3.0.0)"
+ org.rodinp.keyboard.ui;bundle-version="[2.0.0,3.0.0)",
+ org.eclipse.ui.workbench.texteditor
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: lib/commons-lang-2.4.jar,
@@ -22,6 +23,4 @@ Bundle-ClassPath: lib/commons-lang-2.4.jar,
 Bundle-Vendor: Heinrich-Heine University Dusseldorf
 Export-Package: org.eventb.texteditor.ui,
  org.eventb.texteditor.ui.editor
-Import-Package: org.eclipse.emf.edit.ui.util,
- org.eclipse.ui.texteditor.link,
- org.eclipse.ui.texteditor.templates
+Import-Package: org.eclipse.ui.texteditor.link

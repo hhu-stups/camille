@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Test Fragment
-Bundle-SymbolicName: org.eventb.texttools.test
-Bundle-Version: 1.0.0
-Fragment-Host: org.eventb.texttools;bundle-version="0.0.1"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.junit

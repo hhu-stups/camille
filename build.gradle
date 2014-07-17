@@ -1,8 +1,8 @@
 targetRepositories = ["http://www.stups.uni-duesseldorf.de/ProB/buildlibs/rodin/","http://download.eclipse.org/releases/juno/","http://rodin-b-sharp.sourceforge.net/updates"]		// ps Repository with Target Definition File
-
+  
 groupID			=	"org.eventb.texteditor"
-categoryDescriptions	=	[["org.eventb.texteditor.feature": "Camille Text Editor"],["org.eventb.texteditor.feature": "Camille Text Editor"]]		// label and descriptions of the features
 
+categoryDescriptions	=	[["org.eventb.texteditor.feature": "Camille Text Editor"],["org.eventb.texteditor.feature": "Camille Text Editor"]]		// label and descriptions of the features
 
 apply from: 'tycho_build.gradle'
 

@@ -251,7 +251,10 @@ parameter {-> parameter} =[name]:identifier_literal [comment]:comment*  {-> New 
 
 event_where {-> guard*} = where [first]:guard [rest]:event_where_tail* {-> [first.guard, rest.guard]};
 event_where_tail {-> guard} = [guard]:guard {-> guard.guard};
-guard {-> guard} = [label]:P.label [predicate]:formula [comment]:comment* {-> New guard([comment], label.label, predicate)};
+guard {-> guard} =
+	 [label]:P.label [predicate]:formula [comment]:comment* {-> New guard([comment], label.label, predicate)} |
+	 {derived} theorem [label]:P.label [predicate]:formula [comment]:comment* {-> New guard.derived([comment], label.label, predicate)};
+
 
 event_with {-> witness*} = with [first]:witness [rest]:event_with_tail* {-> [first.witness, rest.witness]};
 event_with_tail {-> witness} = [witness]:witness {-> witness.witness};
@@ -265,15 +268,18 @@ action {-> action} = [label]:P.label [action]:formula [comment]:comment* {-> New
 /*
 	Structure of a context file
 */
+
 context {-> parse_unit} =
 	T.context [name]:identifier_literal
 	[comment]:comment*
 	[extends]:extends_clause?
-	[constants]:constants_clause?
-	[sets]:sets_clause?
+	[sets]:sets_clause? 
+    [constants]:constants_clause?
 	[axioms]:axioms_clause?
-	end {-> New parse_unit.context([comment], name, [extends.identifier_literal], [sets.carrier_set], [constants.constant], [axioms.axiom])} ;
-
+	end	{-> New parse_unit.context([comment], name, [extends.identifier_literal], [sets.carrier_set], [constants.constant], [axioms.axiom])} ; 
+ 
+		 
+ 
 extends_clause {-> identifier_literal*} = T.extends [first]:identifier_literal [rest]:extends_clause_tail* {-> [first, rest.identifier_literal]} ;
 extends_clause_tail {-> identifier_literal} = [name]:identifier_literal {-> name};
 
@@ -315,10 +321,10 @@ parse_unit =
 		[comments]:comment*
 		[name]:identifier_literal
 		[extends_names]:identifier_literal*
-		[sets]:carrier_set*
-		[constants]:constant*
+		[sets]:carrier_set* 
+  	    [constants]:constant*
 		[axioms]:axiom*;
-
+		
 variable = [comments]:comment* [name]:identifier_literal;
 variant = [comments]:comment* [expression]:formula ;
 invariant =
@@ -348,6 +354,10 @@ event_refinement =
 	{extended} [name]:identifier_literal ;
 
 parameter = [comments]:comment* [name]:identifier_literal;
-guard = [comments]:comment* [name]:label [predicate]:formula ;
+
+guard = 
+	[comments]:comment* [name]:label [predicate]:formula |
+	{derived} [comments]:comment* [name]:label [predicate]:formula; 
+
 witness = [comments]:comment* [name]:label [predicate]:formula ;
 action = [comments]:comment* [name]:label [action]:formula ;

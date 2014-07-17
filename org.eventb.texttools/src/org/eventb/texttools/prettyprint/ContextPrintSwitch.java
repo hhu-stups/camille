@@ -49,11 +49,11 @@ public class ContextPrintSwitch extends ContextSwitch<Boolean> implements
 		final boolean newLine = (Boolean) printer.getPreference(
 				PROP_NEWLINE_BETWEEN_CLAUSES, true);
 
-		// constants
-		printer.appendNameList(object.getConstants(), CONSTANTS, newLine);
-
 		// sets
 		printer.appendNameList(object.getSets(), SETS, newLine);
+
+		// constants
+		printer.appendNameList(object.getConstants(), CONSTANTS, newLine);
 
 		// axioms
 		printAxioms(object.getAxioms(), newLine);

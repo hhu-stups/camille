@@ -25,6 +25,7 @@ import org.eventb.emf.core.context.ContextFactory;
 import org.eventb.emf.core.machine.Action;
 import org.eventb.emf.core.machine.Convergence;
 import org.eventb.emf.core.machine.Event;
+import org.eventb.emf.core.machine.Guard;
 import org.eventb.emf.core.machine.Invariant;
 import org.eventb.emf.core.machine.Machine;
 import org.eventb.emf.core.machine.MachineFactory;
@@ -42,6 +43,7 @@ import de.be4.eventb.core.parser.node.AConstant;
 import de.be4.eventb.core.parser.node.AContextParseUnit;
 import de.be4.eventb.core.parser.node.AConvergentConvergence;
 import de.be4.eventb.core.parser.node.ADerivedAxiom;
+import de.be4.eventb.core.parser.node.ADerivedGuard;
 import de.be4.eventb.core.parser.node.ADerivedInvariant;
 import de.be4.eventb.core.parser.node.AEvent;
 import de.be4.eventb.core.parser.node.AExtendedEventRefinement;
@@ -261,6 +263,13 @@ public class TransformationVisitor extends DepthFirstAdapter {
 		handleLabeledPredicate(MachineFactory.eINSTANCE.createGuard(), node,
 				node.getPredicate(), node.getName(), node.getComments(), true);
 	}
+	
+	@Override
+	public void outADerivedGuard(final ADerivedGuard node) {
+		Guard guard = MachineFactory.eINSTANCE.createGuard();
+		guard.setTheorem(true);
+		handleLabeledPredicate(guard, node, node.getPredicate(), node.getName(), node.getComments(), true);
+	}		
 
 	@Override
 	public void outAParameter(final AParameter node) {

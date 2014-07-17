@@ -10,8 +10,6 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
-
 import de.be4.eventb.core.parser.analysis.ASTDisplay;
 import de.be4.eventb.core.parser.analysis.ASTPrinter;
 import de.be4.eventb.core.parser.lexer.LexerException;
@@ -166,7 +164,6 @@ public class EventBParser {
 	 *             </ul>
 	 *             </p>
 	 */
-	@SuppressWarnings("unchecked")
 	public Start parse(final String input, final boolean debugOutput)
 			throws BException {
 		final Reader reader = new StringReader(input);

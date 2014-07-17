@@ -36,8 +36,8 @@ public class EventBLexer extends Lexer {
 			"The variant is only allowed after invariants and before events",
 			"The events clause is only allowed at the end",
 			"'context' is only allowed at the beginning of a file",
-			"Constant declarations are only allowed before the set declarations",
-			"Set declarations are only allowed allowed after constants and before axioms",
+			"Set declarations are only allowed before the constants declarations",
+			"Constants declarations are only allowed after sets and before axioms",
 			"The axioms clause is only allowed at the end" };
 	private static List<String> clausesOrder = new LinkedList<String>();
 	private int lastClauseIndex;
@@ -58,8 +58,8 @@ public class EventBLexer extends Lexer {
 		clausesOrder.add("TVariant");
 		clausesOrder.add("TEvents");
 		clausesOrder.add("TContext");
-		clausesOrder.add("TConstants");
 		clausesOrder.add("TSets");
+		clausesOrder.add("TConstants");
 		clausesOrder.add("TAxioms");
 		eventClausesOrder.add("TAny");
 		eventClausesOrder.add("TWhere");
