@@ -8,6 +8,22 @@ project.ext {
 
 apply from: 'tycho_build.gradle'
 
+project(':org.eventb.texttools') {
+	repositories {
+		maven {
+		  name "cobra"
+		  url "http://cobra.cs.uni-duesseldorf.de/artifactory/repo"
+		}
+	}
+
+
+        def parser_version = '2.4.28-SNAPSHOT'
+
+	dependencies {
+	 compile group: "de.prob", name: "bparser", version: parser_version , changing: true
+	}
+}
+
 // Local tasks
 task deleteOldArtifacts(type: Delete) {
   	String updateSite = workspacePath+'updatesite'

@@ -22,6 +22,14 @@ Export-Package: de.be4.eventb.core.parser.node,
  org.eventb.texttools.model.texttools,
  org.eventb.texttools.prettyprint,
  org.eventb.texttools.syntaxExtension
-Bundle-ClassPath: lib/EventBParser.jar,
- .
 Bundle-Vendor: Heinrich-Heine University Dusseldorf
+Bundle-ClassPath: .,
+ lib/dependencies/unicode-2.4.28-SNAPSHOT.jar,
+ lib/dependencies/theorymapping-2.4.28-SNAPSHOT.jar,
+ lib/dependencies/prologlib-2.4.28-SNAPSHOT.jar,
+ lib/dependencies/parserbase-2.4.28-SNAPSHOT.jar,
+ lib/dependencies/ltlparser-2.4.28-SNAPSHOT.jar,
+ lib/dependencies/jsr305-1.3.9.jar,
+ lib/dependencies/cliparser-2.4.28-SNAPSHOT.jar,
+ lib/dependencies/bparser-2.4.28-SNAPSHOT.jar,
+ lib/dependencies/answerparser-2.4.28-SNAPSHOT.jar

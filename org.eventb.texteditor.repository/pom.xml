@@ -15,4 +15,7 @@
     <artifactId>org.eventb.texteditor.repository</artifactId>
     <version>1.0.0.qualifier</version>
     <packaging>eclipse-repository</packaging>
-  </project>
+	
+	
+ 
+</project>
