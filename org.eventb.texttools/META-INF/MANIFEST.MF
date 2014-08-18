@@ -16,8 +16,7 @@ Require-Bundle: org.eclipse.jface.text;bundle-version="[3.6.0,4.0.0)",
  org.eventb.texteditor.parsers;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: de.be4.eventb.core.parser.node,
- org.eventb.texttools,
+Export-Package: org.eventb.texttools,
  org.eventb.texttools.formulas,
  org.eventb.texttools.merge,
  org.eventb.texttools.model.texttools,
