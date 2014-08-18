@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <relativePath>../org.eventb.texteditor.parent/pom.xml</relativePath>
+    <groupId>org.eventb.texteditor</groupId>
+    <artifactId>org.eventb.texteditor.parent</artifactId>
+    <version>1.0.0.qualifier</version>
+  </parent>
+
+  <artifactId>org.eventb.texteditor.parsers</artifactId>
+  <packaging>eclipse-plugin</packaging>
+  
+  <build>
+    <plugins>
+     <plugin>
+      <groupId>org.fortasoft</groupId>
+      <artifactId>gradle-maven-plugin</artifactId>
+      <version>1.0.5</version>
+        <configuration>
+            <tasks>
+            <!-- this would effectively call "gradle doSomething" -->
+            <task>collectDependencies</task>
+        </tasks>
+       </configuration>
+        <executions>
+          <execution>
+        <!-- You can bind this to any phase you like -->
+            <phase>validate</phase>
+            <goals>
+           <!-- goal must be "invoke" -->
+               <goal>invoke</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+  </plugins>
+</build>
+
+</project> 

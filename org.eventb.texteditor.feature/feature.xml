@@ -178,7 +178,7 @@ Inc. in the United States, other countries, or both.
       <import plugin="org.eclipse.emf.compare.match" version="1.2.2" match="compatible"/>
       <import plugin="org.eclipse.core.resources" version="3.8.1" match="compatible"/>
       <import plugin="org.eventb.emf.core" version="3.0.0" match="greaterOrEqual"/>
-     </requires>
+   </requires>
 
    <plugin
          id="org.eventb.texteditor.ui"
@@ -192,6 +192,13 @@ Inc. in the United States, other countries, or both.
          download-size="0"
          install-size="0"
          version="3.0.1.qualifier"
+         unpack="false"/>
+
+   <plugin
+         id="org.eventb.texteditor.parsers"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>

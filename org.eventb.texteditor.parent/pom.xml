@@ -10,7 +10,7 @@
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
 	<properties>
-		<tycho-version>0.17.0</tycho-version>
+		<tycho-version>0.21.0</tycho-version>
 	</properties>
 
    <repositories>
@@ -25,7 +25,10 @@
 	  <url>http://www.stups.uni-duesseldorf.de/ProB/buildlibs/rodin/</url>
 	</repository>
 
-
+    <repository>
+      <id>cobra</id>
+      <url>http://cobra.cs.uni-duesseldorf.de/artifactory/repo/</url>
+    </repository>
 	
 	<repository>
 	  <id>targetRepository1</id>
@@ -50,14 +53,14 @@
 				<!-- enable tycho build extension -->
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
-				<version>0.17.0</version>
+				<version>0.21.0</version>
 				<extensions>true</extensions>
 			</plugin>
 			
 			<plugin>
 		    <groupId>org.eclipse.tycho</groupId>
 		    <artifactId>target-platform-configuration</artifactId>
-		    <version>0.17.0</version>
+		    <version>0.21.0</version>
 		    <configuration>
 		      <dependency-resolution>
 		        <optionalDependencies>ignore</optionalDependencies>
@@ -70,11 +73,11 @@
 
 	<!-- the modules that should be built together -->
 	<modules>
-			<module>../org.eventb.texteditor.feature</module>
+		<module>../org.eventb.texteditor.feature</module>
 		<module>../org.eventb.texteditor.ui</module>
 		<module>../org.eventb.texttools</module>
 		<module>../org.eventb.texteditor.repository</module>
-
+                <module>../org.eventb.texteditor.parsers</module>
 	</modules>
 </project>
 	

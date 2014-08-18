@@ -9,11 +9,11 @@ package org.eventb.texteditor.ui.outline;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eventb.emf.core.EventBNamed;
+import com.google.common.base.Joiner;
 
 public class LabelHelper {
 
@@ -29,7 +29,7 @@ public class LabelHelper {
 	}
 
 	public static <T> String joinEList(final EList<T> parameters) {
-		return StringUtils.join(getAsStringList(parameters), ", ");
+		return Joiner.on(", ").join(getAsStringList(parameters));
 	}
 
 	public static void appendAttrDelim(final StyledString result) {
