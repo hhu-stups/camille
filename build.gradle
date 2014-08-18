@@ -17,7 +17,7 @@ project(':org.eventb.texttools') {
 	}
 
 
-        def parser_version = '2.4.28-SNAPSHOT'
+        def parser_version = '2.4.22-SNAPSHOT'
 
 	dependencies {
 	 compile group: "de.prob", name: "bparser", version: parser_version , changing: true
