@@ -2,7 +2,7 @@
 <site>
 
 
-	<feature url="features/org.eventb.texteditor.feature_3.0.1.qualifier.jar" id="org.eventb.texteditor.feature" version="3.0.1.qualifier">
+	<feature url="features/org.eventb.texteditor.feature_3.0.2.qualifier.jar" id="org.eventb.texteditor.feature" version="3.0.2.qualifier">
 		<category name="org.eventb.texteditor.feature.category"/>
 	</feature>
 

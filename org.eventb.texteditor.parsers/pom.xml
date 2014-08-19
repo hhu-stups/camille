@@ -6,7 +6,7 @@
     <relativePath>../org.eventb.texteditor.parent/pom.xml</relativePath>
     <groupId>org.eventb.texteditor</groupId>
     <artifactId>org.eventb.texteditor.parent</artifactId>
-    <version>1.0.0.qualifier</version>
+    <version>3.0.2.qualifier</version>
   </parent>
 
   <artifactId>org.eventb.texteditor.parsers</artifactId>
