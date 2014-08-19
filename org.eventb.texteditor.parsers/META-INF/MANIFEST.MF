@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Parsers
+Bundle-Name: Parsers for Camille
 Bundle-SymbolicName: org.eventb.texteditor.parsers
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.0.2.qualifier
 Bundle-Activator: org.eventb.texteditor.parsers.Activator
 Require-Bundle: org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
@@ -59,3 +59,4 @@ Export-Package: com.google.common.annotations,
  javax.annotation.concurrent,
  javax.annotation.meta,
  org.eventb.texteditor.parsers
+Bundle-Vendor: Heinrich-Heine University Dusseldorf
