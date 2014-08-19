@@ -15,31 +15,32 @@
 
    <repositories>
 	<!-- configure p2 repository to resolve against -->  
-    
-
-
-	
 	<repository>
 	  <id>targetRepository0</id>
 	  <layout>p2</layout>
-	  <url>http://www.stups.uni-duesseldorf.de/ProB/buildlibs/rodin/</url>
+	  <url>http://download.eclipse.org/eclipse/updates/3.8/</url>
 	</repository>
 
-    <repository>
-      <id>cobra</id>
-      <url>http://cobra.cs.uni-duesseldorf.de/artifactory/repo/</url>
-    </repository>
-	
 	<repository>
 	  <id>targetRepository1</id>
 	  <layout>p2</layout>
 	  <url>http://download.eclipse.org/releases/juno/</url>
 	</repository>
 
-
-	
 	<repository>
 	  <id>targetRepository2</id>
+	  <layout>p2</layout>
+	  <url>http://download.eclipse.org/tools/gef/updates/releases/</url>
+	</repository>
+
+        <repository>
+	  <id>targetRepository3</id>
+	  <layout>p2</layout>
+	  <url>http://rodin-b-sharp.sourceforge.net/core-updates</url>
+	</repository>
+
+	<repository>
+	  <id>targetRepository4</id>
 	  <layout>p2</layout>
 	  <url>http://rodin-b-sharp.sourceforge.net/updates</url>
 	</repository>
