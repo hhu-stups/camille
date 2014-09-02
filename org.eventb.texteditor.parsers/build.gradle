@@ -8,10 +8,10 @@ repositories {
 	}
 }
 
-def parser_version = '2.4.28-SNAPSHOT'
+def parser_version = '2.4.29-SNAPSHOT'
 
 dependencies {
-	 compile group: "de.prob", name: "bparser", version: '2.4.22-SNAPSHOT', changing: true
+	 compile group: "de.prob", name: "bparser", version: parser_version, changing: true
          compile group: "de.prob", name: "eventbstruct", version: parser_version, changing: true
    	 compile 'com.google.guava:guava:14.0.1'// Apache Licence 2.0
 }
