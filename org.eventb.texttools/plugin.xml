@@ -34,6 +34,18 @@
                typeId="org.eventb.texttools.syntax_extensions">
          </attributeType>
       </relationship>
+      <relationship
+            parentTypeId="org.eventb.core.contextFile">
+         <attributeType
+               typeId="org.eventb.texttools.text_representation">
+         </attributeType>
+         <attributeType
+               typeId="org.eventb.texttools.text_lastmodified">
+         </attributeType>
+         <attributeType
+               typeId="org.eventb.texttools.syntax_extensions">
+         </attributeType>
+      </relationship>
    </extension>
    <extension
          point="org.eclipse.emf.compare.match.engine">
