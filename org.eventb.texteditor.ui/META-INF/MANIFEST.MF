@@ -24,3 +24,4 @@ Export-Package: org.eventb.texteditor.ui,
  org.eventb.texteditor.ui.editor
 Import-Package: org.eclipse.ui.texteditor.link
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

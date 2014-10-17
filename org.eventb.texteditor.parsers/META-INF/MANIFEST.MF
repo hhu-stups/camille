@@ -59,3 +59,4 @@ Export-Package: com.google.common.annotations,
  javax.annotation.meta,
  org.eventb.texteditor.parsers
 Bundle-Vendor: Heinrich-Heine University Dusseldorf
+Bundle-ActivationPolicy: lazy
