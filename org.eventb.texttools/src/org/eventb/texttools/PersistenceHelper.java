@@ -60,15 +60,18 @@ public class PersistenceHelper {
 			 * Try to set timestamp to the same as in the annotation. Setting on
 			 * both Resource and IResource to be save.
 			 */
-			//final long textTimestamp = getTextTimestamp(resource);
-			// REMOVED WORKAROUND BELOW: a better fix is to not ignore attributes in EventBReferencesCheck
+			// final long textTimestamp = getTextTimestamp(resource);
+			// REMOVED WORKAROUND BELOW: a better fix is to not ignore
+			// attributes in EventBReferencesCheck
 			// --- TODO: Workaround for save bug. The method getTextTimestamp
-			// --- returns in some cases -1 (no time annotation exists). I noticed
-			// --- that many different instances of the same resource exist. Some
+			// --- returns in some cases -1 (no time annotation exists). I
+			// noticed
+			// --- that many different instances of the same resource exist.
+			// Some
 			// --- are annotated, the others not.
 			long textTimestamp = getTextTimestamp(resource);
-//			if(textTimestamp == -1)
-//				textTimestamp = System.currentTimeMillis();
+			// if(textTimestamp == -1)
+			// textTimestamp = System.currentTimeMillis();
 			resource.setTimeStamp(textTimestamp);
 			getIResource(resource).setLocalTimeStamp(textTimestamp);
 		} catch (final IOException e) {
@@ -183,12 +186,13 @@ public class PersistenceHelper {
 			// we should find a text representation in the EMF
 			final String text = getTextAnnotation(resource);
 
-
-			/* workaround for Bug #3305107 
+			/*
+			 * workaround for Bug #3305107
 			 * 
-			 * When a machine- or contextfile is renamed the lastmodified date does not change.
-			 * Since isTextUptodate() compares timestamps only, it returns true for renamed files.
-			 * */
+			 * When a machine- or contextfile is renamed the lastmodified date
+			 * does not change. Since isTextUptodate() compares timestamps only,
+			 * it returns true for renamed files.
+			 */
 			boolean namesMatch = true;
 			final EventBNamedCommentedComponentElement rootElement = getComponent(resource);
 			if (rootElement != null) {
@@ -198,17 +202,24 @@ public class PersistenceHelper {
 					System.out.println(start);
 					PParseUnit pParseUnit = start.getPParseUnit();
 					String parsedName = null;
-					if (pParseUnit instanceof AMachineParseUnit){
-						parsedName = ((AMachineParseUnit)start.getPParseUnit()).getName().getText();
+					if (pParseUnit instanceof AMachineParseUnit) {
+						parsedName = ((AMachineParseUnit) start.getPParseUnit())
+								.getName().getText();
 					}
-					if (pParseUnit instanceof AContextParseUnit){
-						parsedName = ((AContextParseUnit)start.getPParseUnit()).getName().getText();
+					if (pParseUnit instanceof AContextParseUnit) {
+						parsedName = ((AContextParseUnit) start.getPParseUnit())
+								.getName().getText();
 					}
-					
-					if (parsedName != null){
-						if (!parsedName.equals(rootElement.getName())){
+
+					if (parsedName != null) {
+						if (!parsedName.equals(rootElement.getName())) {
 							namesMatch = false;
-							System.err.println("Conflicting names of ParseUnit! Expected name: '" + rootElement.getName() + "' actual name: '" + parsedName + "'! Prettyprinting unit...");
+							System.err
+									.println("Conflicting names of ParseUnit! Expected name: '"
+											+ rootElement.getName()
+											+ "' actual name: '"
+											+ parsedName
+											+ "'! Prettyprinting unit...");
 						}
 					}
 				} catch (BException e) {
@@ -217,7 +228,7 @@ public class PersistenceHelper {
 				}
 			}
 			/* End of woraround */
-			
+
 			if (text != null && namesMatch) {
 				return text;
 			}
@@ -320,10 +331,10 @@ public class PersistenceHelper {
 	private static boolean isTextUptodate(final Resource resource) {
 		final long textTimestamp = getTextTimestamp(resource);
 
-		if (true){
-			//return false;
+		if (true) {
+			// return false;
 		}
-		
+
 		try {
 			final IResource file = getIResource(resource);
 			// refresh to get latest timestamp

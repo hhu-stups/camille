@@ -5,9 +5,9 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/bparser-2.4.34-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/eventbstruct-2.4.34-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/parserbase-2.4.34-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/prologlib-2.4.34-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bparser-2.4.34-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/eventbstruct-2.4.34-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/parserbase-2.4.34-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/prologlib-2.4.34-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
