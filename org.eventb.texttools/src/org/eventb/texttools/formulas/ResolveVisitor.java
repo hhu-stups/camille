@@ -74,7 +74,7 @@ import org.eventb.emf.formulas.UnaryOperator;
 import org.eventb.texttools.TextPositionUtil;
 import org.eventb.texttools.TextToolsPlugin;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "deprecation", "rawtypes" })
 public class ResolveVisitor implements ISimpleVisitor {
 	private static final Map<Integer, EClass> idToEClass = new HashMap<Integer, EClass>();
 
