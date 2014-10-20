@@ -36,7 +36,6 @@ import org.eventb.emf.core.Annotation;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
 import org.eventb.emf.core.Extension;
 import org.eventb.emf.formulas.BFormula;
-import org.eventb.emf.persistence.factory.RodinResource;
 import org.eventb.texttools.PersistenceHelper;
 import org.eventb.texttools.TextPositionUtil;
 
@@ -168,27 +167,6 @@ public class ModelMerge {
 			tmpFile.deleteOnExit();
 			URI uri = URI.createFileURI(tmpFile.getAbsolutePath());
 			Resource resource = new XMLResourceImpl(uri);
-			resource.getContents().add(element);
-			return tmpFile;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * Alternative to setResourceFile: set a RodinResource
-	 */
-	private static File setRodinResource(
-			EventBNamedCommentedComponentElement element, String extension,
-			String projectPath) {
-		try {
-			File tmpFile = File.createTempFile("camille-", extension);
-			tmpFile.deleteOnExit();
-			// XMLResourceImpl resource = new XMLResourceImpl(uri);
-			RodinResource resource = new RodinResource();
-			resource.setURI(URI.createPlatformResourceURI(projectPath + "/"
-					+ tmpFile.getName(), true));
-			resource.eSetDeliver(true);
 			resource.getContents().add(element);
 			return tmpFile;
 		} catch (IOException e) {

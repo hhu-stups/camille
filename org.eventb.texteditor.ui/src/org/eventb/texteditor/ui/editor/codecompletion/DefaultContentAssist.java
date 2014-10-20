@@ -33,9 +33,9 @@ import org.eventb.texteditor.ui.TextEditorPlugin;
 import org.eventb.texteditor.ui.build.dom.DomManager;
 import org.eventb.texteditor.ui.build.dom.IComponentDom;
 import org.eventb.texteditor.ui.build.dom.IDom;
-import org.eventb.texteditor.ui.build.dom.MachineDom;
 import org.eventb.texteditor.ui.build.dom.IDom.IdentifierType;
 import org.eventb.texteditor.ui.build.dom.IDom.Type;
+import org.eventb.texteditor.ui.build.dom.MachineDom;
 import org.eventb.texteditor.ui.editor.EventBTextEditor;
 import org.eventb.texttools.Constants;
 
@@ -250,8 +250,8 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 				final Image image = getImage(type);
 
 				final EventBCompletionProposal proposal = new EventBCompletionProposal(
-						ident, region.getOffset(), prefix.length(), ident
-								.length(), image, ident, null, description);
+						ident, region.getOffset(), prefix.length(),
+						ident.length(), image, ident, null, description);
 				proposals.add(proposal);
 				proposal.changeRelevance(100);
 			}
@@ -368,6 +368,14 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 					relevance += 50;
 				}
 				break;
+			case Event:
+				break;
+			case Formula:
+				break;
+			case Unknown:
+				break;
+			default:
+				break;
 			}
 		} else {
 			// fallback: do not distinguish
@@ -398,6 +406,7 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 
 	private final class ProposalComparator implements
 			Comparator<ICompletionProposal> {
+		@Override
 		public int compare(final ICompletionProposal o1,
 				final ICompletionProposal o2) {
 			final int rel1 = getRelevance(o1);
@@ -409,8 +418,8 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 			}
 
 			// fall back to alpha-numerical comparison
-			return o1.getDisplayString().toLowerCase().compareTo(
-					o2.getDisplayString().toLowerCase());
+			return o1.getDisplayString().toLowerCase()
+					.compareTo(o2.getDisplayString().toLowerCase());
 		}
 
 		private int getRelevance(final ICompletionProposal o) {
