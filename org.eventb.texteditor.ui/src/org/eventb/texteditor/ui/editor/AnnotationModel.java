@@ -6,16 +6,26 @@
 
 package org.eventb.texteditor.ui.editor;
 
+import java.util.HashSet;
+
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
-import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
+import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
@@ -36,13 +46,78 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 
-public class AnnotationModel extends ResourceMarkerAnnotationModel {
+public class AnnotationModel extends AbstractMarkerAnnotationModel {
 	private static final String LABEL_ATTRIBUTE_ID = "org.eventb.core.label";
 	private final RodinResource rodinResource;
+	private final IResource fResource;
+	private final IWorkspace fWorkspace;
+	private final IResourceChangeListener fResourceChangeListener = new ResourceChangeListener();
+
+	class ResourceChangeListener implements IResourceChangeListener {
+		@Override
+		public void resourceChanged(IResourceChangeEvent e) {
+			IResourceDelta delta = e.getDelta();
+			if (delta != null && fResource != null) {
+				IResourceDelta child = delta
+						.findMember(fResource.getFullPath());
+				if (child != null)
+					update(child.getMarkerDeltas());
+			}
+		}
+	}
+
+	protected void update(IMarkerDelta[] markerDeltas) {
+
+		if (markerDeltas.length == 0)
+			return;
+
+		if (markerDeltas.length == 1) {
+			IMarkerDelta delta = markerDeltas[0];
+			switch (delta.getKind()) {
+			case IResourceDelta.ADDED:
+				addMarkerAnnotation(delta.getMarker());
+				break;
+			case IResourceDelta.REMOVED:
+				removeMarkerAnnotation(delta.getMarker());
+				break;
+			case IResourceDelta.CHANGED:
+				modifyMarkerAnnotation(delta.getMarker());
+				break;
+			}
+		} else
+			batchedUpdate(markerDeltas);
+
+		fireModelChanged();
+	}
+
+	private void batchedUpdate(IMarkerDelta[] markerDeltas) {
+		HashSet<IMarker> removedMarkers = new HashSet<IMarker>(
+				markerDeltas.length);
+		HashSet<IMarker> modifiedMarkers = new HashSet<IMarker>(
+				markerDeltas.length);
+
+		for (int i = 0; i < markerDeltas.length; i++) {
+			IMarkerDelta delta = markerDeltas[i];
+			switch (delta.getKind()) {
+			case IResourceDelta.ADDED:
+				addMarkerAnnotation(delta.getMarker());
+				break;
+			case IResourceDelta.REMOVED:
+				removedMarkers.add(delta.getMarker());
+				break;
+			case IResourceDelta.CHANGED:
+				modifiedMarkers.add(delta.getMarker());
+				break;
+			}
+		}
+	}
 
 	public AnnotationModel(final IResource fileResource,
 			final Resource emfResource) {
-		super(fileResource);
+		// was: super(fileResource);
+		Assert.isNotNull(fileResource);
+		fResource = fileResource;
+		fWorkspace = fileResource.getWorkspace();
 
 		if (emfResource instanceof RodinResource) {
 			rodinResource = (RodinResource) emfResource;
@@ -58,8 +133,10 @@ public class AnnotationModel extends ResourceMarkerAnnotationModel {
 				return createPosition(marker);
 			}
 		} catch (final CoreException e) {
-			TextEditorPlugin.getPlugin().getLog().log(
-					new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID,
+			TextEditorPlugin
+					.getPlugin()
+					.getLog()
+					.log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID,
 							"Error analyzing marker", e));
 		}
 
@@ -221,5 +298,45 @@ public class AnnotationModel extends ResourceMarkerAnnotationModel {
 		}
 
 		return null;
+	}
+
+	/*
+	 * @see AbstractMarkerAnnotationModel#listenToMarkerChanges(boolean)
+	 */
+	@Override
+	protected void listenToMarkerChanges(boolean listen) {
+		if (listen)
+			fWorkspace.addResourceChangeListener(fResourceChangeListener);
+		else
+			fWorkspace.removeResourceChangeListener(fResourceChangeListener);
+	}
+
+	/*
+	 * @see AbstractMarkerAnnotationModel#deleteMarkers(IMarker[])
+	 */
+	@Override
+	protected void deleteMarkers(final IMarker[] markers) throws CoreException {
+		fWorkspace.run(new IWorkspaceRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) throws CoreException {
+				for (int i = 0; i < markers.length; ++i) {
+					markers[i].delete();
+				}
+			}
+		}, null, IWorkspace.AVOID_UPDATE, null);
+	}
+
+	/*
+	 * @see AbstractMarkerAnnotationModel#retrieveMarkers()
+	 */
+	@Override
+	protected IMarker[] retrieveMarkers() throws CoreException {
+		return fResource
+				.findMarkers(IMarker.MARKER, true, IResource.DEPTH_ZERO);
+	}
+
+	@Override
+	protected boolean isAcceptable(IMarker marker) {
+		return marker != null && fResource.equals(marker.getResource());
 	}
 }
