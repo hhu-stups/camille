@@ -11,8 +11,8 @@ import java.util.Map;
 
 import org.eclipse.emf.compare.FactoryException;
 import org.eclipse.emf.compare.match.MatchOptions;
-import org.eclipse.emf.compare.match.engine.IMatchEngine;
 import org.eclipse.emf.compare.match.engine.GenericMatchEngine;
+import org.eclipse.emf.compare.match.engine.IMatchEngine;
 import org.eclipse.emf.compare.match.engine.MatchSettings;
 import org.eclipse.emf.compare.match.internal.statistic.NameSimilarity;
 import org.eclipse.emf.ecore.EObject;
@@ -113,23 +113,26 @@ public class EventBMatchEngine extends GenericMatchEngine {
 
 	private double contentSimilarity(final EventBPredicate pred1,
 			final EventBPredicate pred2) {
-		return NameSimilarity.nameSimilarityMetric(pred1.getPredicate(), pred2
-				.getPredicate());
+		return NameSimilarity.nameSimilarityMetric(pred1.getPredicate(),
+				pred2.getPredicate());
 	}
 
-	/* 
-	 * Overridden to set custom matching options.
-	 * (non-Javadoc)
-	 * @see org.eclipse.emf.compare.match.engine.GenericMatchEngine#updateSettings(org.eclipse.emf.compare.match.engine.MatchSettings, java.util.Map)
+	/*
+	 * Overridden to set custom matching options. (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.emf.compare.match.engine.GenericMatchEngine#updateSettings
+	 * (org.eclipse.emf.compare.match.engine.MatchSettings, java.util.Map)
 	 */
 	@Override
 	protected void updateSettings(MatchSettings settings,
 			Map<String, Object> optionMap) {
 		super.updateSettings(settings, optionMap);
 		Map<String, Object> ignoreOptions = new HashMap<String, Object>();
-		
-		// don't compare by IDs as these can be not unique in current EMF of EventB
-		//FIXME: this can be removed if EMF is fixed to support unique IDs
+
+		// don't compare by IDs as these can be not unique in current EMF of
+		// EventB
+		// FIXME: this can be removed if EMF is fixed to support unique IDs
 		ignoreOptions.put(MatchOptions.OPTION_IGNORE_XMI_ID, true);
 		ignoreOptions.put(MatchOptions.OPTION_IGNORE_ID, true);
 		super.updateSettings(settings, ignoreOptions);
@@ -169,19 +172,20 @@ public class EventBMatchEngine extends GenericMatchEngine {
 	/**
 	 * Test if both given {@link EObject}s are {@link EventBComponent}s and of
 	 * same type of component, includes <code>null</code> check.
-	 *
+	 * 
 	 * @param obj1
 	 * @param obj2
 	 * @return
 	 */
 	private boolean areSameComponentType(final EObject obj1, final EObject obj2) {
-		return areSameType(obj1, obj2) && obj1 instanceof EventBNamedCommentedComponentElement;
+		return areSameType(obj1, obj2)
+				&& obj1 instanceof EventBNamedCommentedComponentElement;
 	}
 
 	/**
 	 * Test if both given {@link EObject}s are of type {@link Variant}, includes
 	 * <code>null</code> check.
-	 *
+	 * 
 	 * @param obj1
 	 * @param obj2
 	 * @return

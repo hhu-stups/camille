@@ -21,9 +21,6 @@ import de.hhu.stups.sablecc.patch.SourcePositions;
 import de.hhu.stups.sablecc.patch.SourcecodeRange;
 
 public class Parser {
-
-	private final Boolean allowSynatxExtensions = false;
-
 	private final EventBParser parser = new EventBParser();
 	private final TransformationVisitor transformer = new TransformationVisitor();
 

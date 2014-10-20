@@ -12,7 +12,6 @@
 package org.eventb.texttools.diff;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.compare.diff.engine.GenericDiffEngine;
 import org.eclipse.emf.compare.diff.metamodel.DiffElement;
@@ -22,9 +21,13 @@ import org.eclipse.emf.compare.match.metamodel.UnmatchElement;
 public class EventBDiffEngine extends GenericDiffEngine {
 
 	/**
-	 * Returns the Event-B implementation of a {@link org.eclipse.emf.compare.diff.engine.check.AbstractCheck} responsible for the verification of updates on attribute values.
+	 * Returns the Event-B implementation of a
+	 * {@link org.eclipse.emf.compare.diff.engine.check.AbstractCheck}
+	 * responsible for the verification of updates on attribute values.
 	 * 
-	 * @return The Event-B implementation of a {@link org.eclipse.emf.compare.diff.engine.check.AbstractCheck} responsible for the verification of updates on attribute values.
+	 * @return The Event-B implementation of a
+	 *         {@link org.eclipse.emf.compare.diff.engine.check.AbstractCheck}
+	 *         responsible for the verification of updates on attribute values.
 	 * @since 1.0
 	 */
 	@Override
@@ -33,9 +36,13 @@ public class EventBDiffEngine extends GenericDiffEngine {
 	}
 
 	/**
-	 * Returns the Event-B implementation of a {@link org.eclipse.emf.compare.diff.engine.check.AbstractCheck} responsible for the verification of updates on reference values.
+	 * Returns the Event-B implementation of a
+	 * {@link org.eclipse.emf.compare.diff.engine.check.AbstractCheck}
+	 * responsible for the verification of updates on reference values.
 	 * 
-	 * @return The Event-B implementation of a {@link org.eclipse.emf.compare.diff.engine.check.AbstractCheck} responsible for the verification of updates on reference values.
+	 * @return The Event-B implementation of a
+	 *         {@link org.eclipse.emf.compare.diff.engine.check.AbstractCheck}
+	 *         responsible for the verification of updates on reference values.
 	 * @since 1.0
 	 */
 	@Override
@@ -44,25 +51,31 @@ public class EventBDiffEngine extends GenericDiffEngine {
 	}
 
 	/**
-	 * This will process the {@link #unmatchedElements unmatched elements} list and create the appropriate {@link DiffElement}s.
+	 * This will process the {@link #unmatchedElements unmatched elements} list
+	 * and create the appropriate {@link DiffElement}s.
 	 * <p>
 	 * This is called for two-way comparison.
 	 * </p>
 	 * <p>
-	 * Filters any unmatched elements according to the references checker. Rodin internal detail Annotation and then defers to the generic diff engine.
+	 * Filters any unmatched elements according to the references checker. Rodin
+	 * internal detail Annotation and then defers to the generic diff engine.
 	 * </p>
 	 * <p>
-	 * FIXME: Make this extensible via an extension point so that extenders can decide what should be ignored.
+	 * FIXME: Make this extensible via an extension point so that extenders can
+	 * decide what should be ignored.
 	 * </p>
 	 * 
 	 * @param diffRoot
-	 *            {@link DiffGroup} under which to create the {@link DiffElement}s.
+	 *            {@link DiffGroup} under which to create the
+	 *            {@link DiffElement}s.
 	 * @param unmatched
 	 *            The MatchModel's {@link UnmatchElement}s.
 	 */
 	@Override
-	protected void processUnmatchedElements(DiffGroup diffRoot, List<UnmatchElement> unmatched) {
-		super.processUnmatchedElements(diffRoot, getReferencesChecker().filterUnmatchedElements(unmatched));
+	protected void processUnmatchedElements(DiffGroup diffRoot,
+			List<UnmatchElement> unmatched) {
+		super.processUnmatchedElements(diffRoot, getReferencesChecker()
+				.filterUnmatchedElements(unmatched));
 	}
 
 }

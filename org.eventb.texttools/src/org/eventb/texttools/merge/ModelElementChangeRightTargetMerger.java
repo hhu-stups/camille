@@ -26,8 +26,9 @@ public class ModelElementChangeRightTargetMerger extends DefaultMerger {
 		final ModelElementChangeRightTarget theDiff = (ModelElementChangeRightTarget) this.diff;
 		final EObject origin = theDiff.getLeftParent();
 		final EObject element = theDiff.getRightElement();
-		if (PersistenceHelper.DEBUG){
-			System.out.println("ModelElementChangeRightTargetMerger.applyInOrigin");
+		if (PersistenceHelper.DEBUG) {
+			System.out
+					.println("ModelElementChangeRightTargetMerger.applyInOrigin");
 			System.out.println("  element: " + element);
 			System.out.println("  origin: " + origin);
 		}

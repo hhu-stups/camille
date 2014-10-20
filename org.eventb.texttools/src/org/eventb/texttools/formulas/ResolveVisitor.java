@@ -77,7 +77,6 @@ import org.eventb.texttools.TextToolsPlugin;
 public class ResolveVisitor implements ISimpleVisitor {
 	private static final Map<Integer, EClass> idToEClass = new HashMap<Integer, EClass>();
 
-	@SuppressWarnings("unchecked")
 	private Map<BFormula, Formula> emfToRodinElements;
 
 	private final Stack<BFormula> stack = new Stack<BFormula>();
@@ -287,7 +286,6 @@ public class ResolveVisitor implements ISimpleVisitor {
 		return (BAssignmentResolved) stack.pop();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void traverseFormula(final Formula rodinFormula, final int offset) {
 		emfToRodinElements = new HashMap<BFormula, Formula>();
 
@@ -304,33 +302,35 @@ public class ResolveVisitor implements ISimpleVisitor {
 	 * @param node
 	 * @param rodinFormula
 	 */
-	@SuppressWarnings("unchecked")
 	private void storeNode(final BFormula node, final Formula rodinFormula) {
 		annotatePosition(node, rodinFormula);
 		emfToRodinElements.put(node, rodinFormula);
 		stack.push(node);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Map<BFormula, Formula> getEmfToRodinMapping() {
 		return emfToRodinElements;
 	}
 
+	@Override
 	public void visitAssociativeExpression(
 			final AssociativeExpression expression) {
 		handleMultiChildren(expression, expression.getChildren());
 	}
 
+	@Override
 	public void visitAssociativePredicate(final AssociativePredicate predicate) {
 		handleMultiChildren(predicate, predicate.getChildren());
 	}
 
+	@Override
 	public void visitAtomicExpression(final AtomicExpression expression) {
 		final EClass eClass = getMatchingEClass(expression);
 		final EObject eObject = FormulasFactory.eINSTANCE.create(eClass);
 		storeNode((BFormula) eObject, expression);
 	}
 
+	@Override
 	public void visitBecomesEqualTo(final BecomesEqualTo assignment) {
 		final FreeIdentifier[] identifiers = assignment
 				.getAssignedIdentifiers();
@@ -359,6 +359,7 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(newNode, assignment);
 	}
 
+	@Override
 	public void visitBecomesMemberOf(final BecomesMemberOf assignment) {
 		final FreeIdentifier[] identifiers = assignment
 				.getAssignedIdentifiers();
@@ -383,6 +384,7 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(newNode, assignment);
 	}
 
+	@Override
 	public void visitBecomesSuchThat(final BecomesSuchThat assignment) {
 		final FreeIdentifier[] identifiers = assignment
 				.getAssignedIdentifiers();
@@ -416,19 +418,23 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(newNode, assignment);
 	}
 
+	@Override
 	public void visitBinaryExpression(final BinaryExpression expression) {
 		handleTwoChildren(expression, expression.getLeft(),
 				expression.getRight());
 	}
 
+	@Override
 	public void visitBinaryPredicate(final BinaryPredicate predicate) {
 		handleTwoChildren(predicate, predicate.getLeft(), predicate.getRight());
 	}
 
+	@Override
 	public void visitBoolExpression(final BoolExpression expression) {
 		handleSingleChild(expression, expression.getPredicate());
 	}
 
+	@Override
 	public void visitBoundIdentDecl(final BoundIdentDecl boundIdentDecl) {
 		final BoundIdentifierExpression node = FormulasFactory.eINSTANCE
 				.createBoundIdentifierExpression();
@@ -436,6 +442,7 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(node, boundIdentDecl);
 	}
 
+	@Override
 	public void visitBoundIdentifier(final BoundIdentifier identifierExpression) {
 		final BoundIdentifierExpression node = FormulasFactory.eINSTANCE
 				.createBoundIdentifierExpression();
@@ -448,6 +455,7 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(node, identifierExpression);
 	}
 
+	@Override
 	public void visitFreeIdentifier(final FreeIdentifier identifierExpression) {
 		final IdentifierExpression node = FormulasFactory.eINSTANCE
 				.createIdentifierExpression();
@@ -455,6 +463,7 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(node, identifierExpression);
 	}
 
+	@Override
 	public void visitIntegerLiteral(final IntegerLiteral expression) {
 		final IntegerLiteralExpression node = FormulasFactory.eINSTANCE
 				.createIntegerLiteralExpression();
@@ -463,16 +472,19 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(node, expression);
 	}
 
+	@Override
 	public void visitLiteralPredicate(final LiteralPredicate predicate) {
 		final Constant node = (Constant) FormulasFactory.eINSTANCE
 				.create(getMatchingEClass(predicate));
 		storeNode(node, predicate);
 	}
 
+	@Override
 	public void visitMultiplePredicate(final MultiplePredicate predicate) {
 		handleMultiChildren(predicate, predicate.getChildren());
 	}
 
+	@Override
 	public void visitQuantifiedExpression(final QuantifiedExpression expression) {
 		final BoundIdentDecl[] localIdentifiers = expression
 				.getBoundIdentDecls();
@@ -552,6 +564,7 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(node, expression);
 	}
 
+	@Override
 	public void visitQuantifiedPredicate(final QuantifiedPredicate predicate) {
 		// visit children
 		final BoundIdentDecl[] localIdentifiers = predicate
@@ -594,27 +607,31 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(node, predicate);
 	}
 
+	@Override
 	public void visitRelationalPredicate(final RelationalPredicate predicate) {
 		handleTwoChildren(predicate, predicate.getLeft(), predicate.getRight());
 	}
 
+	@Override
 	public void visitSetExtension(final SetExtension expression) {
 		handleMultiChildren(expression, expression.getMembers());
 	}
 
+	@Override
 	public void visitSimplePredicate(final SimplePredicate predicate) {
 		handleSingleChild(predicate, predicate.getExpression());
 	}
 
+	@Override
 	public void visitUnaryExpression(final UnaryExpression expression) {
 		handleSingleChild(expression, expression.getChild());
 	}
 
+	@Override
 	public void visitUnaryPredicate(final UnaryPredicate predicate) {
 		handleSingleChild(predicate, predicate.getChild());
 	}
 
-	@SuppressWarnings("unchecked")
 	private void handleSingleChild(final Formula rodinNode, final Formula child) {
 		// visit child
 		child.accept(this);
@@ -629,7 +646,6 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(node, rodinNode);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void handleTwoChildren(final Formula rodinNode,
 			final Formula leftChild, final Formula rightChild) {
 		// visit children
@@ -647,7 +663,6 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(node, rodinNode);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void handleMultiChildren(final Formula rodinNode,
 			final Formula[] rodinChildren) {
 		visitChildren(rodinChildren);
@@ -665,14 +680,12 @@ public class ResolveVisitor implements ISimpleVisitor {
 		storeNode(node, rodinNode);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void visitChildren(final Formula[] rodinChildren) {
 		for (final Formula child : rodinChildren) {
 			child.accept(this);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void visitChildren(final Formula child) {
 		child.accept(this);
 	}
@@ -692,7 +705,6 @@ public class ResolveVisitor implements ISimpleVisitor {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void annotatePosition(final BFormula node,
 			final Formula rodinFormula) {
 
@@ -710,7 +722,6 @@ public class ResolveVisitor implements ISimpleVisitor {
 		 */
 	}
 
-	@SuppressWarnings("unchecked")
 	private EClass getMatchingEClass(final Formula formula) {
 		final EClass eClass = idToEClass.get(formula.getTag());
 
@@ -730,6 +741,7 @@ public class ResolveVisitor implements ISimpleVisitor {
 		return eClass;
 	}
 
+	@Override
 	public void visitExtendedExpression(ExtendedExpression expression) {
 		System.out
 				.println("##################################### mean visitor: visitExtendedExpression");
@@ -737,6 +749,7 @@ public class ResolveVisitor implements ISimpleVisitor {
 
 	}
 
+	@Override
 	public void visitExtendedPredicate(ExtendedPredicate predicate) {
 		System.out
 				.println("##################################### mean visitor: visitExtendedPredicate");

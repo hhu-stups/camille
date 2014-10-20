@@ -104,8 +104,7 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		final Action action = new ContentAssistAction(TextEditorPlugin
 				.getPlugin().getResourceBundle(), "ContentAssistProposal.",
 				this);
-		action
-				.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction(CONTENT_ASSIST_PROPOSAL, action);
 		markAsStateDependentAction(CONTENT_ASSIST_PROPOSAL, true);
 	}
@@ -154,8 +153,7 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		final List<String> result = new ArrayList<String>(Arrays.asList(super
 				.collectContextMenuPreferencePages()));
 		result.add("org.eventb.texteditor.ui.preferences");
-		result
-				.add("org.eventb.texteditor.ui.preferences.HighlightingPreferencePage");
+		result.add("org.eventb.texteditor.ui.preferences.HighlightingPreferencePage");
 		result.add("org.eventb.texteditor.ui.preferences.TemplatePreferences");
 
 		return result.toArray(new String[result.size()]);
@@ -206,6 +204,7 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	public void insert(final String symbol, final boolean correctCursorPosition) {
 		if (symbol != null && symbol.length() > 0) {
 			getSite().getShell().getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					final IDocument document = getDocumentProvider()
 							.getDocument(getEditorInput());
@@ -221,12 +220,11 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 						TextEditorPlugin
 								.getPlugin()
 								.getLog()
-								.log(
-										new Status(
-												IStatus.WARNING,
-												TextEditorPlugin.PLUGIN_ID,
-												"Could not insert text into Event-B text editor.",
-												e));
+								.log(new Status(
+										IStatus.WARNING,
+										TextEditorPlugin.PLUGIN_ID,
+										"Could not insert text into Event-B text editor.",
+										e));
 					}
 				}
 			});
@@ -253,7 +251,6 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(final Class adapter) {
 		if (IGotoMarker.class.equals(adapter)) {
@@ -304,10 +301,6 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 
 	public final int modelOffset2WidgetOffset(final int modelOffset) {
 		return modelOffset2WidgetOffset(getSourceViewer(), modelOffset);
-	}
-
-	public EventBPresentationReconciler getPresentationReconciler() {
-		return presentationReconciler;
 	}
 
 	public void changeWhileDirty() {
@@ -382,24 +375,29 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 
 	class ActivateListener implements IPartListener {
 
+		@Override
 		public void partActivated(final IWorkbenchPart part) {
 			if (part == EventBTextEditor.this) {
 				handleActive();
 			}
 		}
 
+		@Override
 		public void partBroughtToTop(final IWorkbenchPart part) {
 			// IGNORE
 		}
 
+		@Override
 		public void partClosed(final IWorkbenchPart part) {
 			// IGNORE
 		}
 
+		@Override
 		public void partDeactivated(final IWorkbenchPart part) {
 			// IGNORE
 		}
 
+		@Override
 		public void partOpened(final IWorkbenchPart part) {
 			// IGNORE
 		}

@@ -48,7 +48,8 @@ public final class TextEditorPlugin extends EMFPlugin {
 	/**
 	 * ID for problem markers of this plugin
 	 */
-	public static final String SYNTAXERROR_MARKER_ID = PLUGIN_ID + ".syntaxerror";
+	public static final String SYNTAXERROR_MARKER_ID = PLUGIN_ID
+			+ ".syntaxerror";
 
 	/**
 	 * ID the 'format' command
@@ -152,8 +153,10 @@ public final class TextEditorPlugin extends EMFPlugin {
 				try {
 					templateStore.load();
 				} catch (final IOException e) {
-					TextEditorPlugin.getPlugin().getLog().log(
-							new Status(IStatus.ERROR,
+					TextEditorPlugin
+							.getPlugin()
+							.getLog()
+							.log(new Status(IStatus.ERROR,
 									TextEditorPlugin.PLUGIN_ID,
 									"Cannot load templates", e));
 				}

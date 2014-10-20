@@ -32,7 +32,6 @@ public class MarkerHelper extends EditUIMarkerHelper {
 		return markerId;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean adjustMarker(final IMarker marker,
 			final Diagnostic diagnostic) throws CoreException {
@@ -45,17 +44,19 @@ public class MarkerHelper extends EditUIMarkerHelper {
 					final int column = parseProblem.getColumn();
 
 					// Setting attributes for marker
-					final Map attributes = marker.getAttributes();
+					final Map<String, Object> attributes = marker
+							.getAttributes();
 
 					MarkerUtilities.setCharStart(attributes, offset);
 					MarkerUtilities.setCharEnd(attributes, offset
 							+ parseProblem.getTokenLength());
-					MarkerUtilities.setMessage(attributes, parseProblem
-							.getMessage());
+					MarkerUtilities.setMessage(attributes,
+							parseProblem.getMessage());
 					MarkerUtilities.setLineNumber(attributes, line);
 
-					attributes.put(IMarker.LOCATION, EMFEditUIPlugin
-							.getPlugin().getString(
+					attributes.put(
+							IMarker.LOCATION,
+							EMFEditUIPlugin.getPlugin().getString(
 									"_UI_MarkerLocation",
 									new String[] { Integer.toString(line + 1),
 											Integer.toString(column + 1) }));

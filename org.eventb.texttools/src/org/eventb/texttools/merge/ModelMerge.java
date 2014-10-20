@@ -107,7 +107,6 @@ public class ModelMerge {
 		// First find the file extension
 		String path = oldVersion.getURI().path();
 		String extension = path.substring(path.lastIndexOf('.'));
-		String projectName = oldVersion.getURI().segment(1);
 		File tmpFileNew = null;
 
 		if (newVersion.eResource() == null) {
@@ -185,7 +184,6 @@ public class ModelMerge {
 		try {
 			File tmpFile = File.createTempFile("camille-", extension);
 			tmpFile.deleteOnExit();
-			URI uri = URI.createFileURI(tmpFile.getAbsolutePath());
 			// XMLResourceImpl resource = new XMLResourceImpl(uri);
 			RodinResource resource = new RodinResource();
 			resource.setURI(URI.createPlatformResourceURI(projectPath + "/"
