@@ -12,22 +12,11 @@
  */
 package org.eventb.texteditor.ui;
 
-import java.io.IOException;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.EMFPlugin;
 import org.eclipse.emf.common.ui.EclipseUIPlugin;
 import org.eclipse.emf.common.util.ResourceLocator;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
-import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eventb.texteditor.ui.build.dom.DomManager;
-import org.eventb.texteditor.ui.editor.codecompletion.DefaultContentAssist.ContextType;
 
 public final class TextEditorPlugin extends EMFPlugin {
 	/**
@@ -64,7 +53,7 @@ public final class TextEditorPlugin extends EMFPlugin {
 	/**
 	 * Singleton instance of EclipseUIPlugin
 	 */
-	private static Implementation plugin;
+	static TextEditorPluginImplementation plugin;
 
 	private static final DomManager domManager = new DomManager();
 
@@ -82,7 +71,7 @@ public final class TextEditorPlugin extends EMFPlugin {
 	 * 
 	 * @return the singleton instance.
 	 */
-	public static Implementation getPlugin() {
+	public static TextEditorPluginImplementation getPlugin() {
 		return plugin;
 	}
 
@@ -95,74 +84,5 @@ public final class TextEditorPlugin extends EMFPlugin {
 	 */
 	public static String getString(final String key, final Object s1) {
 		return INSTANCE.getString(key, new Object[] { s1 });
-	}
-
-	/**
-	 * The actual implementation of the Eclipse <b>Plugin</b> (
-	 * {@link EclipseUIPlugin}).
-	 */
-	public static class Implementation extends EclipseUIPlugin {
-		private ResourceBundle resourceBundle;
-		private ContributionTemplateStore templateStore;
-		private ContributionContextTypeRegistry contextTypeRegistry;
-
-		public Implementation() {
-			super();
-			plugin = this;
-
-			try {
-				resourceBundle = ResourceBundle.getBundle("plugin");
-			} catch (final MissingResourceException e) {
-				log(new Status(IStatus.ERROR, PLUGIN_ID,
-						"Cannot load resource bundle", e));
-				resourceBundle = null;
-			}
-		}
-
-		public ResourceBundle getResourceBundle() {
-			return resourceBundle;
-		}
-
-		public IWorkbenchPage getActivePage() {
-			final IWorkbenchWindow window = getWorkbench()
-					.getActiveWorkbenchWindow();
-			if (window == null) {
-				return null;
-			}
-			return window.getActivePage();
-		}
-
-		public ContributionContextTypeRegistry getContextTypeRegistry() {
-			if (contextTypeRegistry == null) {
-				contextTypeRegistry = new ContributionContextTypeRegistry();
-				contextTypeRegistry.addContextType(ContextType.Anywhere.key);
-				contextTypeRegistry.addContextType(ContextType.Machine.key);
-				contextTypeRegistry.addContextType(ContextType.Events.key);
-				contextTypeRegistry.addContextType(ContextType.Context.key);
-			}
-
-			return contextTypeRegistry;
-		}
-
-		public ContributionTemplateStore getTemplateStore() {
-			if (templateStore == null) {
-				final IPreferenceStore preferenceStore = TextEditorPlugin
-						.getPlugin().getPreferenceStore();
-				templateStore = new ContributionTemplateStore(
-						getContextTypeRegistry(), preferenceStore, "templates");
-				try {
-					templateStore.load();
-				} catch (final IOException e) {
-					TextEditorPlugin
-							.getPlugin()
-							.getLog()
-							.log(new Status(IStatus.ERROR,
-									TextEditorPlugin.PLUGIN_ID,
-									"Cannot load templates", e));
-				}
-			}
-
-			return templateStore;
-		}
 	}
 }
