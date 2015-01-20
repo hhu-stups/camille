@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>org.eventb.texteditor</groupId>
   	<artifactId>org.eventb.texteditor.parent</artifactId>
   	<version>3.0.3.qualifier</version>
-  
+
 	<packaging>pom</packaging>
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
@@ -14,39 +14,33 @@
 	</properties>
 
    <repositories>
-	<!-- configure p2 repository to resolve against -->  
+	<!-- configure p2 repository to resolve against -->
 	<repository>
 	  <id>targetRepository0</id>
 	  <layout>p2</layout>
-	  <url>http://download.eclipse.org/eclipse/updates/3.8/</url>
+	  <url>http://download.eclipse.org/releases/luna/</url>
 	</repository>
 
 	<repository>
 	  <id>targetRepository1</id>
 	  <layout>p2</layout>
-	  <url>http://download.eclipse.org/releases/juno/</url>
-	</repository>
-
-	<repository>
-	  <id>targetRepository2</id>
-	  <layout>p2</layout>
 	  <url>http://download.eclipse.org/tools/gef/updates/releases/</url>
 	</repository>
 
         <repository>
-	  <id>targetRepository3</id>
+	  <id>targetRepository2</id>
 	  <layout>p2</layout>
 	  <url>http://rodin-b-sharp.sourceforge.net/core-updates</url>
 	</repository>
 
 	<repository>
-	  <id>targetRepository4</id>
+	  <id>targetRepository3</id>
 	  <layout>p2</layout>
 	  <url>http://rodin-b-sharp.sourceforge.net/updates</url>
 	</repository>
 
 
-  </repositories> 
+  </repositories>
 
 	<build>
 		<plugins>
@@ -57,7 +51,7 @@
 				<version>0.21.0</version>
 				<extensions>true</extensions>
 			</plugin>
-			
+
 			<plugin>
 		    <groupId>org.eclipse.tycho</groupId>
 		    <artifactId>target-platform-configuration</artifactId>
@@ -68,7 +62,7 @@
 		      </dependency-resolution>
 		    </configuration>
 		  </plugin>
-			
+
 		</plugins>
 	</build>
 
@@ -81,4 +75,3 @@
                 <module>../org.eventb.texteditor.parsers</module>
 	</modules>
 </project>
-	
