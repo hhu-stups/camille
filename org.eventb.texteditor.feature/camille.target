@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="prob_target" sequenceNumber="67">
+<?pde version="3.8"?><target name="prob_target" sequenceNumber="68">
 <locations>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.1.v20140901-1055"/>
-<unit id="org.eclipse.emf.compare.source.feature.group" version="3.0.1.201408191310"/>
-<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.0.1.201408191310"/>
-<unit id="org.eclipse.emf.diffmerge.sdk.feature.feature.group" version="0.3.0.v20140611-1329"/>
-<repository location="http://download.eclipse.org/releases/luna"/>
-</location>
-<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.gef.feature.group" version="3.9.1.201308190730"/>
-<repository location="http://download.eclipse.org/tools/gef/updates/releases"/>
+<unit id="org.rodinp.platform.product" version="3.1.0.201412171041-e1a03f3"/>
+<repository location="http://rodin-b-sharp.sourceforge.net/core-updates/"/>
 </location>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eventb.emf.feature.feature.group" version="5.0.0"/>
@@ -19,8 +12,11 @@
 <repository location="http://rodin-b-sharp.sourceforge.net/updates/"/>
 </location>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.rodinp.platform.product" version="3.1.0.201412171041-e1a03f3"/>
-<repository location="http://rodin-b-sharp.sourceforge.net/core-updates/"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.1.v20140901-1055"/>
+<unit id="org.eclipse.emf.compare.source.feature.group" version="3.0.1.201408191310"/>
+<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.0.1.201408191310"/>
+<unit id="org.eclipse.emf.diffmerge.sdk.feature.feature.group" version="0.3.0.v20140611-1329"/>
+<repository location="http://download.eclipse.org/releases/luna"/>
 </location>
 </locations>
 </target>
