@@ -15,7 +15,6 @@
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.10.1.v20140901-1055"/>
 <unit id="org.eclipse.emf.compare.source.feature.group" version="3.0.1.201408191310"/>
 <unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.0.1.201408191310"/>
-<unit id="org.eclipse.emf.diffmerge.sdk.feature.feature.group" version="0.3.0.v20140611-1329"/>
 <repository location="http://download.eclipse.org/releases/luna"/>
 </location>
 </locations>
