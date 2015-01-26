@@ -18,13 +18,13 @@ Require-Bundle: org.eclipse.jface.text;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.emf.compare.edit;bundle-version="4.0.0",
  org.eclipse.emf.compare.ide;bundle-version="3.1.1",
  org.eclipse.emf.compare.rcp;bundle-version="2.2.0"
-Export-Package: org.eventb.texttools,
- org.eventb.texttools.formulas,
- org.eventb.texttools.merge,
- org.eventb.texttools.model.texttools,
- org.eventb.texttools.prettyprint,
- org.eventb.texttools.syntaxExtension
 Bundle-Vendor: Heinrich-Heine University Dusseldorf
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Export-Package: org.eventb.texttools,
+ org.eventb.texttools.formulas,
+ org.eventb.texttools.model.texttools,
+ org.eventb.texttools.model.texttools.impl,
+ org.eventb.texttools.model.texttools.util,
+ org.eventb.texttools.prettyprint

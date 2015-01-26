@@ -47,7 +47,7 @@
          </attributeType>
       </relationship>
    </extension>
-   <extension
+<!--   <extension
          point="org.eclipse.emf.compare.match.engine">
       <matchengine
             label="EventB Match Engine"
@@ -70,5 +70,5 @@
             label="Event-B Difference Engine"
             priority="highest">
       </diffengine>
-   </extension>
+   </extension> -->
 </plugin>

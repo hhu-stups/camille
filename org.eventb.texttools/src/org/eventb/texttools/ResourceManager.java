@@ -14,11 +14,6 @@ import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
-import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
-import org.eventb.emf.core.context.provider.ContextItemProviderAdapterFactory;
-import org.eventb.emf.core.machine.provider.MachineItemProviderAdapterFactory;
-import org.eventb.emf.core.provider.CoreItemProviderAdapterFactory;
 
 public class ResourceManager {
 	private final Map<IProject, AdapterFactoryEditingDomain> projectEditingDomains = new HashMap<IProject, AdapterFactoryEditingDomain>();
@@ -37,15 +32,15 @@ public class ResourceManager {
 		final ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
 				ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
 
-		adapterFactory
-				.addAdapterFactory(new ResourceItemProviderAdapterFactory());
-		adapterFactory.addAdapterFactory(new CoreItemProviderAdapterFactory());
-		adapterFactory
-				.addAdapterFactory(new MachineItemProviderAdapterFactory());
-		adapterFactory
-				.addAdapterFactory(new ContextItemProviderAdapterFactory());
-		adapterFactory
-				.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
+//		adapterFactory
+//				.addAdapterFactory(new ResourceItemProviderAdapterFactory());
+//		adapterFactory.addAdapterFactory(new CoreItemProviderAdapterFactory());
+//		adapterFactory
+//				.addAdapterFactory(new MachineItemProviderAdapterFactory());
+//		adapterFactory
+//				.addAdapterFactory(new ContextItemProviderAdapterFactory());
+//		adapterFactory
+//				.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 
 		final BasicCommandStack commandStack = new BasicCommandStack();
 

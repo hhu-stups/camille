@@ -8,6 +8,7 @@ package org.eventb.texttools;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -18,6 +19,23 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.compare.Comparison;
+import org.eclipse.emf.compare.Diff;
+import org.eclipse.emf.compare.EMFCompare;
+import org.eclipse.emf.compare.match.DefaultComparisonFactory;
+import org.eclipse.emf.compare.match.DefaultEqualityHelperFactory;
+import org.eclipse.emf.compare.match.DefaultMatchEngine;
+import org.eclipse.emf.compare.match.IComparisonFactory;
+import org.eclipse.emf.compare.match.IMatchEngine;
+import org.eclipse.emf.compare.match.eobject.IEObjectMatcher;
+import org.eclipse.emf.compare.match.impl.MatchEngineFactoryImpl;
+import org.eclipse.emf.compare.match.impl.MatchEngineFactoryRegistryImpl;
+import org.eclipse.emf.compare.merge.BatchMerger;
+import org.eclipse.emf.compare.merge.IMerger.Registry;
+import org.eclipse.emf.compare.merge.IMerger.RegistryImpl;
+import org.eclipse.emf.compare.scope.DefaultComparisonScope;
+import org.eclipse.emf.compare.scope.IComparisonScope;
+import org.eclipse.emf.compare.utils.UseIdentifiers;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -26,7 +44,7 @@ import org.eventb.emf.core.AttributeType;
 import org.eventb.emf.core.CoreFactory;
 import org.eventb.emf.core.EventBElement;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
-import org.eventb.texttools.merge.ModelMerge;
+//import org.eventb.texttools.merge.ModelMerge;
 import org.eventb.texttools.prettyprint.PrettyPrinter;
 
 import de.be4.eventb.core.parser.BException;
@@ -141,13 +159,43 @@ public class PersistenceHelper {
 			final IProgressMonitor monitor) {
 		try {
 			long time0 = System.currentTimeMillis();
-			final ModelMerge merge = new ModelMerge(oldVersion, newVersion);
+
+			IEObjectMatcher matcher = DefaultMatchEngine
+					.createDefaultEObjectMatcher(UseIdentifiers.NEVER);
+			IComparisonFactory comparisonFactory = new DefaultComparisonFactory(
+					new DefaultEqualityHelperFactory());
+			IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl(
+					matcher, comparisonFactory);
+			matchEngineFactory.setRanking(20);
+			IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
+			matchEngineRegistry.add(matchEngineFactory);
+			EMFCompare comparator = EMFCompare.builder()
+					.setMatchEngineFactoryRegistry(matchEngineRegistry).build();
+
+			IComparisonScope scope = new DefaultComparisonScope(oldVersion,
+					newVersion, null);
+
+			Comparison comparison = comparator.compare(scope);
+
+			List<Diff> differences = comparison.getDifferences();
+
+			Registry registry = RegistryImpl.createStandaloneInstance();
+			BatchMerger bm = new BatchMerger(registry);
+
+			bm.copyAllRightToLeft(differences, null);
+
+			System.out.println("LeFuck");
+
+			// final ModelMerge merge = new ModelMerge(oldVersion, newVersion);
 			long time1 = System.currentTimeMillis();
-			merge.applyChanges(monitor);
+			// merge.applyChanges(monitor);
 			long time2 = System.currentTimeMillis();
 			if (DEBUG) {
 				System.out.println("new ModelMerge: " + (time1 - time0));
 				System.out.println("merge.applyChanges: " + (time2 - time1));
+			}
+			if (3 == 2 * 5) { // FIXME temp fix for dead code
+				throw new InterruptedException();
 			}
 		} catch (final InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -349,7 +397,7 @@ public class PersistenceHelper {
 			final long diff = resourceTimestamp - textTimestamp;
 
 			// tolerate 50ms offset (time to save file)
-			// TODO this is ugly!!!
+			// FIXME this is ugly!!!
 			if (diff < 50) {
 				return true;
 			}
