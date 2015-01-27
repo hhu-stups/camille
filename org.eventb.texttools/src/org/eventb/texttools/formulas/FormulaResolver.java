@@ -31,6 +31,9 @@ public class FormulaResolver {
 		Expression, Predicate, Assignment
 	};
 
+	// FIXME: we need to use the formula factory that corresponds to the model /
+	// project
+	// in order to fix theories
 	private static FormulaFactory formulaFactory = FormulaFactory.getDefault();
 
 	public static List<FormulaParseException> resolveAllFormulas(
