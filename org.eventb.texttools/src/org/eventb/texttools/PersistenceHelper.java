@@ -44,7 +44,7 @@ import org.eventb.emf.core.AttributeType;
 import org.eventb.emf.core.CoreFactory;
 import org.eventb.emf.core.EventBElement;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
-//import org.eventb.texttools.merge.ModelMerge;
+import org.eventb.texttools.merge.EventBMatchEngine;
 import org.eventb.texttools.prettyprint.PrettyPrinter;
 
 import de.be4.eventb.core.parser.BException;
@@ -53,6 +53,8 @@ import de.be4.eventb.core.parser.node.AContextParseUnit;
 import de.be4.eventb.core.parser.node.AMachineParseUnit;
 import de.be4.eventb.core.parser.node.PParseUnit;
 import de.be4.eventb.core.parser.node.Start;
+
+//import org.eventb.texttools.merge.ModelMerge;
 
 public class PersistenceHelper {
 
@@ -160,12 +162,21 @@ public class PersistenceHelper {
 		try {
 			long time0 = System.currentTimeMillis();
 
-			IEObjectMatcher matcher = DefaultMatchEngine
-					.createDefaultEObjectMatcher(UseIdentifiers.NEVER);
 			IComparisonFactory comparisonFactory = new DefaultComparisonFactory(
 					new DefaultEqualityHelperFactory());
-			IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl(
+
+			IEObjectMatcher matcher = DefaultMatchEngine
+					.createDefaultEObjectMatcher(UseIdentifiers.NEVER);
+
+			final IMatchEngine eventBMatchEngine = new EventBMatchEngine(
 					matcher, comparisonFactory);
+
+			IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl() {
+				@Override
+				public IMatchEngine getMatchEngine() {
+					return eventBMatchEngine;
+				}
+			};
 			matchEngineFactory.setRanking(20);
 			IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
 			matchEngineRegistry.add(matchEngineFactory);
