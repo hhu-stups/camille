@@ -159,58 +159,46 @@ public class PersistenceHelper {
 			final EventBNamedCommentedComponentElement oldVersion,
 			final EventBNamedCommentedComponentElement newVersion,
 			final IProgressMonitor monitor) {
-		try {
-			long time0 = System.currentTimeMillis();
+		long time0 = System.currentTimeMillis();
 
-			IComparisonFactory comparisonFactory = new DefaultComparisonFactory(
-					new DefaultEqualityHelperFactory());
+		IComparisonFactory comparisonFactory = new DefaultComparisonFactory(
+				new DefaultEqualityHelperFactory());
 
-			IEObjectMatcher matcher = DefaultMatchEngine
-					.createDefaultEObjectMatcher(UseIdentifiers.NEVER);
+		IEObjectMatcher matcher = DefaultMatchEngine
+				.createDefaultEObjectMatcher(UseIdentifiers.NEVER);
 
-			final IMatchEngine eventBMatchEngine = new EventBMatchEngine(
-					matcher, comparisonFactory);
+		final IMatchEngine eventBMatchEngine = new EventBMatchEngine(matcher,
+				comparisonFactory);
 
-			IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl() {
-				@Override
-				public IMatchEngine getMatchEngine() {
-					return eventBMatchEngine;
-				}
-			};
-			matchEngineFactory.setRanking(20);
-			IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
-			matchEngineRegistry.add(matchEngineFactory);
-			EMFCompare comparator = EMFCompare.builder()
-					.setMatchEngineFactoryRegistry(matchEngineRegistry).build();
-
-			IComparisonScope scope = new DefaultComparisonScope(oldVersion,
-					newVersion, null);
-
-			Comparison comparison = comparator.compare(scope);
-
-			List<Diff> differences = comparison.getDifferences();
-
-			Registry registry = RegistryImpl.createStandaloneInstance();
-			BatchMerger bm = new BatchMerger(registry);
-
-			bm.copyAllRightToLeft(differences, null);
-
-			System.out.println("LeFuck");
-
-			// final ModelMerge merge = new ModelMerge(oldVersion, newVersion);
-			long time1 = System.currentTimeMillis();
-			// merge.applyChanges(monitor);
-			long time2 = System.currentTimeMillis();
-			if (DEBUG) {
-				System.out.println("new ModelMerge: " + (time1 - time0));
-				System.out.println("merge.applyChanges: " + (time2 - time1));
+		IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl() {
+			@Override
+			public IMatchEngine getMatchEngine() {
+				return eventBMatchEngine;
 			}
-			if (3 == 2 * 5) { // FIXME temp fix for dead code
-				throw new InterruptedException();
-			}
-		} catch (final InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		};
+		matchEngineFactory.setRanking(20);
+		IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
+		matchEngineRegistry.add(matchEngineFactory);
+		EMFCompare comparator = EMFCompare.builder()
+				.setMatchEngineFactoryRegistry(matchEngineRegistry).build();
+
+		IComparisonScope scope = new DefaultComparisonScope(oldVersion,
+				newVersion, null);
+
+		Comparison comparison = comparator.compare(scope);
+
+		List<Diff> differences = comparison.getDifferences();
+
+		long time1 = System.currentTimeMillis();
+		Registry registry = RegistryImpl.createStandaloneInstance();
+		BatchMerger bm = new BatchMerger(registry);
+
+		bm.copyAllRightToLeft(differences, null);
+
+		long time2 = System.currentTimeMillis();
+		if (DEBUG) {
+			System.out.println("new ModelMerge: " + (time1 - time0));
+			System.out.println("merge.applyChanges: " + (time2 - time1));
 		}
 	}
 
