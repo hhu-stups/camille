@@ -24,7 +24,6 @@ import org.eclipse.emf.compare.Diff;
 import org.eclipse.emf.compare.EMFCompare;
 import org.eclipse.emf.compare.match.DefaultComparisonFactory;
 import org.eclipse.emf.compare.match.DefaultEqualityHelperFactory;
-import org.eclipse.emf.compare.match.DefaultMatchEngine;
 import org.eclipse.emf.compare.match.IComparisonFactory;
 import org.eclipse.emf.compare.match.IMatchEngine;
 import org.eclipse.emf.compare.match.eobject.IEObjectMatcher;
@@ -35,7 +34,6 @@ import org.eclipse.emf.compare.merge.IMerger.Registry;
 import org.eclipse.emf.compare.merge.IMerger.RegistryImpl;
 import org.eclipse.emf.compare.scope.DefaultComparisonScope;
 import org.eclipse.emf.compare.scope.IComparisonScope;
-import org.eclipse.emf.compare.utils.UseIdentifiers;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -44,7 +42,7 @@ import org.eventb.emf.core.AttributeType;
 import org.eventb.emf.core.CoreFactory;
 import org.eventb.emf.core.EventBElement;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
-import org.eventb.texttools.merge.EventBMatchEngine;
+import org.eventb.texttools.merge.EventBEObjectMatcher;
 import org.eventb.texttools.prettyprint.PrettyPrinter;
 
 import de.be4.eventb.core.parser.BException;
@@ -159,58 +157,52 @@ public class PersistenceHelper {
 			final EventBNamedCommentedComponentElement oldVersion,
 			final EventBNamedCommentedComponentElement newVersion,
 			final IProgressMonitor monitor) {
-		try {
-			long time0 = System.currentTimeMillis();
+		long time0 = System.currentTimeMillis();
 
-			IComparisonFactory comparisonFactory = new DefaultComparisonFactory(
-					new DefaultEqualityHelperFactory());
+		IComparisonFactory comparisonFactory = new DefaultComparisonFactory(
+				new DefaultEqualityHelperFactory());
 
-			IEObjectMatcher matcher = DefaultMatchEngine
-					.createDefaultEObjectMatcher(UseIdentifiers.NEVER);
+		IEObjectMatcher matcher = new EventBEObjectMatcher();
 
-			final IMatchEngine eventBMatchEngine = new EventBMatchEngine(
-					matcher, comparisonFactory);
+		// IMatchEngine matchEngine = new DefaultMatchEngine(matcher,
+		// comparisonFactory);
+		// final IMatchEngine eventBMatchEngine = new EventBMatchEngine(matcher,
+		// comparisonFactory);
 
-			IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl() {
-				@Override
-				public IMatchEngine getMatchEngine() {
-					return eventBMatchEngine;
-				}
-			};
-			matchEngineFactory.setRanking(20);
-			IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
-			matchEngineRegistry.add(matchEngineFactory);
-			EMFCompare comparator = EMFCompare.builder()
-					.setMatchEngineFactoryRegistry(matchEngineRegistry).build();
+		// IMatchEngine.Factory matchEngineFactory = new
+		// MatchEngineFactoryImpl() {
+		// @Override
+		// public IMatchEngine getMatchEngine() {
+		// return eventBMatchEngine;
+		// }
+		// };
+		IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl(
+				matcher, comparisonFactory);
 
-			IComparisonScope scope = new DefaultComparisonScope(oldVersion,
-					newVersion, null);
+		matchEngineFactory.setRanking(20);
+		IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
+		matchEngineRegistry.add(matchEngineFactory);
+		EMFCompare comparator = EMFCompare.builder()
+				.setMatchEngineFactoryRegistry(matchEngineRegistry).build();
 
-			Comparison comparison = comparator.compare(scope);
+		IComparisonScope scope = new DefaultComparisonScope(oldVersion,
+				newVersion, null);
 
-			List<Diff> differences = comparison.getDifferences();
+		Comparison comparison = comparator.compare(scope);
 
-			Registry registry = RegistryImpl.createStandaloneInstance();
-			BatchMerger bm = new BatchMerger(registry);
+		List<Diff> differences = comparison.getDifferences();
 
-			bm.copyAllRightToLeft(differences, null);
+		long time1 = System.currentTimeMillis();
 
-			System.out.println("LeFuck");
+		Registry registry = RegistryImpl.createStandaloneInstance();
+		BatchMerger bm = new BatchMerger(registry);
 
-			// final ModelMerge merge = new ModelMerge(oldVersion, newVersion);
-			long time1 = System.currentTimeMillis();
-			// merge.applyChanges(monitor);
-			long time2 = System.currentTimeMillis();
-			if (DEBUG) {
-				System.out.println("new ModelMerge: " + (time1 - time0));
-				System.out.println("merge.applyChanges: " + (time2 - time1));
-			}
-			if (3 == 2 * 5) { // FIXME temp fix for dead code
-				throw new InterruptedException();
-			}
-		} catch (final InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		bm.copyAllRightToLeft(differences, null);
+
+		long time2 = System.currentTimeMillis();
+		if (DEBUG) {
+			System.out.println("new ModelMerge: " + (time1 - time0));
+			System.out.println("merge.applyChanges: " + (time2 - time1));
 		}
 	}
 
@@ -258,7 +250,7 @@ public class PersistenceHelper {
 				final EventBParser parser = new EventBParser();
 				try {
 					Start start = parser.parse(text, false);
-					System.out.println(start);
+					// System.out.println(start);
 					PParseUnit pParseUnit = start.getPParseUnit();
 					String parsedName = null;
 					if (pParseUnit instanceof AMachineParseUnit) {
