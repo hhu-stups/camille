@@ -1,7 +1,7 @@
-/** 
- * (c) 2009 Lehrstuhl fuer Softwaretechnik und Programmiersprachen, 
+/**
+ * (c) 2009 Lehrstuhl fuer Softwaretechnik und Programmiersprachen,
  * Heinrich Heine Universitaet Duesseldorf
- * This software is licenced under EPL 1.0 (http://www.eclipse.org/org/documents/epl-v10.html) 
+ * This software is licenced under EPL 1.0 (http://www.eclipse.org/org/documents/epl-v10.html)
  * */
 
 package org.eventb.texttools;
@@ -199,6 +199,7 @@ public class PersistenceHelper {
 
 		bm.copyAllRightToLeft(differences, null);
 
+
 		long time2 = System.currentTimeMillis();
 		if (DEBUG) {
 			System.out.println("new ModelMerge: " + (time1 - time0));
@@ -239,7 +240,7 @@ public class PersistenceHelper {
 
 			/*
 			 * workaround for Bug #3305107
-			 * 
+			 *
 			 * When a machine- or contextfile is renamed the lastmodified date
 			 * does not change. Since isTextUptodate() compares timestamps only,
 			 * it returns true for renamed files.
@@ -341,7 +342,7 @@ public class PersistenceHelper {
 	/**
 	 * Extracts the timestamp of the latest saved text representation from the
 	 * EMF and returns it.
-	 * 
+	 *
 	 * @param resource
 	 * @return timestamp or <code>-1</code> if none is found
 	 */
@@ -374,7 +375,7 @@ public class PersistenceHelper {
 	 * Checks if the text representation saved in the EMF is up-to-date. The
 	 * timestamps in the EMF and of the underlying file are compared for this
 	 * decision.
-	 * 
+	 *
 	 * @param resource
 	 * @return <code>true</code> if there was no external change and the text
 	 *         representation is still up-to-date
