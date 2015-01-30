@@ -17,7 +17,9 @@ public class EventBDiffProcessor extends DiffBuilder {
 	public void referenceChange(Match match, EReference reference,
 			EObject value, DifferenceKind kind, DifferenceSource source) {
 		// before the EMF update, this code was found in EventBReferencesCheck
-		// TODO: reference.isContainment() ??
+		// TODO: reference.isContainment() = true lead to ignoring the diff
+		// before
+		// now this seams to cause trouble?
 		boolean ignore = false;
 		ignore = ignore || reference.isDerived();
 		ignore = ignore || reference.isTransient();
