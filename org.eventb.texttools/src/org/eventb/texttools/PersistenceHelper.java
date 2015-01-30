@@ -195,10 +195,12 @@ public class PersistenceHelper {
 		long time1 = System.currentTimeMillis();
 
 		Registry registry = RegistryImpl.createStandaloneInstance();
+		IMerger evbMerger = new EventBMerger();
+		evbMerger.setRanking(100);
+		registry.add(evbMerger);
 		BatchMerger bm = new BatchMerger(registry);
 
 		bm.copyAllRightToLeft(differences, null);
-
 
 		long time2 = System.currentTimeMillis();
 		if (DEBUG) {
