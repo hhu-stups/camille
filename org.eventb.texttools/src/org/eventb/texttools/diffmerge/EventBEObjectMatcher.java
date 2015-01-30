@@ -1,4 +1,4 @@
-package org.eventb.texttools.merge;
+package org.eventb.texttools.diffmerge;
 
 import java.util.Iterator;
 import java.util.List;

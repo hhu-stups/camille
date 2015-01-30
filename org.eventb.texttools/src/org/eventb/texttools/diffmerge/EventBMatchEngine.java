@@ -1,4 +1,4 @@
-package org.eventb.texttools.merge;
+package org.eventb.texttools.diffmerge;
 
 import org.eclipse.emf.compare.match.DefaultMatchEngine;
 import org.eclipse.emf.compare.match.IComparisonFactory;
