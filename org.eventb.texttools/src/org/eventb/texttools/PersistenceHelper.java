@@ -22,6 +22,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.Comparison;
 import org.eclipse.emf.compare.Diff;
 import org.eclipse.emf.compare.EMFCompare;
+import org.eclipse.emf.compare.diff.DefaultDiffEngine;
+import org.eclipse.emf.compare.diff.IDiffEngine;
 import org.eclipse.emf.compare.match.DefaultComparisonFactory;
 import org.eclipse.emf.compare.match.DefaultEqualityHelperFactory;
 import org.eclipse.emf.compare.match.IComparisonFactory;
@@ -30,6 +32,7 @@ import org.eclipse.emf.compare.match.eobject.IEObjectMatcher;
 import org.eclipse.emf.compare.match.impl.MatchEngineFactoryImpl;
 import org.eclipse.emf.compare.match.impl.MatchEngineFactoryRegistryImpl;
 import org.eclipse.emf.compare.merge.BatchMerger;
+import org.eclipse.emf.compare.merge.IMerger;
 import org.eclipse.emf.compare.merge.IMerger.Registry;
 import org.eclipse.emf.compare.merge.IMerger.RegistryImpl;
 import org.eclipse.emf.compare.scope.DefaultComparisonScope;
@@ -42,7 +45,9 @@ import org.eventb.emf.core.AttributeType;
 import org.eventb.emf.core.CoreFactory;
 import org.eventb.emf.core.EventBElement;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
-import org.eventb.texttools.merge.EventBEObjectMatcher;
+import org.eventb.texttools.diffmerge.EventBDiffProcessor;
+import org.eventb.texttools.diffmerge.EventBEObjectMatcher;
+import org.eventb.texttools.diffmerge.EventBMerger;
 import org.eventb.texttools.prettyprint.PrettyPrinter;
 
 import de.be4.eventb.core.parser.BException;
@@ -178,12 +183,16 @@ public class PersistenceHelper {
 		// };
 		IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl(
 				matcher, comparisonFactory);
-
 		matchEngineFactory.setRanking(20);
 		IMatchEngine.Factory.Registry matchEngineRegistry = new MatchEngineFactoryRegistryImpl();
 		matchEngineRegistry.add(matchEngineFactory);
+
+		IDiffEngine diffEngine = new DefaultDiffEngine(
+				new EventBDiffProcessor());
+
 		EMFCompare comparator = EMFCompare.builder()
-				.setMatchEngineFactoryRegistry(matchEngineRegistry).build();
+				.setMatchEngineFactoryRegistry(matchEngineRegistry)
+				.setDiffEngine(diffEngine).build();
 
 		IComparisonScope scope = new DefaultComparisonScope(oldVersion,
 				newVersion, null);
@@ -242,7 +251,7 @@ public class PersistenceHelper {
 
 			/*
 			 * workaround for Bug #3305107
-			 *
+			 * 
 			 * When a machine- or contextfile is renamed the lastmodified date
 			 * does not change. Since isTextUptodate() compares timestamps only,
 			 * it returns true for renamed files.
@@ -344,7 +353,7 @@ public class PersistenceHelper {
 	/**
 	 * Extracts the timestamp of the latest saved text representation from the
 	 * EMF and returns it.
-	 *
+	 * 
 	 * @param resource
 	 * @return timestamp or <code>-1</code> if none is found
 	 */
@@ -377,7 +386,7 @@ public class PersistenceHelper {
 	 * Checks if the text representation saved in the EMF is up-to-date. The
 	 * timestamps in the EMF and of the underlying file are compared for this
 	 * decision.
-	 *
+	 * 
 	 * @param resource
 	 * @return <code>true</code> if there was no external change and the text
 	 *         representation is still up-to-date
