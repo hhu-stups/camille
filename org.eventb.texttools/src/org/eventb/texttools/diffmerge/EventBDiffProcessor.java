@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eventb.emf.core.CorePackage;
 
 public class EventBDiffProcessor extends DiffBuilder {
@@ -15,13 +16,36 @@ public class EventBDiffProcessor extends DiffBuilder {
 	@Override
 	public void referenceChange(Match match, EReference reference,
 			EObject value, DifferenceKind kind, DifferenceSource source) {
-		super.referenceChange(match, reference, value, kind, source);
+		// before the EMF update, this code was found in EventBReferencesCheck
+		// TODO: reference.isContainment() ??
+		boolean ignore = false;
+		ignore = ignore || reference.isDerived();
+		ignore = ignore || reference.isTransient();
+		ignore = ignore || reference.isContainer();
+		ignore = ignore
+				|| reference.eContainer().equals(
+						EcorePackage.eINSTANCE.getEGenericType());
+		String name = reference.getName();
+		ignore = ignore || "refines".equals(name);
+		ignore = ignore || "sees".equals(name);
+		ignore = ignore || "extends".equals(name);
+		ignore = ignore || "annotations".equals(name);
+		ignore = ignore || "extensions".equals(name);
+		// ignore = ignore || "attributes".equals(name); //Cannot ignore generic
+		// attributes since camille timestamp is an attribute
+		ignore = ignore
+				|| reference.eContainer().equals(
+						CorePackage.eINSTANCE.getAnnotation());
+
+		if (!ignore) {
+			super.referenceChange(match, reference, value, kind, source);
+		}
 	}
 
 	@Override
 	public void attributeChange(Match match, EAttribute attribute,
 			Object value, DifferenceKind kind, DifferenceSource source) {
-		// before the EMF update this code was found in EventBAttributesCheck
+		// before the EMF update, this code was found in EventBAttributesCheck
 
 		boolean ignore = false;
 		EObject container = attribute.eContainer();
