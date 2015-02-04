@@ -11,6 +11,9 @@ import java.util.List;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBProject;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
@@ -24,6 +27,9 @@ import org.eventb.emf.core.machine.Machine;
 import org.eventb.emf.formulas.BFormula;
 import org.eventb.texttools.TextPositionUtil;
 import org.eventb.texttools.model.texttools.TextRange;
+import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 
 public class FormulaResolver {
 
@@ -31,19 +37,28 @@ public class FormulaResolver {
 		Expression, Predicate, Assignment
 	};
 
-	// FIXME: we need to use the formula factory that corresponds to the model /
-	// project
-	// in order to fix theories
 	private static FormulaFactory formulaFactory = FormulaFactory.getDefault();
 
 	public static List<FormulaParseException> resolveAllFormulas(
+			String projectName,
 			final EventBNamedCommentedComponentElement astRoot) {
+		// prepare to fetch the corresponding formula factory from the project
+		IRodinDB rodinDB = RodinCore.getRodinDB();
+		IRodinProject rodinProject = rodinDB.getRodinProject(projectName);
+		IEventBProject eventBProject = (IEventBProject) rodinProject
+				.getAdapter(IEventBProject.class);
+
 		// traverse tree using an iterator
 		final TreeIterator<EObject> iterator = EcoreUtil.getAllContents(
 				astRoot, false);
 		List<FormulaParseException> exceptions = null;
 
 		if (astRoot instanceof Machine) {
+			// fetch machine specific formula factory and replace default one
+			IMachineRoot machineRoot = eventBProject.getMachineRoot(astRoot
+					.doGetName());
+			formulaFactory = machineRoot.getFormulaFactory();
+
 			final MachineResolveSwitch switcher = new MachineResolveSwitch();
 			while (iterator.hasNext()) {
 				// visit node
@@ -56,6 +71,11 @@ public class FormulaResolver {
 			}
 			exceptions = switcher.getExceptions();
 		} else if (astRoot instanceof Context) {
+			// fetch machine specific formula factory and replace default one
+			IContextRoot contextRoot = eventBProject.getContextRoot(astRoot
+					.doGetName());
+			formulaFactory = contextRoot.getFormulaFactory();
+
 			final ContextResolveSwitch switcher = new ContextResolveSwitch();
 			while (iterator.hasNext()) {
 				// visit node

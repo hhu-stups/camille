@@ -30,11 +30,12 @@ public class FormulasResolver {
 			TextEditorPlugin.SYNTAXERROR_MARKER_ID);
 
 	public static void resolveFormulas(final Resource resource,
-			final EventBNamedCommentedComponentElement astRoot, final IDocument document,
-			final boolean markErrors) {
+			final EventBNamedCommentedComponentElement astRoot,
+			final IDocument document, final boolean markErrors) {
 
+		String projectName = resource.getURI().segment(1);
 		final List<FormulaParseException> exceptions = FormulaResolver
-				.resolveAllFormulas(astRoot);
+				.resolveAllFormulas(projectName, astRoot);
 
 		if (markErrors && exceptions.size() > 0) {
 			markerHelper.deleteMarkers(resource,
@@ -58,8 +59,8 @@ public class FormulasResolver {
 
 		for (final FormulaParseException ex : exceptions) {
 			final String inputFormula = ex.getFormula();
-			final TextRange range = TextPositionUtil.getInternalPosition(ex
-					.getEmfObject(), inputFormula);
+			final TextRange range = TextPositionUtil.getInternalPosition(
+					ex.getEmfObject(), inputFormula);
 			final int offset = range.getOffset();
 
 			final List<ASTProblem> problems = ex.getAstProblems();
