@@ -633,6 +633,32 @@ public class ResolveVisitor implements ISimpleVisitor {
 		handleSingleChild(predicate, predicate.getChild());
 	}
 
+	@Override
+	public void visitExtendedExpression(ExtendedExpression expression) {
+		Formula[] children = new Formula[expression.getChildCount()];
+		for (int i = 0; i < expression.getChildCount(); i++) {
+			children[i] = expression.getChild(i);
+		}
+		handleMultiChildren(expression, children);
+		System.out
+				.println("##################################### mean visitor: visitExtendedExpression");
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void visitExtendedPredicate(ExtendedPredicate predicate) {
+		Formula[] children = new Formula[predicate.getChildCount()];
+		for (int i = 0; i < predicate.getChildCount(); i++) {
+			children[i] = predicate.getChild(i);
+		}
+		handleMultiChildren(predicate, children);
+		System.out
+				.println("##################################### mean visitor: visitExtendedPredicate");
+		// TODO Auto-generated method stub
+
+	}
+
 	private void handleSingleChild(final Formula rodinNode, final Formula child) {
 		// visit child
 		child.accept(this);
@@ -724,37 +750,28 @@ public class ResolveVisitor implements ISimpleVisitor {
 	}
 
 	private EClass getMatchingEClass(final Formula formula) {
-		final EClass eClass = idToEClass.get(formula.getTag());
+		int tag = formula.getTag();
+		EClass eClass = null;
+		if (tag < Formula.FIRST_EXTENSION_TAG) {
+			eClass = idToEClass.get(formula.getTag());
 
-		if (eClass == null) {
-			final String message = "Unknown Rodin formula type: ["
-					+ formula.getTag() + "] " + formula.toString();
+			if (eClass == null) {
+				final String message = "Unknown Rodin formula type: ["
+						+ formula.getTag() + "] " + formula.toString();
 
-			TextToolsPlugin
-					.getDefault()
-					.getLog()
-					.log(new Status(IStatus.ERROR, TextToolsPlugin.PLUGIN_ID,
-							message));
+				TextToolsPlugin
+						.getDefault()
+						.getLog()
+						.log(new Status(IStatus.ERROR,
+								TextToolsPlugin.PLUGIN_ID, message));
 
-			throw new UnsupportedOperationException(message);
+				throw new UnsupportedOperationException(message);
+			}
+		} else {
+			throw new UnsupportedOperationException(
+					"Extended expressions / predicates are currently not supported in Camille");
 		}
 
 		return eClass;
-	}
-
-	@Override
-	public void visitExtendedExpression(ExtendedExpression expression) {
-		System.out
-				.println("##################################### mean visitor: visitExtendedExpression");
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void visitExtendedPredicate(ExtendedPredicate predicate) {
-		System.out
-				.println("##################################### mean visitor: visitExtendedPredicate");
-		// TODO Auto-generated method stub
-
 	}
 }
