@@ -640,10 +640,6 @@ public class ResolveVisitor implements ISimpleVisitor {
 			children[i] = expression.getChild(i);
 		}
 		handleMultiChildren(expression, children);
-		System.out
-				.println("##################################### mean visitor: visitExtendedExpression");
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -653,10 +649,6 @@ public class ResolveVisitor implements ISimpleVisitor {
 			children[i] = predicate.getChild(i);
 		}
 		handleMultiChildren(predicate, children);
-		System.out
-				.println("##################################### mean visitor: visitExtendedPredicate");
-		// TODO Auto-generated method stub
-
 	}
 
 	private void handleSingleChild(final Formula rodinNode, final Formula child) {
