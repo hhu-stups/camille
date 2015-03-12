@@ -760,8 +760,11 @@ public class ResolveVisitor implements ISimpleVisitor {
 				throw new UnsupportedOperationException(message);
 			}
 		} else {
-			throw new UnsupportedOperationException(
-					"Extended expressions / predicates are currently not supported in Camille");
+			if (formula instanceof Expression) {
+				eClass = FormulasPackage.eINSTANCE.getExtendedExpression();
+			} else {
+				eClass = FormulasPackage.eINSTANCE.getExtendedPredicate();
+			}
 		}
 
 		return eClass;

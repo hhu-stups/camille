@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="prob_target" sequenceNumber="72">
+<?pde version="3.8"?><target name="prob_target" sequenceNumber="73">
 <locations>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.rodinp.platform.product" version="3.1.0.201412171041-e1a03f3"/>
 <repository location="http://rodin-b-sharp.sourceforge.net/core-updates/"/>
 </location>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.1.v20140901-1055"/>
-<unit id="org.eclipse.emf.compare.source.feature.group" version="3.0.1.201408191310"/>
-<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.0.1.201408191310"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.2.v20150123-0452"/>
+<unit id="org.eclipse.emf.compare.source.feature.group" version="3.0.2.201501201328"/>
+<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.0.2.201501201328"/>
 <repository location="http://download.eclipse.org/releases/luna"/>
 </location>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
