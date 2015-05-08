@@ -28,9 +28,9 @@ public class EventBDiffProcessor extends DiffBuilder {
 				|| reference.eContainer().equals(
 						EcorePackage.eINSTANCE.getEGenericType());
 		String name = reference.getName();
-		ignore = ignore || "refines".equals(name);
-		ignore = ignore || "sees".equals(name);
-		ignore = ignore || "extends".equals(name);
+		// ignore = ignore || "refines".equals(name);
+		// ignore = ignore || "sees".equals(name);
+		// ignore = ignore || "extends".equals(name);
 		ignore = ignore || "annotations".equals(name);
 		ignore = ignore || "extensions".equals(name);
 		// ignore = ignore || "attributes".equals(name); //Cannot ignore generic
