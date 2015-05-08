@@ -1,7 +1,9 @@
 language: java
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
-after_success: "find org.eventb.texteditor.repository/target/repository/ -type f -exec curl -u $FTP_USER:$FTP_PASS --ftp-create-dirs -T {} ftp://cobra.cs.uni-duesseldorf.de/upload/{} \;"
+after_success: find org.eventb.texteditor.repository/target/repository/ -type f -exec
+  curl -u $FTP_USER:$FTP_PASS --ftp-create-dirs -T {} ftp://cobra.cs.uni-duesseldorf.de/upload/{}
+  \;
 env:
   global:
-  - secure: HRQ+jlzo01lF6emdgkqT3CumaHMsndSSNVvmb9kX9nDr7R3b0e2nayJziufUeYI8zqCh8bLgHqMr8I/eXMDdnyKXfXWpU5fifdY9QROYdWBZeCG3ncPwxdvbIvIXoioleGaQigKT1Xf7Mp0ge9vXC9dmVacob/9/0aoYhI7dXOE=
-  - secure: xSxZonMKI8+uiOUTua4RC23S45m3dIDe8v+wsCcAGF3WFrL8fhizzqRJbIWTkSQu2On1KDprtew/fnsD8XQnS7MT/5Hgch/xU9wa/5JXThe4WnYf57XHLHwZ7UtSuikdk/ntKvNiPZG/kgHolnzVsYKsIy5jy7yELzR4BkoedOQ=
+  - secure: XtyaZ20QiSkVyk9ryL/9Fbh8b4KHZ7hecZXSsf7O4rs8Aq0hT9xCX69wORnDtsqnXSvuUY0IqRekLmNdNd9BPPXctqvySUXonPNG7U0AAnunLbWyWCg5/vIzjfTwEgbCv3JKRcYlb07MQjZM9TvYduDQ9iFEQlxgRbsAc1pd3I8=
+  - secure: mak0TcdD/ffFfZqWIP/R9lz/JvSDU9c8HBluqlUtsS40OadkCmarGAgSPI0LsWSDig7SFA3qd/KJyw54oTmfT9craHVIluuauFPPNxKNx3/c/+Zj2ngG7ch1A2hmEnWe6I9AdkGxFzbzTOnGt5JYXmKfWwzvQDNiCED9Ez1Xbew=
