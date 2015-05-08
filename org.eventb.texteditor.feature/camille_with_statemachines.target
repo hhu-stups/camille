@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?><target name="prob_target" sequenceNumber="75">
+<locations>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.rodinp.platform.product" version="3.1.0.201412171041-e1a03f3"/>
+<repository location="http://rodin-b-sharp.sourceforge.net/core-updates/"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.2.v20150123-0452"/>
+<unit id="org.eclipse.emf.compare.source.feature.group" version="3.0.2.201501201328"/>
+<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.0.2.201501201328"/>
+<repository location="http://download.eclipse.org/releases/luna"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eventb.emf.feature.feature.group" version="5.3.0"/>
+<unit id="ac.soton.eventb.statemachines.feature.feature.group" version="3.2.0"/>
+<unit id="ac.soton.eventb.roseEditor.feature.feature.group" version="1.6.0"/>
+<unit id="org.eventb.theory.feature.feature.group" version="3.0.0"/>
+<unit id="ac.soton.eventb.emf.core.extension.feature.feature.group" version="5.1.0"/>
+<repository location="http://rodin-b-sharp.sourceforge.net/updates/"/>
+</location>
+</locations>
+</target>
