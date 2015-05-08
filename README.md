@@ -1,6 +1,8 @@
 # Camille
 The Camille Editor for Rodin.
 
+[![Build Status](https://travis-ci.org/hhu-stups/camille.svg)](https://travis-ci.org/hhu-stups/camille)
+
 
 ## Building Camille
 Maven 3 is required to build the project: 
