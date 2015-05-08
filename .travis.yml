@@ -1,6 +1,6 @@
 language: java
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
-after_success: find org.eventb.texteditor.repository/target/repository/ -type f -exec curl -u $FTP_USER:$FTP_PASS --ftp-create-dirs -T {} ftp://cobra.cs.uni-duesseldorf.de/upload/{} \;
+after_success: "find org.eventb.texteditor.repository/target/repository/ -type f -exec curl -u $FTP_USER:$FTP_PASS --ftp-create-dirs -T {} ftp://cobra.cs.uni-duesseldorf.de/upload/{} \;"
 env:
   global:
   - secure: HRQ+jlzo01lF6emdgkqT3CumaHMsndSSNVvmb9kX9nDr7R3b0e2nayJziufUeYI8zqCh8bLgHqMr8I/eXMDdnyKXfXWpU5fifdY9QROYdWBZeCG3ncPwxdvbIvIXoioleGaQigKT1Xf7Mp0ge9vXC9dmVacob/9/0aoYhI7dXOE=
