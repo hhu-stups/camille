@@ -1,2 +1,7 @@
 language: java
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
+after_success: curl --ftp-create-dirs -T org.eventb.texteditor.repository/target/repository/* -u $FTP_USER:$FTP_PASS ftp://cobra.cs.uni-duesseldorf.de/
+env:
+  global:
+  - secure: HRQ+jlzo01lF6emdgkqT3CumaHMsndSSNVvmb9kX9nDr7R3b0e2nayJziufUeYI8zqCh8bLgHqMr8I/eXMDdnyKXfXWpU5fifdY9QROYdWBZeCG3ncPwxdvbIvIXoioleGaQigKT1Xf7Mp0ge9vXC9dmVacob/9/0aoYhI7dXOE=
+  - secure: xSxZonMKI8+uiOUTua4RC23S45m3dIDe8v+wsCcAGF3WFrL8fhizzqRJbIWTkSQu2On1KDprtew/fnsD8XQnS7MT/5Hgch/xU9wa/5JXThe4WnYf57XHLHwZ7UtSuikdk/ntKvNiPZG/kgHolnzVsYKsIy5jy7yELzR4BkoedOQ=
