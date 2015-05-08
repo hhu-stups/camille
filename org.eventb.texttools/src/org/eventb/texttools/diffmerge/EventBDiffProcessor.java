@@ -21,6 +21,7 @@ public class EventBDiffProcessor extends DiffBuilder {
 		// before
 		// now this seams to cause trouble?
 		boolean ignore = false;
+		ignore = ignore || reference.isContainment();
 		ignore = ignore || reference.isDerived();
 		ignore = ignore || reference.isTransient();
 		ignore = ignore || reference.isContainer();
