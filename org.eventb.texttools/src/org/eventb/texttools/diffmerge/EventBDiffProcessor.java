@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eventb.emf.core.CorePackage;
+import org.eventb.emf.core.impl.StringToAttributeMapEntryImpl;
 
 public class EventBDiffProcessor extends DiffBuilder {
 
@@ -17,11 +18,8 @@ public class EventBDiffProcessor extends DiffBuilder {
 	public void referenceChange(Match match, EReference reference,
 			EObject value, DifferenceKind kind, DifferenceSource source) {
 		// before the EMF update, this code was found in EventBReferencesCheck
-		// TODO: reference.isContainment() = true lead to ignoring the diff
-		// before
-		// now this seams to cause trouble?
 		boolean ignore = false;
-		ignore = ignore || reference.isContainment();
+		// ignore = ignore || reference.isContainment();
 		ignore = ignore || reference.isDerived();
 		ignore = ignore || reference.isTransient();
 		ignore = ignore || reference.isContainer();
@@ -34,11 +32,25 @@ public class EventBDiffProcessor extends DiffBuilder {
 		// ignore = ignore || "extends".equals(name);
 		ignore = ignore || "annotations".equals(name);
 		ignore = ignore || "extensions".equals(name);
-		// ignore = ignore || "attributes".equals(name); //Cannot ignore generic
+		ignore = ignore || "nodes".equals(name);
+		// ignore = ignore || "attributes".equals(name); // Cannot ignore
+		// generic
 		// attributes since camille timestamp is an attribute
 		ignore = ignore
 				|| reference.eContainer().equals(
 						CorePackage.eINSTANCE.getAnnotation());
+
+		// ignore all containments except the org.eventb.texttools attributes
+		if ("attributes".equals(name)) {
+			if (value instanceof StringToAttributeMapEntryImpl) {
+				if (!((StringToAttributeMapEntryImpl) value).getKey()
+						.startsWith("org.eventb.texttools")) {
+					ignore = true;
+				}
+			} else {
+				ignore = true;
+			}
+		}
 
 		if (!ignore) {
 			super.referenceChange(match, reference, value, kind, source);
