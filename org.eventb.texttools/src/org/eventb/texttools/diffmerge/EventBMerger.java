@@ -6,7 +6,6 @@ import org.eclipse.emf.compare.merge.AbstractMerger;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eventb.emf.core.context.Context;
-import org.eventb.emf.core.impl.StringToAttributeMapEntryImpl;
 import org.eventb.emf.core.machine.Event;
 import org.eventb.emf.core.machine.Machine;
 
@@ -22,15 +21,6 @@ public class EventBMerger extends AbstractMerger {
 					|| reference.getName().equals("sees")) {
 				return true;
 			}
-			if (reference.getName().equals("attributes")) {
-				if (rtarget.getValue() instanceof StringToAttributeMapEntryImpl) {
-					StringToAttributeMapEntryImpl value = (StringToAttributeMapEntryImpl) rtarget
-							.getValue();
-					if (!value.getKey().startsWith("org.eventb.texttools")) {
-						return true;
-					}
-				}
-			}
 		}
 		return false; // currently disabled
 	}
@@ -45,21 +35,6 @@ public class EventBMerger extends AbstractMerger {
 	protected void reject(final Diff diff, boolean rightToLeft) {
 		// do we always merge right to left in Camille?
 		assert (rightToLeft);
-
-		if (diff instanceof ReferenceChange) {
-			ReferenceChange rtarget = (ReferenceChange) diff;
-			EReference reference = rtarget.getReference();
-
-			if (reference.getName().equals("attributes")
-					&& rtarget.getValue() instanceof StringToAttributeMapEntryImpl) {
-				StringToAttributeMapEntryImpl value = (StringToAttributeMapEntryImpl) rtarget
-						.getValue();
-				if (!value.getKey().startsWith("org.eventb.texttools")) {
-					diff.discard();
-					return;
-				}
-			}
-		}
 
 		EObject left = diff.getMatch().getLeft();
 		EObject right = diff.getMatch().getRight();
