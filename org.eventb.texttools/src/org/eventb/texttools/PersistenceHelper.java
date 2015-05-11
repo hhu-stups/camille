@@ -355,17 +355,18 @@ public class PersistenceHelper {
 	 * EMF and returns it.
 	 * 
 	 * @param resource
-	 * @return timestamp or <code>System.currentTimeMillis();</code> if none is found
+	 * @return timestamp or <code>System.currentTimeMillis();</code> if none is
+	 *         found
 	 */
 	private static long getTextTimestamp(final Resource resource) {
 		final EMap<String, Attribute> attributes = getAttributesMap(resource);
 		if (attributes != null) {
 			final Attribute attr = attributes
 					.get(TextToolsPlugin.TYPE_LASTMODIFIED.getId());
-			return attr != null ? (Long) attr.getValue() : System.currentTimeMillis();
+			return attr != null ? (Long) attr.getValue() : -1;
 		}
 
-		return System.currentTimeMillis();
+		return -1;
 	}
 
 	private static EMap<String, Attribute> getAttributesMap(
