@@ -33,6 +33,7 @@ public class EventBDiffProcessor extends DiffBuilder {
 		ignore = ignore || "annotations".equals(name);
 		ignore = ignore || "extensions".equals(name);
 		ignore = ignore || "nodes".equals(name);
+
 		// ignore = ignore || "attributes".equals(name); // Cannot ignore
 		// generic
 		// attributes since camille timestamp is an attribute
@@ -97,6 +98,7 @@ public class EventBDiffProcessor extends DiffBuilder {
 	@Override
 	public void resourceAttachmentChange(Match match, String uri,
 			DifferenceKind kind, DifferenceSource source) {
+
 		super.resourceAttachmentChange(match, uri, kind, source);
 	}
 

@@ -11,18 +11,18 @@
 
   <artifactId>org.eventb.texteditor.parsers</artifactId>
   <packaging>eclipse-plugin</packaging>
-  
+
   <build>
     <plugins>
      <plugin>
-      <groupId>org.fortasoft</groupId>
-      <artifactId>gradle-maven-plugin</artifactId>
-      <version>1.0.5</version>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>exec-maven-plugin</artifactId>
+      <version>1.4.0</version>
         <configuration>
-            <tasks>
-            <!-- this would effectively call "gradle doSomething" -->
-            <task>collectDependencies</task>
-        </tasks>
+            <executable>gradle</executable>
+            <arguments>
+                <argument>collectDependencies</argument>
+            </arguments>
        </configuration>
         <executions>
           <execution>
@@ -30,7 +30,7 @@
             <phase>validate</phase>
             <goals>
            <!-- goal must be "invoke" -->
-               <goal>invoke</goal>
+               <goal>exec</goal>
             </goals>
           </execution>
         </executions>
@@ -38,4 +38,4 @@
   </plugins>
 </build>
 
-</project> 
+</project>
