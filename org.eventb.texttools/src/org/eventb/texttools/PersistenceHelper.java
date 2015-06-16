@@ -7,6 +7,7 @@
 package org.eventb.texttools;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.Comparison;
 import org.eclipse.emf.compare.Diff;
+import org.eclipse.emf.compare.DifferenceKind;
 import org.eclipse.emf.compare.EMFCompare;
 import org.eclipse.emf.compare.diff.DefaultDiffEngine;
 import org.eclipse.emf.compare.diff.IDiffEngine;
@@ -209,6 +211,8 @@ public class PersistenceHelper {
 		registry.add(evbMerger);
 		BatchMerger bm = new BatchMerger(registry);
 
+		differences = filter(differences);
+
 		bm.copyAllRightToLeft(differences, null);
 
 		long time2 = System.currentTimeMillis();
@@ -216,6 +220,22 @@ public class PersistenceHelper {
 			System.out.println("new ModelMerge: " + (time1 - time0));
 			System.out.println("merge.applyChanges: " + (time2 - time1));
 		}
+	}
+
+	// for some reasons, there are still problematic diffs:
+	// usually, they can be identified as follows:
+	// 1. right = null, i.e. Camille does not hold this element
+	// 2. ADD, i.e. the "nothing" coming from Camille is added to the EMF model
+	// => we drop the diff before we screw up the database
+	// Obvoiusly it would be better not to generate the diff at all....
+	private static List<Diff> filter(List<Diff> differences) {
+		List<Diff> newList = new ArrayList<Diff>();
+		for (Diff d : differences) {
+			if (!(d.getKind() == DifferenceKind.ADD && d.getMatch().getRight() == null)) {
+				newList.add(d);
+			}
+		}
+		return newList;
 	}
 
 	public static void mergeRootElement(final Resource resource,
