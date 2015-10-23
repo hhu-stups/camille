@@ -1,18 +1,13 @@
 language: java
-
-
 before_install:
-  - rvm install 2.0.0
-  - gem install travis-custom-deploy
-
+- rvm install 2.0.0
+- gem install travis-custom-deploy
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
 after_success:
-  - find org.eventb.texteditor.repository/target/repository/ -type f -exec curl -u $FTP_USER:$FTP_PASS --ftp-create-dirs -T {} ftp://cobra.cs.uni-duesseldorf.de/upload/{} \;
-  - travis-custom-deploy sftp target/repository/
-
+- travis-custom-deploy sftp target/repository/
 env:
   global:
-  - secure: XtyaZ20QiSkVyk9ryL/9Fbh8b4KHZ7hecZXSsf7O4rs8Aq0hT9xCX69wORnDtsqnXSvuUY0IqRekLmNdNd9BPPXctqvySUXonPNG7U0AAnunLbWyWCg5/vIzjfTwEgbCv3JKRcYlb07MQjZM9TvYduDQ9iFEQlxgRbsAc1pd3I8=
-  - secure: mak0TcdD/ffFfZqWIP/R9lz/JvSDU9c8HBluqlUtsS40OadkCmarGAgSPI0LsWSDig7SFA3qd/KJyw54oTmfT9craHVIluuauFPPNxKNx3/c/+Zj2ngG7ch1A2hmEnWe6I9AdkGxFzbzTOnGt5JYXmKfWwzvQDNiCED9Ez1Xbew=
-  - secure: Y9nWrvDeH0xq5F0QvZlP++ajshJtJISy22jzT0MkdnRe/PYIHcsSrD1RfZEfQ8h90FG5iDdKYEtcQw3/Nl7yRpJYwIvmNjTsLCjhLQ6iV7lHQit5SEWb+g9ihcUZkycBcTufcv9qFY2d6weaONXYAQYlG6VM4EC2bJ9vJJ4A6f0=
-  - secure: ga1WTC/ReMGbVG64J8NEU0K02iD9z9wC3fJpeabOf3owrwEctUlQeynCvvhWzNxqcsDr1zKwQ7PpMf9NOKwDqsvnUcELYv2vZq7AD+lrKtM1R04//NP7VTpQr5fhGdeiwyWhrYo2eS3WWqf1bABQu2ofLPgP3ZWqHD6qS+wuqxk=
+  - secure: oNRTmD1VNkdvJ6Fx4WKFLRQD4EmhCpJehLxsPqk6OkcqoEI9a0yo4dUNVCvx0MSeFp+RYKpz+Jo4fUqhcjQyb9MkjTOzec4YKXmPGQIPeu0TyN8NJ8aQMSPt8E2FiIC9dsdh5v1J3fLtrM/tIk2pyxSB5F25sBYQfnpmmZGZOtM=
+  - secure: wdIm+cvMWFTyJhrbtTVCzE6SLTDuDECooPLDf+6YCVrDNBjWSh6fO9ATXZ+xndpkBCDF1hJmJz9y2CCLExX/5c7fA7oRbgZi0Kt5/LEiBwnPsHfPRdCwKFE3zsNsifKEDI/WHcMs/lFJGzQkzVn3YgE+OhVqumlfl8s6JvFo0/0=
+  - secure: i0bcurnf2CSzYVqtZsk/BrOF4zXc4kha7ztr6Kt3A83c4fpNNYFxzoinBWIGn37eLMcQpgmnnWaga94Cr2+o+zdG3PFS8GX8Iehix5IQp7cyI43eX+Zy4avtnyO97Ufgz1aK9yZlEaBGfmIQn/c4CcsTA/6jrIriBBFNRqA/9pc=
+  - secure: m7mVkna4jzrp6yhpSGjKT8aQlNtA1stp7pUrngRfuoUR65ze1i3sarDEGDHDp0BmOqXwHKb0jZIWxvaUB1rjm2NLQqsoWN/3h7/Nek8AxXiSnNT1PEnFZgJIAeSWRZu5VpjmH5OUL7WulznD2rllromFq3J0vnWTPllE5+IpmdQ=
