@@ -1,9 +1,11 @@
 language: java
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
-after_success: find org.eventb.texteditor.repository/target/repository/ -type f -exec
-  curl -u $FTP_USER:$FTP_PASS --ftp-create-dirs -T {} ftp://cobra.cs.uni-duesseldorf.de/upload/{}
-  \;
+after_success:
+  - find org.eventb.texteditor.repository/target/repository/ -type f -exec curl -u $FTP_USER:$FTP_PASS --ftp-create-dirs -T {} ftp://cobra.cs.uni-duesseldorf.de/upload/{} \;
+  - find org.eventb.texteditor.repository/target/repository/ -type f -exec curl -u $SFTP_USER:$SFTP_PASSWORD --ftp-create-dirs -T {} sftp://www3.hhu.de/stupshome/stups/test/camille/{} \;
 env:
   global:
   - secure: XtyaZ20QiSkVyk9ryL/9Fbh8b4KHZ7hecZXSsf7O4rs8Aq0hT9xCX69wORnDtsqnXSvuUY0IqRekLmNdNd9BPPXctqvySUXonPNG7U0AAnunLbWyWCg5/vIzjfTwEgbCv3JKRcYlb07MQjZM9TvYduDQ9iFEQlxgRbsAc1pd3I8=
   - secure: mak0TcdD/ffFfZqWIP/R9lz/JvSDU9c8HBluqlUtsS40OadkCmarGAgSPI0LsWSDig7SFA3qd/KJyw54oTmfT9craHVIluuauFPPNxKNx3/c/+Zj2ngG7ch1A2hmEnWe6I9AdkGxFzbzTOnGt5JYXmKfWwzvQDNiCED9Ez1Xbew=
+  - secure: Y9nWrvDeH0xq5F0QvZlP++ajshJtJISy22jzT0MkdnRe/PYIHcsSrD1RfZEfQ8h90FG5iDdKYEtcQw3/Nl7yRpJYwIvmNjTsLCjhLQ6iV7lHQit5SEWb+g9ihcUZkycBcTufcv9qFY2d6weaONXYAQYlG6VM4EC2bJ9vJJ4A6f0=
+  - secure: ga1WTC/ReMGbVG64J8NEU0K02iD9z9wC3fJpeabOf3owrwEctUlQeynCvvhWzNxqcsDr1zKwQ7PpMf9NOKwDqsvnUcELYv2vZq7AD+lrKtM1R04//NP7VTpQr5fhGdeiwyWhrYo2eS3WWqf1bABQu2ofLPgP3ZWqHD6qS+wuqxk=
