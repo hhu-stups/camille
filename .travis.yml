@@ -8,7 +8,8 @@ before_install:
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
 after_success:
   - find org.eventb.texteditor.repository/target/repository/ -type f -exec curl -u $FTP_USER:$FTP_PASS --ftp-create-dirs -T {} ftp://cobra.cs.uni-duesseldorf.de/upload/{} \;
-  - find org.eventb.texteditor.repository/target/repository/ -type f -exec curl -u $SFTP_USER:$SFTP_PASSWORD --ftp-create-dirs -T {} sftp:///{} \;
+  - bundle exec travis-custom-deploy sftp target/repository/
+
 env:
   global:
   - secure: XtyaZ20QiSkVyk9ryL/9Fbh8b4KHZ7hecZXSsf7O4rs8Aq0hT9xCX69wORnDtsqnXSvuUY0IqRekLmNdNd9BPPXctqvySUXonPNG7U0AAnunLbWyWCg5/vIzjfTwEgbCv3JKRcYlb07MQjZM9TvYduDQ9iFEQlxgRbsAc1pd3I8=
