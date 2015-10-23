@@ -3,7 +3,7 @@ language: java
 
 before_install:
   - rvm install 2.0.0
-  - gem install travis-custom-deploy
+  - bundle install travis-custom-deploy
 
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
 after_success:
