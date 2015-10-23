@@ -4,7 +4,7 @@ before_install:
 - gem install travis-custom-deploy
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
 after_success:
-- travis-custom-deploy sftp target/repository/
+- travis-custom-deploy sftp org.eventb.texteditor.repository/target/repository/
 env:
   global:
   - secure: YCES4StrYD8U1i1868rgd16vM4ken/RAIMC/1/QJ0j7TdC6xATDo/uYTGiKMMo+hzZUcoLCVFAVzkZSriZbxngEkia1U+mOPKOEm+sPEhynea6I+TgkinYBakDYNlC1lAah48aBOp+L74J352LZHKH+H0mncRfJwC/e5zba59HU=
