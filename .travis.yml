@@ -7,7 +7,7 @@ after_success:
 - travis-custom-deploy sftp org.eventb.texteditor.repository/target/repository/
 env:
   global:
-  - secure: YCES4StrYD8U1i1868rgd16vM4ken/RAIMC/1/QJ0j7TdC6xATDo/uYTGiKMMo+hzZUcoLCVFAVzkZSriZbxngEkia1U+mOPKOEm+sPEhynea6I+TgkinYBakDYNlC1lAah48aBOp+L74J352LZHKH+H0mncRfJwC/e5zba59HU=
-  - secure: Ch0wjR1Nr4sMW3vl1QV4MxMBp+ArVXR4VX9jxa15z0SbiuSosDpihJRP3j/MibnCMLb+Gn+HEloDxuGicqGD8xgnI1XUkVIykQsvEYp21YMBp1WU5tY/N4xM85RBJ+DudoQb+vKQ2OwpSmUhlelUIE2XmW0WtPdN57G/p87fNXo=
-  - secure: RRDTEE1zALhonAvzYY7cTzWOO3Q8Isp9eZhY45dH89LxJu1AJx6U8R5me4LfVgEhLPF5/1G9M8ZVoog+xVNUrU7pOq3W+NH1YDz2AugOaN4pdNMNHwGkn0uzsZU9V1Obh6wf/fCsIgddsW/34Rw1Xekd0dpFOvvCE8oNRxE3fiY=
-  - secure: CYdrPFaJQmmfa8Ue53iWNgQGCjKm7riFMZkJSCJYlXlrs+z388HcqouK0xkdapF/Tvz16V5zWl8cEt51+FCXuuLWRhqCTIvrUzvEf7H+XJusQ6W69yktzZ19fFAQof1++5ImRL4F2vIa8ZfIwcquAxPl0DofPduNj2UIPMqFNv0=
+  - secure: J19wt8RgIJ4rS+g+zx1VD67yqliO4zs2CO1TAHGBgRcwie6uUfqqLU/4Qmpedie8CwQQ/cktHx4C5gL9MbNwiDUVZ2PbdwnyEQ5rdTJpIfxgsDkL+c5mL1rUq/SrnmRTF2PRpt4Ktp5cgZtwH5UH5RUCO/JuVWAzD9TUWbqw0ec=
+  - secure: wIToXAHi6kQpv3a0JfOI35Hd3/16kK/OPdLPizObqFDG+coyZW4URnXm324qGth/iL/JZMt2ffgK7drAumMUWkSEFyvOPphaw7E39g67KX6ZcgMy2Ei9FpoF2kK39KVxSA00rzGlkjoSzLmyiVnQqX2frAEvEk9m/aOx2HlyxDM=
+  - secure: dBIRkrKPtqfu26Nxl7hG+pY9HF96cbifkt/JnrkXvdP/bauQ5iSFF+Nl2TCfDrSGyGyq1DoIFv1EBT3K1KR+3YAFDSPp5sxhVRc3amhAaqngf9Oh9PGsuIvi9WtalNGKEEj6ykmuDI9DAaqsXCP4SY3PjHfw6YksQ0Hz9bdXOFs=
+  - secure: bvQ4nd/bCARliaU+bDOZlsRykcutQcgUaq+Ns4oFkYlkyJ0XsMQPhbMWm/rQy2aOiJLIo9R+4e3+hn1vxmx5hDlzs4BzU8cK3x7hxBxjPx0HeAhWj2aQdyEsNAiDqhd/q5n25Y/lrKRGt1K0HIoaG1rZnOEekVSN0sWLlepexXo=
