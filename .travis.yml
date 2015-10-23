@@ -3,12 +3,12 @@ language: java
 
 before_install:
   - rvm install 2.0.0
-  - bundle install travis-custom-deploy
+  - gem install travis-custom-deploy
 
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
 after_success:
   - find org.eventb.texteditor.repository/target/repository/ -type f -exec curl -u $FTP_USER:$FTP_PASS --ftp-create-dirs -T {} ftp://cobra.cs.uni-duesseldorf.de/upload/{} \;
-  - bundle exec travis-custom-deploy sftp target/repository/
+  - travis-custom-deploy sftp target/repository/
 
 env:
   global:
