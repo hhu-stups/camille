@@ -1,5 +1,8 @@
 language: java
 
+rvm:
+  - 2.0.0
+  
 before_install: gem install travis-custom-deploy
 
 script: mvn -f org.eventb.texteditor.parent/pom.xml clean verify
