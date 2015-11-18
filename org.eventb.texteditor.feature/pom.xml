@@ -6,11 +6,11 @@
 		<parent>
 			<groupId>org.eventb.texteditor</groupId>
 			<artifactId>org.eventb.texteditor.parent</artifactId>
-			<version>3.1.2.qualifier</version>
+			<version>3.2.0.qualifier</version>
 			<relativePath>../org.eventb.texteditor.parent/pom.xml</relativePath>
 		</parent>
 		<groupId>org.eventb.texteditor</groupId>
 		<artifactId>org.eventb.texteditor.feature</artifactId>
-		<version>3.1.2.qualifier</version>
+		<version>3.2.0.qualifier</version>
 		<packaging>eclipse-feature</packaging>
 	</project>
