@@ -11,3 +11,6 @@ env:
   - secure: wIToXAHi6kQpv3a0JfOI35Hd3/16kK/OPdLPizObqFDG+coyZW4URnXm324qGth/iL/JZMt2ffgK7drAumMUWkSEFyvOPphaw7E39g67KX6ZcgMy2Ei9FpoF2kK39KVxSA00rzGlkjoSzLmyiVnQqX2frAEvEk9m/aOx2HlyxDM=
   - secure: dBIRkrKPtqfu26Nxl7hG+pY9HF96cbifkt/JnrkXvdP/bauQ5iSFF+Nl2TCfDrSGyGyq1DoIFv1EBT3K1KR+3YAFDSPp5sxhVRc3amhAaqngf9Oh9PGsuIvi9WtalNGKEEj6ykmuDI9DAaqsXCP4SY3PjHfw6YksQ0Hz9bdXOFs=
   - secure: bvQ4nd/bCARliaU+bDOZlsRykcutQcgUaq+Ns4oFkYlkyJ0XsMQPhbMWm/rQy2aOiJLIo9R+4e3+hn1vxmx5hDlzs4BzU8cK3x7hxBxjPx0HeAhWj2aQdyEsNAiDqhd/q5n25Y/lrKRGt1K0HIoaG1rZnOEekVSN0sWLlepexXo=
+notifications:
+  slack:
+    secure: hjNOQo2XuvLc57VjYyYZ+V7GipbnT/gYqPZMC/nQLEOjp5eUWq/J8L8kgmMwy0lWZDUGBc2umIKox1PoovWCUrvYuElkO7Xh7qns2KCVbsxPo9Wc7lmu9idalPrGqry7sLsVGtclARYNEu18vdAb362Gv4+vhc6ZOXYztUfXGWE=
