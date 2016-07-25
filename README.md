@@ -12,7 +12,7 @@ Maven 3 is required to build the project:
   
 This will produce an updatesite in org.eventb.texteditor.repository/target
 
-We autmatically produce nightly builds that can be installed using the update site located at  http://nightly.cobra.cs.uni-duesseldorf.de/camille/
+We autmatically produce nightly builds that can be installed using the update site located at  https://www3.hhu.de/stups/rodin/camille/nightly/
 
 ## Contributing/Bugs
 Pull requests are very welcome. Suggestions for new extensions and known bugs are tracked on [Github](https://github.com/hhu-stups/camille/issues)
