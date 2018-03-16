@@ -18,19 +18,19 @@
 	<repository>
 	  <id>targetRepository0</id>
 	  <layout>p2</layout>
-	  <url>http://download.eclipse.org/releases/luna/</url>
+	  <url>http://download.eclipse.org/releases/oxygen/</url>
 	</repository>
 
 	<repository>
 	  <id>targetRepository1</id>
 	  <layout>p2</layout>
-	  <url>http://download.eclipse.org/tools/gef/updates/releases/</url>
+	  <url>http://download.eclipse.org/modeling/emf/compare/updates/releases/</url>
 	</repository>
 
-        <repository>
+    <repository>
 	  <id>targetRepository2</id>
 	  <layout>p2</layout>
-	  <url>http://rodin-b-sharp.sourceforge.net/core-updates</url>
+	  <url>https://www3.hhu.de/stups/buildlibs/org.rodinp.dev</url>
 	</repository>
 
 	<repository>
@@ -72,6 +72,6 @@
 		<module>../org.eventb.texteditor.ui</module>
 		<module>../org.eventb.texttools</module>
 		<module>../org.eventb.texteditor.repository</module>
-                <module>../org.eventb.texteditor.parsers</module>
+		<module>../org.eventb.texteditor.parsers</module>
 	</modules>
 </project>

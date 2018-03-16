@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="prob_target" sequenceNumber="76">
+<?pde version="3.8"?><target name="camille_target" sequenceNumber="89">
 <locations>
-<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.rodinp.platform.product" version="3.2.0.201506220911-ecacdcb"/>
-<repository location="http://rodin-b-sharp.sourceforge.net/core-updates/"/>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.compare.ide.ui.feature.group" version="3.3.2.201709090201"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.13.0.v20170609-0928"/>
+<repository location="http://download.eclipse.org/releases/oxygen"/>
 </location>
-<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.2.v20150123-0452"/>
-<unit id="org.eclipse.emf.compare.source.feature.group" version="3.0.2.201501201328"/>
-<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.0.2.201501201328"/>
-<repository location="http://download.eclipse.org/releases/luna"/>
-</location>
-<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="ac.soton.eventb.roseEditor.feature.feature.group" version="1.6.1"/>
-<unit id="org.eventb.emf.feature.feature.group" version="5.3.1"/>
-<unit id="org.eventb.theory.feature.feature.group" version="3.0.0"/>
-<unit id="ac.soton.eventb.emf.core.extension.feature.feature.group" version="5.1.1"/>
+<unit id="org.eventb.emf.feature.feature.group" version="5.4.0"/>
+<unit id="org.eventb.emf.sdk.feature.group" version="5.4.0"/>
 <repository location="http://rodin-b-sharp.sourceforge.net/updates/"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="fr.systerel.editor.feature.group" version="0.9.2.201802230927-6980ca1"/>
+<unit id="org.eclipse.platform.feature.group" version="4.7.2.v20171130-0510"/>
+<unit id="org.eventb.ide.feature.group" version="3.4.0.201802230927-6980ca1"/>
+<unit id="org.rodinp.feature.group" version="1.8.1.201802230927-6980ca1"/>
+<unit id="org.rodinp.platform.feature.group" version="3.4.0.201802230927-6980ca1"/>
+<unit id="org.rodinp.platform.sources.feature.group" version="3.4.0.201802230927-6980ca1"/>
+<repository location="https://www3.hhu.de/stups/buildlibs/org.rodinp.dev/"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.compare.feature.group" version="3.3.2.201709090201"/>
+<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.3.2.201709090201"/>
+<unit id="org.eclipse.emf.compare.rcp.ui.feature.group" version="3.3.2.201709090201"/>
+<unit id="org.eclipse.emf.compare.rcp.ui.source.feature.group" version="3.3.2.201709090201"/>
+<unit id="org.eclipse.emf.compare.source.feature.group" version="3.3.2.201709090201"/>
+<repository location="http://download.eclipse.org/modeling/emf/compare/updates/releases"/>
 </location>
 </locations>
 </target>
