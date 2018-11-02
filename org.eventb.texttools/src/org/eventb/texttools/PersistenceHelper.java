@@ -23,9 +23,11 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.Comparison;
 import org.eclipse.emf.compare.Diff;
 import org.eclipse.emf.compare.DifferenceKind;
+import org.eclipse.emf.compare.DifferenceState;
 import org.eclipse.emf.compare.EMFCompare;
 import org.eclipse.emf.compare.diff.DefaultDiffEngine;
 import org.eclipse.emf.compare.diff.IDiffEngine;
+import org.eclipse.emf.compare.internal.spec.ReferenceChangeSpec;
 import org.eclipse.emf.compare.match.DefaultComparisonFactory;
 import org.eclipse.emf.compare.match.DefaultEqualityHelperFactory;
 import org.eclipse.emf.compare.match.IComparisonFactory;
@@ -34,9 +36,11 @@ import org.eclipse.emf.compare.match.eobject.IEObjectMatcher;
 import org.eclipse.emf.compare.match.impl.MatchEngineFactoryImpl;
 import org.eclipse.emf.compare.match.impl.MatchEngineFactoryRegistryImpl;
 import org.eclipse.emf.compare.merge.BatchMerger;
+import org.eclipse.emf.compare.merge.ConflictMerger;
 import org.eclipse.emf.compare.merge.IMerger;
 import org.eclipse.emf.compare.merge.IMerger.Registry;
 import org.eclipse.emf.compare.merge.IMerger.RegistryImpl;
+import org.eclipse.emf.compare.merge.PseudoConflictMerger;
 import org.eclipse.emf.compare.scope.DefaultComparisonScope;
 import org.eclipse.emf.compare.scope.IComparisonScope;
 import org.eclipse.emf.ecore.EClass;
@@ -49,6 +53,7 @@ import org.eventb.emf.core.EventBElement;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
 import org.eventb.texttools.diffmerge.EventBDiffProcessor;
 import org.eventb.texttools.diffmerge.EventBEObjectMatcher;
+import org.eventb.texttools.diffmerge.EventBMerger;
 import org.eventb.texttools.diffmerge.EventBMerger;
 import org.eventb.texttools.prettyprint.PrettyPrinter;
 
@@ -79,7 +84,11 @@ public class PersistenceHelper {
 			final boolean overwrite, final IProgressMonitor monitor)
 			throws CoreException {
 		try {
+			//System.out.println("SAVING");
 			resource.save(Collections.EMPTY_MAP);
+			//resource.unload();
+			//resource.load(Collections.EMPTY_MAP);
+			//System.out.println("SAVING DONE");
 
 			/*
 			 * Try to set timestamp to the same as in the annotation. Setting on
@@ -108,6 +117,7 @@ public class PersistenceHelper {
 	public static void addTextAnnotation(final Resource resource,
 			final String textRepresentation, final long timeStamp)
 			throws CoreException {
+//System.out.println("TEXT1:"+textRepresentation);
 		final EventBNamedCommentedComponentElement component = getComponent(resource);
 		if (component != null) {
 			addTextAnnotation(component, textRepresentation, timeStamp);
@@ -123,6 +133,7 @@ public class PersistenceHelper {
 		final EMap<String, Attribute> attributes = element.getAttributes();
 
 		// update text representation
+//System.out.println("TEXT2:"+textRepresentation);
 		Attribute textAttribute = attributes
 				.get(TextToolsPlugin.TYPE_TEXTREPRESENTATION.getId());
 		if (textAttribute == null) {
@@ -160,6 +171,15 @@ public class PersistenceHelper {
 
 	}
 
+	private static void applyDiff(EventBNamedCommentedComponentElement root,IMerger evbMerger,Diff d) {
+		try {
+			if (d.getState() != DifferenceState.MERGED)
+				evbMerger.copyRightToLeft(d,null);
+		} catch(Exception e) {
+			System.out.println("SKIP:"+d);
+		}
+	}
+	
 	private static void mergeComponents(
 			final EventBNamedCommentedComponentElement oldVersion,
 			final EventBNamedCommentedComponentElement newVersion,
@@ -209,13 +229,15 @@ public class PersistenceHelper {
 		IMerger evbMerger = new EventBMerger();
 		evbMerger.setRanking(100);
 		registry.add(evbMerger);
-		BatchMerger bm = new BatchMerger(registry);
-
+		//BatchMerger bm = new BatchMerger(registry);
 		differences = filter(differences);
 
-		bm.copyAllRightToLeft(differences, null);
-
+		//bm.copyAllRightToLeft(differences, null);
+		
+		for (Diff d: differences) applyDiff(oldVersion,evbMerger,d);
+		
 		long time2 = System.currentTimeMillis();
+		
 		if (DEBUG) {
 			System.out.println("new ModelMerge: " + (time1 - time0));
 			System.out.println("merge.applyChanges: " + (time2 - time1));
@@ -247,6 +269,8 @@ public class PersistenceHelper {
 			long start = System.currentTimeMillis();
 			mergeComponents(component, newVersion, monitor);
 			long end = System.currentTimeMillis();
+			resource.setModified(true);
+			resource.eSetDeliver(true);
 			if (DEBUG) {
 				System.out
 						.println("Time to merge components: " + (end - start));
