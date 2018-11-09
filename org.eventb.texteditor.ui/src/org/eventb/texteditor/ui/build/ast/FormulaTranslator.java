@@ -13,7 +13,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Display;
-import org.eventb.emf.core.EventBCommentedExpressionElement;
+import org.eventb.emf.core.EventBNamedCommentedExpressionElement;
 import org.eventb.emf.core.EventBElement;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
 import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
@@ -73,7 +73,7 @@ public class FormulaTranslator {
 		}
 	}
 
-	public void replace(final EventBCommentedExpressionElement expression) {
+	public void replace(final EventBNamedCommentedExpressionElement expression) {
 		final String input = expression.getExpression();
 
 		if (input != null) {

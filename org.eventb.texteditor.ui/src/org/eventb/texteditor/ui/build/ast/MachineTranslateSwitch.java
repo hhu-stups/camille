@@ -6,7 +6,7 @@
 
 package org.eventb.texteditor.ui.build.ast;
 
-import org.eventb.emf.core.EventBCommentedExpressionElement;
+import org.eventb.emf.core.EventBNamedCommentedExpressionElement;
 import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
 import org.eventb.emf.core.machine.Action;
 import org.eventb.emf.core.machine.util.MachineSwitch;
@@ -26,7 +26,7 @@ public class MachineTranslateSwitch extends MachineSwitch<Boolean> {
 	}
 
 	@Override
-	public Boolean caseEventBCommentedExpressionElement(final EventBCommentedExpressionElement object) {
+	public Boolean caseEventBNamedCommentedExpressionElement(final EventBNamedCommentedExpressionElement object) {
 		translator.replace(object);
 		return true;
 	}

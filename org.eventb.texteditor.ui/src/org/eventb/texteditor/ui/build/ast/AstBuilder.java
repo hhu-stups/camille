@@ -44,7 +44,7 @@ public class AstBuilder implements IBuildPhase {
 		return successful;
 	}
 
-public void run(final EventBTextEditor editor, final Resource resource,
+	public void run(final EventBTextEditor editor, final Resource resource,
 			final IDocument document, final IProgressMonitor monitor) {
 		successful = false;
 		
@@ -95,7 +95,6 @@ public void run(final EventBTextEditor editor, final Resource resource,
 			FormulasResolver.resolveFormulas(resource, astRoot, document,
 					markFormulaErrors);
 			monitor.worked(1);
-
 			/*
 			 * Add text representation as annotation to resource's model
 			 */

@@ -36,7 +36,6 @@ public class FormulasResolver {
 		String projectName = resource.getURI().segment(1);
 		final List<FormulaParseException> exceptions = FormulaResolver
 				.resolveAllFormulas(projectName, astRoot);
-
 		if (markErrors && exceptions.size() > 0) {
 			markerHelper.deleteMarkers(resource,
 					RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
