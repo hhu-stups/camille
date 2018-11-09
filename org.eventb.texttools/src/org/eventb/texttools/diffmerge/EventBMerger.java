@@ -17,26 +17,21 @@ public class EventBMerger extends AbstractMerger {
 	
 	@Override
 	public boolean isMergerFor(Diff target) {
-		//FIXME: could return true in all cases???
+		String pack = "";
 		if (target instanceof ReferenceChange) {
-			ReferenceChange rtarget = (ReferenceChange) target;
-			EReference reference = rtarget.getReference();
-			if (reference.getName().equals("extends")
-					|| reference.getName().equals("refines")
-					|| reference.getName().equals("sees")) {
-				return true;
-			}
-			//FIXME: find a way to avoid naming all core MM attributes
-			//but test seems useless ... => always returns true?
-			if (reference.getName().contains("extension")) {
-				System.out.println("REFERENCE:"+reference.getName());
-				return false;
-			}
-			return true;
-		} else if (target instanceof AttributeChange)
-			return true; 
-		 System.out.println("TARGET:"+target);
-		return false;
+			ReferenceChange rc = (ReferenceChange) target;
+			pack = rc.getReference().getEContainingClass().getEPackage().getName();
+			//System.out.println("REF PACK:"+pack);
+		} else if (target instanceof AttributeChange) {
+			AttributeChange ac = (AttributeChange) target;
+			pack = ac.getAttribute().getEContainingClass().getEPackage().getName();
+			//System.out.println("ATTR PACK:"+pack);
+		} else {
+			System.out.println("TARGET:"+target);
+			return false;
+		}
+		return pack.equals("core") || pack.equals("machine") || pack.equals("context") || pack.equals("formulas");
+
 	}
 
 	//@Override
@@ -49,6 +44,11 @@ public class EventBMerger extends AbstractMerger {
 	protected void reject(final Diff diff, boolean rightToLeft) {
 		// do we always merge right to left in Camille?
 		assert (rightToLeft);
+
+		if (!isMergerFor(diff)) {
+			super.reject(diff, rightToLeft);
+			return;
+		}
 
 		EObject left = diff.getMatch().getLeft();
 		EObject right = diff.getMatch().getRight();
@@ -65,6 +65,7 @@ public class EventBMerger extends AbstractMerger {
 			ReferenceChange d = (ReferenceChange) diff;
 			//System.out.println("REF CHANGE:"+d.getReference());
 			//System.out.println("REF VALUE:"+ d.getValue());
+			
 			rm.copyRightToLeft(diff,null);
 			Object l = left.eGet(d.getReference());
 			Object r = right.eGet(d.getReference());
@@ -77,6 +78,7 @@ public class EventBMerger extends AbstractMerger {
 			AttributeChange d = (AttributeChange) diff;
 			//System.out.println("ATTR CHANGE:"+d.getAttribute());
 			//System.out.println("ATTR VALUE:"+ d.getValue());
+
 			am.copyRightToLeft(diff,null);
 			Object l = left.eGet(d.getAttribute());
 			Object r = right.eGet(d.getAttribute());

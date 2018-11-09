@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="camille_target" sequenceNumber="89">
+<?pde version="3.8"?><target name="camille_target" sequenceNumber="90">
 <locations>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.compare.ide.ui.feature.group" version="3.3.2.201709090201"/>
@@ -22,11 +22,11 @@
 <repository location="https://www3.hhu.de/stups/buildlibs/org.rodinp.dev/"/>
 </location>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.compare.feature.group" version="3.3.2.201709090201"/>
-<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.3.2.201709090201"/>
-<unit id="org.eclipse.emf.compare.rcp.ui.feature.group" version="3.3.2.201709090201"/>
-<unit id="org.eclipse.emf.compare.rcp.ui.source.feature.group" version="3.3.2.201709090201"/>
-<unit id="org.eclipse.emf.compare.source.feature.group" version="3.3.2.201709090201"/>
+<unit id="org.eclipse.emf.compare.feature.group" version="3.3.4.201806221350"/>
+<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="3.3.4.201806221350"/>
+<unit id="org.eclipse.emf.compare.rcp.ui.feature.group" version="3.3.4.201806221350"/>
+<unit id="org.eclipse.emf.compare.rcp.ui.source.feature.group" version="3.3.4.201806221350"/>
+<unit id="org.eclipse.emf.compare.source.feature.group" version="3.3.4.201806221350"/>
 <repository location="http://download.eclipse.org/modeling/emf/compare/updates/releases"/>
 </location>
 </locations>

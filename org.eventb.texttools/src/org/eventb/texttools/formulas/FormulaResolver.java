@@ -17,7 +17,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.emf.core.EventBCommentedExpressionElement;
+import org.eventb.emf.core.EventBNamedCommentedExpressionElement;
 import org.eventb.emf.core.EventBElement;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
 import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
@@ -92,7 +92,7 @@ public class FormulaResolver {
 		return exceptions;
 	}
 
-	public static void resolve(final EventBCommentedExpressionElement emfExpr)
+	public static void resolve(final EventBNamedCommentedExpressionElement emfExpr)
 			throws FormulaParseException {
 		final String expression = emfExpr.getExpression();
 		resolve(emfExpr, expression,

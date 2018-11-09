@@ -9,7 +9,7 @@ package org.eventb.texttools.formulas;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.emf.core.EventBCommentedExpressionElement;
+import org.eventb.emf.core.EventBNamedCommentedExpressionElement;
 import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
 import org.eventb.emf.core.EventBObject;
 import org.eventb.emf.core.machine.Action;
@@ -38,8 +38,8 @@ public class MachineResolveSwitch extends MachineSwitch<Boolean> {
 	}
 
 	@Override
-	public Boolean caseEventBCommentedExpressionElement(
-			final EventBCommentedExpressionElement object) {
+	public Boolean caseEventBNamedCommentedExpressionElement(
+			final EventBNamedCommentedExpressionElement object) {
 		try {
 			FormulaResolver.resolve(object);
 		} catch (final FormulaParseException e) {

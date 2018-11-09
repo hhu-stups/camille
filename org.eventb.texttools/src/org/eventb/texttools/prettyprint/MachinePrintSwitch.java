@@ -71,13 +71,7 @@ public class MachinePrintSwitch extends MachineSwitch<Boolean> implements
 		printInvariants(object.getInvariants(), newLine);
 
 		// variant
-		final Variant variant = object.getVariant();
-		if (variant != null) {
-			if (newLine) {
-				printer.appendLineBreak();
-			}
-			doSwitch(variant);
-		}
+		printVariants(object.getVariants(), newLine);
 
 		// events
 		printEvents(object.getEvents(), newLine);
@@ -121,7 +115,6 @@ public class MachinePrintSwitch extends MachineSwitch<Boolean> implements
 
 	@Override
 	public Boolean caseVariant(final Variant object) {
-		printer.appendWithSpace(VARIANT);
 		printer.appendFormula(object.getExpression(), printer
 				.hasComment(object));
 		printer.appendComment(object);
@@ -245,6 +238,24 @@ public class MachinePrintSwitch extends MachineSwitch<Boolean> implements
 
 			for (final Invariant invariant : invariants) {
 				doSwitch(invariant);
+			}
+
+			printer.decreaseIndentLevel();
+		}
+	}
+
+	private void printVariants(final EList<Variant> variants,
+			final boolean newLine) {
+		if (variants.size() > 0) {
+			if (newLine) {
+				printer.appendLineBreak();
+			}
+
+			printer.appendWithLineBreak(VARIANT);
+			printer.increaseIndentLevel();
+
+			for (final Variant variant : variants) {
+				doSwitch(variant);
 			}
 
 			printer.decreaseIndentLevel();

@@ -20,7 +20,6 @@ import org.eventb.emf.core.EventBObject;
 import org.eventb.emf.core.context.Context;
 import org.eventb.emf.core.machine.Event;
 import org.eventb.emf.core.machine.Machine;
-import org.eventb.emf.core.machine.Variant;
 import org.eventb.texteditor.ui.TextEditorPlugin;
 import org.eventb.texteditor.ui.build.dom.DomManager;
 import org.eventb.texteditor.ui.build.dom.IParseResultListener;
@@ -167,12 +166,7 @@ public class ContentProvider implements ITreeContentProvider,
 			final ArrayList<EventBObject> children = new ArrayList<EventBObject>();
 			children.addAll(machine.getVariables());
 			children.addAll(machine.getInvariants());
-
-			final Variant variant = machine.getVariant();
-			if (variant != null) {
-				children.add(variant);
-			}
-
+			children.addAll(machine.getVariants());
 			children.addAll(machine.getEvents());
 
 			machineChildren = children.toArray();

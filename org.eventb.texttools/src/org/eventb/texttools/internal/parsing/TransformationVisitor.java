@@ -107,11 +107,12 @@ public class TransformationVisitor extends DepthFirstAdapter {
 
 		// variant
 		if (node.getVariant() != null) {
-			newNode.setVariant((Variant) stack.pop());
+			newNode.getVariants().add((Variant) stack.pop());
 		}
+		
 
 		// TODO theorems
-		// final EList<Theorem> theorems = newNode.getTheorems();
+		//final EList<Theorem> theorems = newNode.getTheorems();
 		// handleList(theorems, node.getTheorems().size());
 
 		handleList(newNode.getInvariants(), node.getInvariants().size());
