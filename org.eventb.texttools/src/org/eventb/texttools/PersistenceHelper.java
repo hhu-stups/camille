@@ -168,7 +168,7 @@ public class PersistenceHelper {
 			if (d.getState() != DifferenceState.MERGED)
 				evbMerger.copyRightToLeft(d,null);
 		} catch(Exception e) {
-			System.out.println("SKIPPED:"+d);
+			System.out.println("SKIPED:"+d);
 		}
 	}
 	

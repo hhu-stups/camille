@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eventb.emf.core.EventBNamed;
+import org.eventb.emf.core.context.Context;
 import org.eventb.emf.core.machine.Variant;
 
 import com.google.common.collect.Iterables;
@@ -68,14 +69,13 @@ public class EventBEObjectMatcher implements IEObjectMatcher {
 	}
 
 	// this logic was previously found in isSimiliar of EventBMatchEngine
-	private boolean matching(EObject left, EObject candidate) {
+	public static boolean matching(EObject left, EObject candidate) {
 		/*
 		 * If the type differs it can not be a match
 		 */
 		if (!areSameType(left, candidate)) {
 			return false;
 		}
-
 		/*
 		 * Only one variant may exist in a model, so two variants are a match
 		 */
@@ -87,10 +87,10 @@ public class EventBEObjectMatcher implements IEObjectMatcher {
 		 * Improve matching for event b named objects with same name
 		 */
 		if (left instanceof EventBNamed && candidate instanceof EventBNamed) {
-			EventBNamed r = (EventBNamed) left;
-			EventBNamed c = (EventBNamed) left;
+			EventBNamed l = (EventBNamed) left;
+			EventBNamed c = (EventBNamed) candidate;
 
-			if (r.getName().equals(c.getName())) {
+			if (l.getName().equals(c.getName())) {
 				return true;
 			}
 		}
@@ -107,7 +107,7 @@ public class EventBEObjectMatcher implements IEObjectMatcher {
 		return false;
 	}
 
-	private boolean areSameType(final EObject obj1, final EObject obj2) {
+	private static boolean areSameType(final EObject obj1, final EObject obj2) {
 		return obj1 != null && obj2 != null
 				&& obj1.eClass().equals(obj2.eClass());
 	}
@@ -120,11 +120,11 @@ public class EventBEObjectMatcher implements IEObjectMatcher {
 	 * @param obj2
 	 * @return
 	 */
-	private boolean areVariants(final EObject obj1, final EObject obj2) {
+	private static boolean areVariants(final EObject obj1, final EObject obj2) {
 		return areSameType(obj1, obj2) && obj2 instanceof Variant;
 	}
 
-	private String getEMFId(EObject eObject) {
+	private static String getEMFId(EObject eObject) {
 		final String identifier;
 		if (eObject == null) {
 			identifier = null;

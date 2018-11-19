@@ -1,5 +1,6 @@
 package org.eventb.texttools.diffmerge;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.compare.AttributeChange;
 import org.eclipse.emf.compare.Diff;
 import org.eclipse.emf.compare.ReferenceChange;
@@ -13,7 +14,8 @@ import org.eventb.texttools.TextPositionUtil;
 
 public class EventBMerger extends AbstractMerger {
 	private AttributeChangeMerger am = new AttributeChangeMerger();
-	private ReferenceChangeMerger rm = new ReferenceChangeMerger();
+	// replacement of emfcompare version (solves a bug with multivalued references
+	private MyReferenceChangeMerger rm = new MyReferenceChangeMerger();
 	
 	@Override
 	public boolean isMergerFor(Diff target) {
@@ -65,7 +67,6 @@ public class EventBMerger extends AbstractMerger {
 			ReferenceChange d = (ReferenceChange) diff;
 			//System.out.println("REF CHANGE:"+d.getReference());
 			//System.out.println("REF VALUE:"+ d.getValue());
-			
 			rm.copyRightToLeft(diff,null);
 			Object l = left.eGet(d.getReference());
 			Object r = right.eGet(d.getReference());
@@ -78,7 +79,6 @@ public class EventBMerger extends AbstractMerger {
 			AttributeChange d = (AttributeChange) diff;
 			//System.out.println("ATTR CHANGE:"+d.getAttribute());
 			//System.out.println("ATTR VALUE:"+ d.getValue());
-
 			am.copyRightToLeft(diff,null);
 			Object l = left.eGet(d.getAttribute());
 			Object r = right.eGet(d.getAttribute());
