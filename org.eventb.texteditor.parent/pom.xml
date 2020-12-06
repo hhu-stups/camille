@@ -18,27 +18,20 @@
 	<repository>
 	  <id>targetRepository0</id>
 	  <layout>p2</layout>
-	  <url>http://download.eclipse.org/releases/oxygen/</url>
+	  <url>http://download.eclipse.org/releases/2020-06</url>
 	</repository>
 
 	<repository>
 	  <id>targetRepository1</id>
 	  <layout>p2</layout>
-	  <url>http://download.eclipse.org/modeling/emf/compare/updates/releases/</url>
+	  <url>http://rodin-b-sharp.sourceforge.net/updates</url>
 	</repository>
 
-    <repository>
+	<repository>
 	  <id>targetRepository2</id>
 	  <layout>p2</layout>
 	  <url>https://www3.hhu.de/stups/buildlibs/org.rodinp.dev</url>
 	</repository>
-
-	<repository>
-	  <id>targetRepository3</id>
-	  <layout>p2</layout>
-	  <url>http://rodin-b-sharp.sourceforge.net/updates</url>
-	</repository>
-
 
   </repositories>
 
