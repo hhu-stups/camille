@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.texteditor.feature"
       label="Camille TextEditor"
-      version="3.3.0.qualifier"
+      version="3.4.0.qualifier"
       provider-name="Heinrich-Heine University Dusseldorf"
       plugin="org.eventb.texteditor.ui">
 
@@ -10,6 +10,7 @@
       A text editor for the Rodin platform to edit Event-B models
 -----------------------------------------------------------
 Release History:
+3.4.0 - Release for Rodin 3.5 and related dependencies
 3.3.0 - Compatibility with core 3.3
 3.2.0 - Rodin 3.2 compatible release
 3.1.2 - Fix some more bugs regarding theory parsing, fix saving
@@ -204,21 +205,21 @@ Inc. in the United States, other countries, or both.
          id="org.eventb.texteditor.ui"
          download-size="0"
          install-size="0"
-         version="3.3.0.qualifier"
+         version="3.4.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="org.eventb.texttools"
          download-size="0"
          install-size="0"
-         version="3.3.0.qualifier"
+         version="3.4.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="org.eventb.texteditor.parsers"
          download-size="0"
          install-size="0"
-         version="3.3.0.qualifier"
+         version="3.4.0.qualifier"
          unpack="false"/>
 
 </feature>
