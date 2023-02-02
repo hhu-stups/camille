@@ -19,7 +19,7 @@
 <unit id="org.rodinp.feature.group" version="1.8.1.201802230927-6980ca1"/>
 <unit id="org.rodinp.platform.feature.group" version="3.4.0.201802230927-6980ca1"/>
 <unit id="org.rodinp.platform.sources.feature.group" version="3.4.0.201802230927-6980ca1"/>
-<repository location="https://www3.hhu.de/stups/buildlibs/org.rodinp.dev/"/>
+<repository location="https://stups.hhu-hosting.de/buildlibs/org.rodinp.dev/"/>
 </location>
 <location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.compare.feature.group" version="3.3.4.201806221350"/>

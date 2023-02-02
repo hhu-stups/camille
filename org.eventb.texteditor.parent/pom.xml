@@ -30,7 +30,7 @@
 	<repository>
 	  <id>targetRepository2</id>
 	  <layout>p2</layout>
-	  <url>https://www3.hhu.de/stups/buildlibs/org.rodinp.dev</url>
+	  <url>https://stups.hhu-hosting.de/buildlibs/org.rodinp.dev</url>
 	</repository>
 
   </repositories>
