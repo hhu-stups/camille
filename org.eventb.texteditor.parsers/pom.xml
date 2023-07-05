@@ -10,7 +10,6 @@
 	</parent>
 
 	<artifactId>org.eventb.texteditor.parsers</artifactId>
-	<version>3.4.1-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 
 	<build>
