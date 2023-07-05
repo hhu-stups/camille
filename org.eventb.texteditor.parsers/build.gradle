@@ -7,13 +7,12 @@ repositories {
 def parser_version = '2.4.40'
 
 dependencies {
-	compile group: "de.hhu.stups", name: "bparser", version: parser_version, changing: true
-	compile group: "de.hhu.stups", name: "eventbstruct", version: parser_version, changing: true
-	compile 'com.google.guava:guava:14.0.1'// Apache Licence 2.0
+	implementation group: "de.hhu.stups", name: "bparser", version: parser_version, changing: true
+	implementation group: "de.hhu.stups", name: "eventbstruct", version: parser_version, changing: true
+	implementation 'com.google.guava:guava:14.0.1'// Apache Licence 2.0
 }
 
 task collectDependencies(type: Copy) {
-	from configurations.compile
-	from configurations.runtime
+	from configurations.runtimeClasspath
 	into "./lib/"
 }
