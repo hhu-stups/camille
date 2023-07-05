@@ -1,0 +1,30 @@
+build:
+  stage: build
+  image: maven:3-eclipse-temurin-11
+  variables:
+    GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  script:
+    - ./gradlew prepareMaven
+    - mvn -Dmaven.repo.local="$CI_PROJECT_DIR/maven_repo_local" -f org.eventb.texteditor.parent/pom.xml install
+  cache:
+    paths:
+      - .gradle/caches
+      - .gradle/native
+      - .gradle/wrapper
+      - maven_repo_local
+  artifacts:
+    paths:
+      - org.eventb.texteditor.repository/target/repository
+
+deploy:nightly:
+  stage: deploy
+  only:
+    - develop@general/stups/camille
+  image: alpine:3
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - apk update
+    - apk add lftp openssh-client
+  script:
+    - LFTP_PASSWORD="${DEPLOY_PASSWORD}" lftp -c "set cmd:fail-exit true; set sftp:auto-confirm true; open --user ${DEPLOY_USERNAME} --env-password sftp://${DEPLOY_HOST}/${DEPLOY_REMOTE_BASEDIR}/rodin/camille/develop/; mirror -vvv -R org.eventb.texteditor.repository/target/repository ."
