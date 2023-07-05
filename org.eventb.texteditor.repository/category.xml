@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <feature url="features/org.eventb.texteditor.feature_3.4.1.qualifier.jar" id="org.eventb.texteditor.feature" version="3.4.1.qualifier">
+      <category name="org.eventb.texteditor.feature.category"/>
+   </feature>
 
-
-	<feature url="features/org.eventb.texteditor.feature_3.4.1.qualifier.jar" id="org.eventb.texteditor.feature" version="3.4.1.qualifier">
-		<category name="org.eventb.texteditor.feature.category"/>
-	</feature>
-
-<category-def name="org.eventb.texteditor.feature.category" label="Camille Text Editor">
+   <category-def name="org.eventb.texteditor.feature.category" label="Camille Text Editor">
       <description>
 null
       </description>
    </category-def>
-
 </site>

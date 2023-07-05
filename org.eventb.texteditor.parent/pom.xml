@@ -3,34 +3,33 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.eventb.texteditor</groupId>
-  	<artifactId>org.eventb.texteditor.parent</artifactId>
-  	<version>3.4.1.qualifier</version>
+	<artifactId>org.eventb.texteditor.parent</artifactId>
+	<version>3.4.1.qualifier</version>
 
 	<packaging>pom</packaging>
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
 
-   <repositories>
-	<!-- configure p2 repository to resolve against -->
-	<repository>
-	  <id>targetRepository0</id>
-	  <layout>p2</layout>
-	  <url>http://download.eclipse.org/releases/2020-06</url>
-	</repository>
+	<repositories>
+		<!-- configure p2 repository to resolve against -->
+		<repository>
+			<id>targetRepository0</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/2020-06</url>
+		</repository>
 
-	<repository>
-	  <id>targetRepository1</id>
-	  <layout>p2</layout>
-	  <url>http://rodin-b-sharp.sourceforge.net/updates</url>
-	</repository>
+		<repository>
+			<id>targetRepository1</id>
+			<layout>p2</layout>
+			<url>http://rodin-b-sharp.sourceforge.net/updates</url>
+		</repository>
 
-	<repository>
-	  <id>targetRepository2</id>
-	  <layout>p2</layout>
-	  <url>https://stups.hhu-hosting.de/buildlibs/org.rodinp.dev</url>
-	</repository>
-
-  </repositories>
+		<repository>
+			<id>targetRepository2</id>
+			<layout>p2</layout>
+			<url>https://stups.hhu-hosting.de/buildlibs/org.rodinp.dev</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
