@@ -12,25 +12,42 @@
 	<artifactId>org.eventb.texteditor.parsers</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>14.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>de.hhu.stups</groupId>
+			<artifactId>bparser</artifactId>
+			<version>2.4.40</version>
+		</dependency>
+		<dependency>
+			<groupId>de.hhu.stups</groupId>
+			<artifactId>eventbstruct</artifactId>
+			<version>2.4.40</version>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.4.0</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.6.0</version>
 				<configuration>
-					<executable>./gradlew</executable>
-					<arguments>
-						<argument>collectDependencies</argument>
-					</arguments>
+					<!-- Prevent copying all the Eclipse plugin jars into lib as well. -->
+					<!-- We only want the plain Maven dependencies above. -->
+					<excludeTypes>eclipse-plugin</excludeTypes>
+					<outputDirectory>${project.basedir}/lib</outputDirectory>
+					<overWriteSnapshots>true</overWriteSnapshots>
 				</configuration>
 				<executions>
 					<execution>
-						<!-- You can bind this to any phase you like -->
 						<phase>validate</phase>
 						<goals>
-							<!-- goal must be "invoke" -->
-							<goal>exec</goal>
+							<goal>copy-dependencies</goal>
 						</goals>
 					</execution>
 				</executions>
