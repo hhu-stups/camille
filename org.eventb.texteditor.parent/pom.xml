@@ -9,9 +9,6 @@
 	<packaging>pom</packaging>
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
-	<properties>
-		<tycho-version>2.1.0</tycho-version>
-	</properties>
 
    <repositories>
 	<!-- configure p2 repository to resolve against -->
@@ -41,14 +38,14 @@
 				<!-- enable tycho build extension -->
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
-				<version>2.1.0</version>
+				<version>2.7.5</version>
 				<extensions>true</extensions>
 			</plugin>
 
 			<plugin>
 		    <groupId>org.eclipse.tycho</groupId>
 		    <artifactId>target-platform-configuration</artifactId>
-		    <version>2.1.0</version>
+		    <version>2.7.5</version>
 		    <configuration>
 		      <dependency-resolution>
 		        <optionalDependencies>ignore</optionalDependencies>
