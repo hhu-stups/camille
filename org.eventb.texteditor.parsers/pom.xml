@@ -20,7 +20,7 @@
       <artifactId>exec-maven-plugin</artifactId>
       <version>1.4.0</version>
         <configuration>
-            <executable>gradle</executable>
+            <executable>./gradlew</executable>
             <arguments>
                 <argument>collectDependencies</argument>
             </arguments>
