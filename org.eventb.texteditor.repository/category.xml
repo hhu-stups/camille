@@ -6,7 +6,7 @@
 
    <category-def name="org.eventb.texteditor.feature.category" label="Camille Text Editor">
       <description>
-null
+         A text editor for the Rodin platform to edit Event-B models.
       </description>
    </category-def>
 </site>
