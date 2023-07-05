@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/org.eventb.texteditor.feature_3.4.1.qualifier.jar" id="org.eventb.texteditor.feature" version="3.4.1.qualifier">
-      <category name="camille"/>
-   </feature>
-   <category-def name="camille" label="camille"/>
-</site>
