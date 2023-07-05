@@ -4,7 +4,6 @@ build:
   variables:
     GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
   script:
-    - ./gradlew prepareMaven
     - mvn -Dmaven.repo.local="$CI_PROJECT_DIR/maven_repo_local" -f org.eventb.texteditor.parent/pom.xml install
   cache:
     paths:
