@@ -10,6 +10,7 @@
       A text editor for the Rodin platform to edit Event-B models
 -----------------------------------------------------------
 Release History:
+3.4.1 - Internal updates to the build process - no visible changes.
 3.4.0 - Release for Rodin 3.5 and related dependencies
 3.3.0 - Compatibility with core 3.3
 3.2.0 - Rodin 3.2 compatible release
@@ -45,7 +46,7 @@ EventB-EMF-plugin v3.1.0
    </description>
 
    <copyright>
-      Copyright (c) 2009-2018 Heinrich-Heine University Dusseldorf.
+      Copyright (c) 2009-2023 Heinrich-Heine University Dusseldorf.
 All rights reserved.
    </copyright>
 
