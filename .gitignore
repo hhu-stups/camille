@@ -1,5 +1,6 @@
 *.class
 .gradle
+.tycho-consumer-pom.xml
 **/build
 **/lib
 **/target
