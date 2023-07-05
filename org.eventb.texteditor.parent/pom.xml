@@ -41,18 +41,6 @@
 				<version>2.7.5</version>
 				<extensions>true</extensions>
 			</plugin>
-
-			<plugin>
-		    <groupId>org.eclipse.tycho</groupId>
-		    <artifactId>target-platform-configuration</artifactId>
-		    <version>2.7.5</version>
-		    <configuration>
-		      <dependency-resolution>
-		        <optionalDependencies>ignore</optionalDependencies>
-		      </dependency-resolution>
-		    </configuration>
-		  </plugin>
-
 		</plugins>
 	</build>
 
