@@ -7,8 +7,8 @@ repositories {
 def parser_version = '2.4.40'
 
 dependencies {
-	implementation group: "de.hhu.stups", name: "bparser", version: parser_version, changing: true
-	implementation group: "de.hhu.stups", name: "eventbstruct", version: parser_version, changing: true
+	implementation group: "de.hhu.stups", name: "bparser", version: parser_version
+	implementation group: "de.hhu.stups", name: "eventbstruct", version: parser_version
 	implementation 'com.google.guava:guava:14.0.1'// Apache Licence 2.0
 }
 
