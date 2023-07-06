@@ -1,6 +1,8 @@
 package org.eventb.texttools.diffmerge;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,12 +17,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eventb.emf.core.EventBNamed;
-import org.eventb.emf.core.context.Context;
 import org.eventb.emf.core.machine.Variant;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class EventBEObjectMatcher implements IEObjectMatcher {
 	@Override
@@ -29,10 +26,12 @@ public class EventBEObjectMatcher implements IEObjectMatcher {
 			Iterator<? extends EObject> rightEObjects,
 			Iterator<? extends EObject> originEObjects, Monitor monitor) {
 
-		final Set<Match> matches = Sets.newLinkedHashSet();
+		final Set<Match> matches = new LinkedHashSet<>();
 
-		final List<EObject> rightCopy = Lists.newArrayList(rightEObjects);
-		final List<EObject> originCopy = Lists.newArrayList(originEObjects);
+		final List<EObject> rightCopy = new ArrayList<>();
+		rightEObjects.forEachRemaining(rightCopy::add);
+		final List<EObject> originCopy = new ArrayList<>();
+		originEObjects.forEachRemaining(originCopy::add);
 
 		// only two way merge in camille?!
 		assert (originCopy.isEmpty());
@@ -55,7 +54,7 @@ public class EventBEObjectMatcher implements IEObjectMatcher {
 			matches.add(match);
 		}
 
-		Iterables.addAll(comparison.getMatches(), matches);
+		comparison.getMatches().addAll(matches);
 	}
 
 	protected EObject findMatch(EObject left, List<EObject> rightCopy) {

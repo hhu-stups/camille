@@ -11,16 +11,14 @@
  *******************************************************************************/
 package org.eventb.texttools.diffmerge;
 
-import static com.google.common.collect.Iterators.filter;
 import static org.eclipse.emf.compare.merge.IMergeCriterion.NONE;
 import static org.eclipse.emf.compare.utils.ReferenceUtil.safeEGet;
 import static org.eclipse.emf.compare.utils.ReferenceUtil.safeEIsSet;
 import static org.eclipse.emf.compare.utils.ReferenceUtil.safeESet;
 
-import com.google.common.collect.Iterators;
-
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.compare.Comparison;
@@ -31,7 +29,6 @@ import org.eclipse.emf.compare.ReferenceChange;
 import org.eclipse.emf.compare.internal.utils.DiffUtil;
 import org.eclipse.emf.compare.merge.AbstractMerger;
 import org.eclipse.emf.compare.merge.IMergeCriterion;
-import org.eclipse.emf.compare.utils.IEqualityHelper;
 import org.eclipse.emf.compare.utils.ReferenceUtil;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -618,21 +615,19 @@ public class MyReferenceChangeMerger extends AbstractMerger {
 			mergedImplications = diff.getImpliedBy();
 		}
 
-		Iterator<Diff> impliedDiffs = mergedImplications.iterator();
+		Stream<Diff> impliedDiffs = mergedImplications.stream();
 		if (reference.isMany() && diff.getEquivalence() != null) {
-			impliedDiffs = Iterators.concat(impliedDiffs, diff.getEquivalence().getDifferences().iterator());
+			impliedDiffs = Stream.concat(impliedDiffs, diff.getEquivalence().getDifferences().stream());
 		}
-		final Iterator<ReferenceChange> impliedReferenceChanges = filter(impliedDiffs, ReferenceChange.class);
-
-		while (impliedReferenceChanges.hasNext()) {
-			final ReferenceChange implied = impliedReferenceChanges.next();
-			if (implied != diff && isInTerminalState(implied)) {
+		impliedDiffs.forEach(imp -> {
+			if (imp instanceof ReferenceChange && imp != diff && isInTerminalState(imp)) {
+				final ReferenceChange implied = (ReferenceChange)imp;
 				if (implied.getReference().isMany() && isAdd(implied, rightToLeft)) {
 					internalCheckOrdering(implied, rightToLeft);
 					checkImpliedDiffsOrdering(implied, rightToLeft);
 				}
 			}
-		}
+		});
 	}
 
 	/**

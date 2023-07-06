@@ -13,7 +13,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eventb.emf.core.EventBNamed;
-import com.google.common.base.Joiner;
 
 public class LabelHelper {
 
@@ -29,7 +28,7 @@ public class LabelHelper {
 	}
 
 	public static <T> String joinEList(final EList<T> parameters) {
-		return Joiner.on(", ").join(getAsStringList(parameters));
+		return String.join(", ", getAsStringList(parameters));
 	}
 
 	public static void appendAttrDelim(final StyledString result) {
