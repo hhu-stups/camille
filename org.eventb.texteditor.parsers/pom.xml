@@ -20,11 +20,6 @@
 		</dependency>
 		<dependency>
 			<groupId>de.hhu.stups</groupId>
-			<artifactId>bparser</artifactId>
-			<version>2.4.40</version>
-		</dependency>
-		<dependency>
-			<groupId>de.hhu.stups</groupId>
 			<artifactId>eventbstruct</artifactId>
 			<version>2.4.40</version>
 		</dependency>
