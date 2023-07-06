@@ -14,28 +14,20 @@ Release History:
 3.4.0 - Release for Rodin 3.5 and related dependencies
 3.3.0 - Compatibility with core 3.3
 3.2.0 - Rodin 3.2 compatible release
-3.1.2 - Fix some more bugs regarding theory parsing, fix saving
-changes to seen contexts.
+3.1.2 - Fix some more bugs regarding theory parsing, fix saving changes to seen contexts.
 3.1.1 - Fix parsing of theory operators with more than one operand
 3.1.0 - Initial release for Rodin 3.1
 3.0.3 - Fix bugs / regressions intruduces by the Rodin 3.0 migration
-3.0.2 - First release automatically build by Jenkins from the
-GitHub repository
+3.0.2 - First release automatically build by Jenkins from the GitHub repository
 3.0.1 - Added patches from 2.2.0 to the Rodin Release
 3.0.0 - Rodin 3.0 Release
-2.2.0 - Theorem in guards. Order of sets and constants changed
-to be consistent with the Rodin editor.
+2.2.0 - Theorem in guards. Order of sets and constants changed to be consistent with the Rodin editor.
 2.1.4 - Be more generous regarding Rodin compatibility
-2.1.3 - Bugfix release for Bug #3305107 (NPE after renaming a
-machine)
-2.1.0.beta - Rodin 2.1.1 release compatible with EventB-EMF Framework
-3.3.0
-(emf-compare 1.1.2)
+2.1.3 - Bugfix release for Bug #3305107 (NPE after renaming a machine)
+2.1.0.beta - Rodin 2.1.1 release compatible with EventB-EMF Framework 3.3.0 (emf-compare 1.1.2)
 2.0.1 - Rodin 2.0 release
-2.0.0 - Rodin 1.3.1 release compatible with
-EventB-EMF-plugin v3.1.0
-1.1.7 - Rodin 1.3 release (dependency to new EventB-EMF-plugin
-2.0.0)
+2.0.0 - Rodin 1.3.1 release compatible with EventB-EMF-plugin v3.1.0
+1.1.7 - Rodin 1.3 release (dependency to new EventB-EMF-plugin 2.0.0)
 1.1.6 - Rodin 1.3 bug-fix release
 1.1.5 - Rodin 1.3 release
 1.1.4 - Rodin 1.2 bug-fix release (dependency to old EventB-EMF-plugin)
@@ -53,50 +45,42 @@ All rights reserved.
    <license>
       RODIN SOFTWARE USER AGREEMENT
 June 1, 2006
+
 Usage Of Content
+
 THE RODIN PROJECT MAKES AVAILABLE SOFTWARE, DOCUMENTATION, INFORMATION
 AND/OR OTHER MATERIALS FOR OPEN SOURCE PROJECTS (COLLECTIVELY
 &quot;CONTENT&quot;).  USE OF THE CONTENT IS GOVERNED BY THE TERMS AND
-CONDITIONS OF THIS AGREEMENT AND/OR THE TERMS AND CONDITIONS
-OF
-LICENSE AGREEMENTS OR NOTICES INDICATED OR REFERENCED BELOW.
-BY USING
-THE CONTENT, YOU AGREE THAT YOUR USE OF THE CONTENT IS GOVERNED
-BY
+CONDITIONS OF THIS AGREEMENT AND/OR THE TERMS AND CONDITIONS OF
+LICENSE AGREEMENTS OR NOTICES INDICATED OR REFERENCED BELOW.  BY USING
+THE CONTENT, YOU AGREE THAT YOUR USE OF THE CONTENT IS GOVERNED BY
 THIS AGREEMENT AND/OR THE TERMS AND CONDITIONS OF ANY APPLICABLE
-LICENSE AGREEMENTS OR NOTICES INDICATED OR REFERENCED BELOW.
-IF YOU
-DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS AGREEMENT AND
-THE
-TERMS AND CONDITIONS OF ANY APPLICABLE LICENSE AGREEMENTS OR
-NOTICES
+LICENSE AGREEMENTS OR NOTICES INDICATED OR REFERENCED BELOW.  IF YOU
+DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS AGREEMENT AND THE
+TERMS AND CONDITIONS OF ANY APPLICABLE LICENSE AGREEMENTS OR NOTICES
 INDICATED OR REFERENCED BELOW, THEN YOU MAY NOT USE THE CONTENT.
+
 Applicable Licenses
-Unless otherwise indicated, all Content made available by the
-Rodin
-Project is provided to you under the terms and conditions of
-the
-Eclipse Public License Version 1.0 (&quot;EPL&quot;).  A copy of the EPL
-is
+
+Unless otherwise indicated, all Content made available by the Rodin
+Project is provided to you under the terms and conditions of the
+Eclipse Public License Version 1.0 (&quot;EPL&quot;).  A copy of the EPL is
 provided with this Content and is also available at
-http://www.eclipse.org/legal/epl-v10.html.  For purposes of the
-EPL,
+http://www.eclipse.org/legal/epl-v10.html.  For purposes of the EPL,
 &quot;Program&quot; will mean the Content.
-Content includes, but is not limited to, source code, object
-code,
-documentation and other files maintained in the Rodin SourceForge
-CVS
+
+Content includes, but is not limited to, source code, object code,
+documentation and other files maintained in the Rodin SourceForge CVS
 repository (&quot;Repository&quot;) in CVS modules (&quot;Modules&quot;) and made
 available as downloadable archives (&quot;Downloads&quot;).
+
 - Content may be structured and packaged into modules to facilitate
 delivering, extending, and upgrading the Content.  Typical modules
 may include plug-ins (&quot;Plug-ins&quot;), plug-in fragments
 (&quot;Fragments&quot;), and features (&quot;Features&quot;).
-- Each Plug-in or Fragment may be packaged as a sub-directory
-or JAR
+- Each Plug-in or Fragment may be packaged as a sub-directory or JAR
 (Java(TM) ARchive) in a directory named &quot;plugins&quot;.
-- A Feature is a bundle of one or more Plug-ins and/or Fragments
-and
+- A Feature is a bundle of one or more Plug-ins and/or Fragments and
 associated material.  Each Feature may be packaged as a
 sub-directory in a directory named &quot;features&quot;.  Within a Feature,
 files named &quot;feature.xml&quot; may contain a list of the names and
@@ -106,64 +90,64 @@ that Feature.
 Features&quot;). Within a Feature, files named &quot;feature.xml&quot; may
 contain a list of the names and version numbers of Included
 Features.
-The terms and conditions governing Plug-ins and Fragments should
-be
+
+The terms and conditions governing Plug-ins and Fragments should be
 contained in files named &quot;about.html&quot; (&quot;Abouts&quot;). The terms and
 conditions governing Features and Included Features should be
-contained in files named &quot;license.html&quot; (&quot;Feature Licenses&quot;).
-Abouts
-and Feature Licenses may be located in any directory of a Download
-or
+contained in files named &quot;license.html&quot; (&quot;Feature Licenses&quot;).  Abouts
+and Feature Licenses may be located in any directory of a Download or
 Module including, but not limited to the following locations:
+
 - The top-level (root) directory
 - Plug-in and Fragment directories
 - Inside Plug-ins and Fragments packaged as JARs
 - Sub-directories of the directory named &quot;src&quot; of certain Plug-ins
 - Feature directories
+
 Note: if a Feature made available by the Rodin Project is installed
 using the Eclipse Update Manager, you must agree to a license
-(&quot;Feature Update License&quot;) during the installation process.
-If the
-Feature contains Included Features, the Feature Update License
-should
+(&quot;Feature Update License&quot;) during the installation process.  If the
+Feature contains Included Features, the Feature Update License should
 either provide you with the terms and conditions governing the
 Included Features or inform you where you can locate them.  Feature
-Update Licenses may be found in the &quot;license&quot; property of files
-named
+Update Licenses may be found in the &quot;license&quot; property of files named
 &quot;feature.properties&quot; found within a Feature.  Such Abouts, Feature
 Licenses, and Feature Update Licenses contain the terms and conditions
-(or references to such terms and conditions) that govern your
-use of
+(or references to such terms and conditions) that govern your use of
 the associated Content in that directory.
-THE ABOUTS, FEATURE LICENSES, AND FEATURE UPDATE LICENSES MAY
-REFER TO
+
+THE ABOUTS, FEATURE LICENSES, AND FEATURE UPDATE LICENSES MAY REFER TO
 THE EPL OR OTHER LICENSE AGREEMENTS, NOTICES OR TERMS AND CONDITIONS.
 SOME OF THESE OTHER LICENSE AGREEMENTS MAY INCLUDE (BUT ARE NOT
 LIMITED TO):
+
 - Common Public License Version 1.0 (available at http://www.eclipse.org/legal/cpl-v10.html)
+
 - Apache Software License 1.1 (available at http://www.apache.org/licenses/LICENSE)
+
 - Apache Software License 2.0 (available at http://www.apache.org/licenses/LICENSE-2.0)
+
 - IBM Public License 1.0 (available at http://oss.software.ibm.com/developerworks/opensource/license10.html)
+
 - Metro Link Public License 1.00 (available at http://www.opengroup.org/openmotif/supporters/metrolink/license.html)
+
 - Mozilla Public License Version 1.1 (available at http://www.mozilla.org/MPL/MPL-1.1.html)
+
 IT IS YOUR OBLIGATION TO READ AND ACCEPT ALL SUCH TERMS AND CONDITIONS
-PRIOR TO USE OF THE CONTENT.  If no About, Feature License, or
-Feature
-Update License is provided, please contact the Rodin Project
-to
+PRIOR TO USE OF THE CONTENT.  If no About, Feature License, or Feature
+Update License is provided, please contact the Rodin Project to
 determine what terms and conditions govern that particular
 Content.
+
 Cryptography
-Content may contain encryption software. The country in which
-you are
-currently may have restrictions on the import, possession, and
-use,
-and/or re-export to another country, of encryption software.
-BEFORE
+
+Content may contain encryption software. The country in which you are
+currently may have restrictions on the import, possession, and use,
+and/or re-export to another country, of encryption software. BEFORE
 using any encryption software, please check the country&apos;s laws,
-regulations and policies concerning the import, possession, or
-use,
+regulations and policies concerning the import, possession, or use,
 and re-export of encryption software, to see if this is permitted.
+
 Java and all Java-based trademarks are trademarks of Sun Microsystems,
 Inc. in the United States, other countries, or both.
    </license>
