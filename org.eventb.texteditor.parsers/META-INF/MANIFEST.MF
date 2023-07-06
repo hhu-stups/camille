@@ -7,10 +7,10 @@ Bundle-Activator: org.eventb.texteditor.parsers.Activator
 Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .,
- lib/guava-14.0.1.jar,
- lib/jsr305-1.3.9.jar,
  lib/bparser-2.4.40.jar,
  lib/eventbstruct-2.4.40.jar,
+ lib/guava-14.0.1.jar,
+ lib/jsr305-1.3.9.jar,
  lib/parserbase-2.4.40.jar,
  lib/prologlib-2.4.40.jar
 Export-Package: com.google.common.annotations,

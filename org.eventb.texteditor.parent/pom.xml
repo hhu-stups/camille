@@ -46,9 +46,9 @@
 	<!-- the modules that should be built together -->
 	<modules>
 		<module>../org.eventb.texteditor.feature</module>
+		<module>../org.eventb.texteditor.parsers</module>
+		<module>../org.eventb.texteditor.repository</module>
 		<module>../org.eventb.texteditor.ui</module>
 		<module>../org.eventb.texttools</module>
-		<module>../org.eventb.texteditor.repository</module>
-		<module>../org.eventb.texteditor.parsers</module>
 	</modules>
 </project>
