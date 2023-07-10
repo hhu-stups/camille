@@ -6,10 +6,6 @@
 
 package org.eventb.texttools;
 
-import org.eclipse.jface.text.IDocument;
-import org.eventb.emf.core.EventBObject;
-import org.eventb.texttools.internal.parsing.TransformationVisitor;
-
 import de.be4.eventb.core.parser.BException;
 import de.be4.eventb.core.parser.EventBLexerException;
 import de.be4.eventb.core.parser.EventBParseException;
@@ -17,8 +13,10 @@ import de.be4.eventb.core.parser.EventBParser;
 import de.be4.eventb.core.parser.node.Start;
 import de.be4.eventb.core.parser.node.Token;
 import de.be4.eventb.core.parser.parser.ParserException;
-import de.hhu.stups.sablecc.patch.SourcePositions;
-import de.hhu.stups.sablecc.patch.SourcecodeRange;
+
+import org.eclipse.jface.text.IDocument;
+import org.eventb.emf.core.EventBObject;
+import org.eventb.texttools.internal.parsing.TransformationVisitor;
 
 public class Parser {
 	private final EventBParser parser = new EventBParser();
@@ -76,23 +74,12 @@ public class Parser {
 
 			if (cause instanceof EventBParseException) {
 				final EventBParseException ex = (EventBParseException) cause;
-				final SourcecodeRange range = ex.getRange();
-				final SourcePositions positions = parser.getSourcePositions();
 
-				if (range != null && positions != null) {
+				final Token token = ex.getToken();
+				if (token != null) {
 					throw new ParseException(
 							adjustMessage(ex.getLocalizedMessage()),
-							positions.getBeginLine(range) - 1,
-							positions.getBeginColumn(range) - 1, positions
-									.getRangeString(range).length());
-				} else {
-					final Token token = ex.getToken();
-					if (token != null) {
-						throw new ParseException(
-								adjustMessage(ex.getLocalizedMessage()),
-								token.getLine() - 1, token.getPos() - 1, token
-										.getText().length());
-					}
+							token.getLine() - 1, token.getPos() - 1, token.getText().length());
 				}
 			}
 
