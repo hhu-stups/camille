@@ -21,7 +21,7 @@ deploy:nightly:
     - apk update
     - apk add lftp openssh-client
   script:
-    - LFTP_PASSWORD="${DEPLOY_PASSWORD}" lftp -c "set cmd:fail-exit true; set sftp:auto-confirm true; open --user ${DEPLOY_USERNAME} --env-password sftp://${DEPLOY_HOST}/${DEPLOY_REMOTE_BASEDIR}/rodin/camille/develop/; mirror -vvv -R org.eventb.texteditor.repository/target/repository ."
+    - LFTP_PASSWORD="${DEPLOY_PASSWORD}" lftp -c "set cmd:fail-exit true; set sftp:auto-confirm true; open --user ${DEPLOY_USERNAME} --env-password sftp://${DEPLOY_HOST}/${DEPLOY_REMOTE_BASEDIR}/rodin/camille/develop/; mirror -vvv -R --delete org.eventb.texteditor.repository/target/repository ."
 
 deploy:release:
   stage: deploy
