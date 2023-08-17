@@ -173,9 +173,9 @@ Inc. in the United States, other countries, or both.
       <import plugin="org.eclipse.ui.ide" version="3.8.2" match="compatible"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eventb.core.ast" version="3.1.0" match="compatible"/>
-      <import plugin="org.eventb.emf.core" version="4.0.0"/>
-      <import plugin="org.eventb.emf.formulas" version="1.4.0" match="compatible"/>
-      <import plugin="org.eventb.emf.persistence" version="3.1.1" match="compatible"/>
+      <import plugin="org.eventb.emf.core" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eventb.emf.formulas" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eventb.emf.persistence" version="3.1.1" match="greaterOrEqual"/>
       <import plugin="org.eventb.texteditor.parsers"/>
       <import plugin="org.eventb.ui" version="3.0.0" match="compatible"/>
       <import plugin="org.rodinp.core" version="1.7.0" match="compatible"/>
