@@ -7,7 +7,7 @@ Bundle-Activator: org.eventb.texteditor.parsers.Activator
 Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .,
- lib/eventbstruct-2.12.6.jar,
+ lib/eventbstruct-2.12.7.jar,
  lib/sablecc-runtime-3.6.0.jar
 Export-Package: de.be4.eventb.core.parser,
  de.be4.eventb.core.parser.analysis,
