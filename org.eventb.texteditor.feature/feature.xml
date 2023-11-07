@@ -9,6 +9,7 @@
    <description>
       A text editor for the Rodin platform to edit Event-B models
 --- Release History ---
+3.5.1 - Fix "Empty label" error when adding a variant to a machine
 3.5.0 - Compatibility with EventB-EMF 7.0.0 - fixes CamilleX dependency conflict. Fixed OOM error when top-level end keyword is missing.
 3.4.1 - Internal updates to the build process - no visible changes.
 3.4.0 - Release for Rodin 3.5 and related dependencies

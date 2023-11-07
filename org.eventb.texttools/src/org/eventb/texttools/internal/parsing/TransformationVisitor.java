@@ -11,29 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eventb.emf.core.EventBCommented;
-import org.eventb.emf.core.EventBElement;
-import org.eventb.emf.core.EventBNamed;
-import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
-import org.eventb.emf.core.EventBObject;
-import org.eventb.emf.core.context.Axiom;
-import org.eventb.emf.core.context.Context;
-import org.eventb.emf.core.context.ContextFactory;
-import org.eventb.emf.core.machine.Action;
-import org.eventb.emf.core.machine.Convergence;
-import org.eventb.emf.core.machine.Event;
-import org.eventb.emf.core.machine.Guard;
-import org.eventb.emf.core.machine.Invariant;
-import org.eventb.emf.core.machine.Machine;
-import org.eventb.emf.core.machine.MachineFactory;
-import org.eventb.emf.core.machine.Variant;
-import org.eventb.texttools.TextPositionUtil;
-import org.eventb.texttools.model.texttools.TextRange;
-import org.eventb.texttools.model.texttools.TexttoolsFactory;
-
 import de.be4.eventb.core.parser.analysis.DepthFirstAdapter;
 import de.be4.eventb.core.parser.node.AAction;
 import de.be4.eventb.core.parser.node.AAnticipatedConvergence;
@@ -66,6 +43,30 @@ import de.be4.eventb.core.parser.node.Token;
 import de.hhu.stups.sablecc.patch.IToken;
 import de.hhu.stups.sablecc.patch.PositionedNode;
 import de.hhu.stups.sablecc.patch.SourcePosition;
+
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eventb.core.IVariant;
+import org.eventb.emf.core.EventBCommented;
+import org.eventb.emf.core.EventBElement;
+import org.eventb.emf.core.EventBNamed;
+import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
+import org.eventb.emf.core.EventBObject;
+import org.eventb.emf.core.context.Axiom;
+import org.eventb.emf.core.context.Context;
+import org.eventb.emf.core.context.ContextFactory;
+import org.eventb.emf.core.machine.Action;
+import org.eventb.emf.core.machine.Convergence;
+import org.eventb.emf.core.machine.Event;
+import org.eventb.emf.core.machine.Guard;
+import org.eventb.emf.core.machine.Invariant;
+import org.eventb.emf.core.machine.Machine;
+import org.eventb.emf.core.machine.MachineFactory;
+import org.eventb.emf.core.machine.Variant;
+import org.eventb.texttools.TextPositionUtil;
+import org.eventb.texttools.model.texttools.TextRange;
+import org.eventb.texttools.model.texttools.TexttoolsFactory;
 
 public class TransformationVisitor extends DepthFirstAdapter {
 
@@ -217,6 +218,9 @@ public class TransformationVisitor extends DepthFirstAdapter {
 		TextPositionUtil.annotatePosition(newNode, createTextRange(node));
 
 		handleComment(newNode, node.getComments());
+		// Work around an Event-B EMF bug that sets an explicit empty label and suppresses the default label.
+		// TODO Allow a label here in the Camille grammar?
+		newNode.setName(IVariant.DEFAULT_LABEL);
 
 		final TFormula exprToken = node.getExpression();
 		final String exprString = exprToken.getText();
