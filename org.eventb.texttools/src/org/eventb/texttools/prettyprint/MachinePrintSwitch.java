@@ -251,7 +251,7 @@ public class MachinePrintSwitch extends MachineSwitch<Boolean> implements
 				printer.appendLineBreak();
 			}
 
-			printer.appendWithLineBreak(VARIANT);
+			printer.appendWithSpace(VARIANT);
 			printer.increaseIndentLevel();
 
 			for (final Variant variant : variants) {
