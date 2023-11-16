@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.texteditor.feature"
       label="Camille TextEditor"
-      version="3.5.1.qualifier"
+      version="3.5.2.qualifier"
       provider-name="Heinrich-Heine University Dusseldorf"
       plugin="org.eventb.texteditor.ui">
 
