@@ -1,6 +1,5 @@
 package org.eventb.texttools.diffmerge;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.compare.AttributeChange;
 import org.eclipse.emf.compare.Diff;
 import org.eclipse.emf.compare.ReferenceChange;
@@ -8,7 +7,7 @@ import org.eclipse.emf.compare.merge.AbstractMerger;
 import org.eclipse.emf.compare.merge.AttributeChangeMerger;
 import org.eclipse.emf.compare.merge.ReferenceChangeMerger;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eventb.emf.core.EventBObject;
 import org.eventb.texttools.TextPositionUtil;
 
@@ -19,20 +18,18 @@ public class EventBMerger extends AbstractMerger {
 	
 	@Override
 	public boolean isMergerFor(Diff target) {
-		String pack = "";
+		EStructuralFeature thing;
 		if (target instanceof ReferenceChange) {
 			ReferenceChange rc = (ReferenceChange) target;
-			pack = rc.getReference().getEContainingClass().getEPackage().getName();
-			//System.out.println("REF PACK:"+pack);
+			thing = rc.getReference();
 		} else if (target instanceof AttributeChange) {
 			AttributeChange ac = (AttributeChange) target;
-			pack = ac.getAttribute().getEContainingClass().getEPackage().getName();
-			//System.out.println("ATTR PACK:"+pack);
+			thing = ac.getAttribute();
 		} else {
-			System.out.println("TARGET:"+target);
 			return false;
 		}
-		return pack.equals("core") || pack.equals("machine") || pack.equals("context") || pack.equals("formulas");
+		String namespaceURI = thing.getEContainingClass().getEPackage().getNsURI();
+		return namespaceURI.startsWith("http://emf.eventb.org/models/core/");
 
 	}
 
