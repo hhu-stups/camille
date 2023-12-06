@@ -46,28 +46,4 @@
          </attributeType>
       </relationship>
    </extension>
-<!--   <extension
-         point="org.eclipse.emf.compare.match.engine">
-      <matchengine
-            label="EventB Match Engine"
-            engineClass="org.eventb.texttools.merge.EventBMatchEngine"
-            fileExtension="bum,buc">
-      </matchengine>
-   </extension>
-   <extension
-         point="org.eclipse.emf.compare.diff.mergerprovider">
-      <mergerprovider
-            fileExtension="bum,buc"
-            mergerProviderClass="org.eventb.texttools.merge.MergerProvider"
-            priority="highest">
-      </mergerprovider>
-   </extension>
-   <extension
-         point="org.eclipse.emf.compare.diff.engine">
-      <diffengine
-            engineClass="org.eventb.texttools.diff.EventBDiffEngine"
-            label="Event-B Difference Engine"
-            priority="highest">
-      </diffengine>
-   </extension> -->
 </plugin>

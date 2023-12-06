@@ -183,18 +183,6 @@ public class PersistenceHelper {
 
 		IEObjectMatcher matcher = new EventBEObjectMatcher();
 
-		// IMatchEngine matchEngine = new DefaultMatchEngine(matcher,
-		// comparisonFactory);
-		// final IMatchEngine eventBMatchEngine = new EventBMatchEngine(matcher,
-		// comparisonFactory);
-
-		// IMatchEngine.Factory matchEngineFactory = new
-		// MatchEngineFactoryImpl() {
-		// @Override
-		// public IMatchEngine getMatchEngine() {
-		// return eventBMatchEngine;
-		// }
-		// };
 		IMatchEngine.Factory matchEngineFactory = new MatchEngineFactoryImpl(
 				matcher, comparisonFactory);
 		matchEngineFactory.setRanking(20);
