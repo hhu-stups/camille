@@ -205,6 +205,10 @@ public class PersistenceHelper {
 
 		long time1 = System.currentTimeMillis();
 
+		if (DEBUG) {
+			System.out.println("new ModelMerge: " + (time1 - time0));
+		}
+
 		Registry registry = RegistryImpl.createStandaloneInstance();
 		IMerger evbMerger = new EventBMerger();
 		evbMerger.setRanking(100);
@@ -219,7 +223,6 @@ public class PersistenceHelper {
 		long time2 = System.currentTimeMillis();
 		
 		if (DEBUG) {
-			System.out.println("new ModelMerge: " + (time1 - time0));
 			System.out.println("merge.applyChanges: " + (time2 - time1));
 		}
 	}
