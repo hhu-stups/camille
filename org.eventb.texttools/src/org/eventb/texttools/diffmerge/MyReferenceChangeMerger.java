@@ -283,14 +283,14 @@ public class MyReferenceChangeMerger extends AbstractMerger {
 					targetList.add(insertionIndex, expectedValue);
 				}
 			} else if (targetList instanceof EList<?>) {
-				if (insertionIndex < 0 || insertionIndex > targetList.size()) {
+				if (insertionIndex < 0 || insertionIndex >= targetList.size()) {
 					((EList<EObject>)targetList).move(targetList.size() - 1, expectedValue);
 				} else {
 					((EList<EObject>)targetList).move(insertionIndex, expectedValue);
 				}
 			} else {
 				targetList.remove(expectedValue);
-				if (insertionIndex < 0 || insertionIndex > targetList.size()) {
+				if (insertionIndex < 0 || insertionIndex >= targetList.size()) {
 					targetList.add(expectedValue);
 				} else {
 					targetList.add(insertionIndex, expectedValue);
@@ -410,7 +410,7 @@ public class MyReferenceChangeMerger extends AbstractMerger {
 				expectedValue = diff.getValue();
 			}
 		} else if (rightToLeft) {
-			if (reference.isContainment() || valueMatch.getLeft() == null) {
+			if (valueMatch.getLeft() == null) {
 				expectedValue = createCopy(diff.getValue());
 				valueMatch.setLeft(expectedValue);
 				needXmiId = true;
@@ -418,7 +418,7 @@ public class MyReferenceChangeMerger extends AbstractMerger {
 				expectedValue = valueMatch.getLeft();
 			}
 		} else {
-			if (reference.isContainment() || valueMatch.getRight() == null) {
+			if (valueMatch.getRight() == null) {
 				expectedValue = createCopy(diff.getValue());
 				valueMatch.setRight(expectedValue);
 				needXmiId = true;
@@ -440,7 +440,7 @@ public class MyReferenceChangeMerger extends AbstractMerger {
 		if (needXmiId) {
 			// Copy XMI ID when applicable.
 			final Resource initialResource = diff.getValue().eResource();
-			final Resource targetResource = expectedValue.eResource();
+			final Resource targetResource = expectedContainer.eResource();
 			if (initialResource instanceof XMIResource && targetResource instanceof XMIResource) {
 				((XMIResource)targetResource).setID(expectedValue,
 						((XMIResource)initialResource).getID(diff.getValue()));
@@ -496,7 +496,6 @@ public class MyReferenceChangeMerger extends AbstractMerger {
 		}
 
 		final EObject expectedValue;
-		
 		if (valueMatch == null) {
 			// value is out of the scope... we need to look it up
 			if (reference.isMany()) {
