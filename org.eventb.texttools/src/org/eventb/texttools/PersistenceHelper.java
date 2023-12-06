@@ -176,7 +176,7 @@ public class PersistenceHelper {
 			final EventBNamedCommentedComponentElement oldVersion,
 			final EventBNamedCommentedComponentElement newVersion,
 			final IProgressMonitor monitor) {
-		long time0 = System.currentTimeMillis();
+		long timeStart = System.currentTimeMillis();
 
 		IComparisonFactory comparisonFactory = new DefaultComparisonFactory(
 				new DefaultEqualityHelperFactory());
@@ -199,14 +199,18 @@ public class PersistenceHelper {
 		IComparisonScope scope = new DefaultComparisonScope(oldVersion,
 				newVersion, null);
 
+		long timeSetup = System.currentTimeMillis();
+		if (DEBUG) {
+			System.out.println("Setting up comparator took " + (timeSetup - timeStart) + " ms");
+		}
+
 		Comparison comparison = comparator.compare(scope);
 
 		List<Diff> differences = comparison.getDifferences();
 
-		long time1 = System.currentTimeMillis();
-
+		long timeCompare = System.currentTimeMillis();
 		if (DEBUG) {
-			System.out.println("new ModelMerge: " + (time1 - time0));
+			System.out.println("Comparing took " + (timeCompare - timeSetup) + " ms");
 		}
 
 		Registry registry = RegistryImpl.createStandaloneInstance();
@@ -220,10 +224,9 @@ public class PersistenceHelper {
 		
 		for (Diff d: differences) applyDiff(oldVersion,evbMerger,d);
 		
-		long time2 = System.currentTimeMillis();
-		
+		long timeApply = System.currentTimeMillis();
 		if (DEBUG) {
-			System.out.println("merge.applyChanges: " + (time2 - time1));
+			System.out.println("Merging changes took " + (timeApply - timeCompare) + " ms");
 		}
 	}
 
