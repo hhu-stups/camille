@@ -167,8 +167,8 @@ public class PersistenceHelper {
 		try {
 			if (d.getState() != DifferenceState.MERGED)
 				evbMerger.copyRightToLeft(d,null);
-		} catch(Exception e) {
-			System.out.println("SKIPED:"+d);
+		} catch (RuntimeException e) {
+			TextToolsPlugin.getDefault().getLog().error("Failed to apply diff while saving edit", e);
 		}
 	}
 	
