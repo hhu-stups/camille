@@ -78,14 +78,16 @@ public class EventBEObjectMatcher implements IEObjectMatcher {
 		/*
 		 * Only one variant may exist in a model, so two variants are a match
 		 */
-		if (areVariants(left, candidate)) {
+		if (left instanceof Variant) {
+			assert candidate instanceof Variant;
 			return true;
 		}
 
 		/*
 		 * Improve matching for event b named objects with same name
 		 */
-		if (left instanceof EventBNamed && candidate instanceof EventBNamed) {
+		if (left instanceof EventBNamed) {
+			assert candidate instanceof EventBNamed;
 			EventBNamed l = (EventBNamed) left;
 			EventBNamed c = (EventBNamed) candidate;
 
@@ -98,12 +100,11 @@ public class EventBEObjectMatcher implements IEObjectMatcher {
 		 * rely on emf identifiers after the event-b specific code
 		 */
 		String idLeft = getEMFId(left);
-		String idCandidate = getEMFId(candidate);
-		if (idLeft != null && idLeft.equals(idCandidate)) {
-			return true;
+		if (idLeft == null) {
+			return false;
 		}
-
-		return false;
+		String idCandidate = getEMFId(candidate);
+		return idLeft.equals(idCandidate);
 	}
 
 	private static boolean areSameType(final EObject obj1, final EObject obj2) {
@@ -111,23 +112,9 @@ public class EventBEObjectMatcher implements IEObjectMatcher {
 				&& obj1.eClass().equals(obj2.eClass());
 	}
 
-	/**
-	 * Test if both given {@link EObject}s are of type {@link Variant}, includes
-	 * <code>null</code> check.
-	 * 
-	 * @param obj1
-	 * @param obj2
-	 * @return
-	 */
-	private static boolean areVariants(final EObject obj1, final EObject obj2) {
-		return areSameType(obj1, obj2) && obj2 instanceof Variant;
-	}
-
 	private static String getEMFId(EObject eObject) {
 		final String identifier;
-		if (eObject == null) {
-			identifier = null;
-		} else if (eObject.eIsProxy()) {
+		if (eObject.eIsProxy()) {
 			identifier = ((InternalEObject) eObject).eProxyURI().fragment();
 		} else {
 			String functionalId = EcoreUtil.getID(eObject);
