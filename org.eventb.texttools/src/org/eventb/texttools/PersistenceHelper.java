@@ -7,7 +7,6 @@
 package org.eventb.texttools;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -163,15 +162,6 @@ public class PersistenceHelper {
 
 	}
 
-	private static void applyDiff(EventBNamedCommentedComponentElement root,IMerger evbMerger,Diff d) {
-		try {
-			if (d.getState() != DifferenceState.MERGED)
-				evbMerger.copyRightToLeft(d,null);
-		} catch (RuntimeException e) {
-			TextToolsPlugin.getDefault().getLog().error("Failed to apply diff while saving edit", e);
-		}
-	}
-	
 	private static void mergeComponents(
 			final EventBNamedCommentedComponentElement oldVersion,
 			final EventBNamedCommentedComponentElement newVersion,
@@ -205,6 +195,9 @@ public class PersistenceHelper {
 		}
 
 		Comparison comparison = comparator.compare(scope);
+		if (DEBUG) {
+			System.out.println("Comparison stats: " + comparison.getMatches().size() + " matches, " + comparison.getDifferences().size() + " differences");
+		}
 
 		List<Diff> differences = comparison.getDifferences();
 
@@ -218,12 +211,18 @@ public class PersistenceHelper {
 		evbMerger.setRanking(100);
 		registry.add(evbMerger);
 		//BatchMerger bm = new BatchMerger(registry);
-		differences = filter(differences);
-
 		//bm.copyAllRightToLeft(differences, null);
-		
-		for (Diff d: differences) applyDiff(oldVersion,evbMerger,d);
-		
+
+		for (Diff d : differences) {
+			try {
+				if (d.getState() != DifferenceState.MERGED && !shouldIgnoreDiff(d)) {
+					evbMerger.copyRightToLeft(d, null);
+				}
+			} catch (RuntimeException e) {
+				TextToolsPlugin.getDefault().getLog().error("Failed to apply diff while saving edit", e);
+			}
+		}
+
 		long timeApply = System.currentTimeMillis();
 		if (DEBUG) {
 			System.out.println("Merging changes took " + (timeApply - timeCompare) + " ms");
@@ -235,15 +234,9 @@ public class PersistenceHelper {
 	// 1. right = null, i.e. Camille does not hold this element
 	// 2. ADD, i.e. the "nothing" coming from Camille is added to the EMF model
 	// => we drop the diff before we screw up the database
-	// Obvoiusly it would be better not to generate the diff at all....
-	private static List<Diff> filter(List<Diff> differences) {
-		List<Diff> newList = new ArrayList<Diff>();
-		for (Diff d : differences) {
-			if (!(d.getKind() == DifferenceKind.ADD && d.getMatch().getRight() == null)) {
-				newList.add(d);
-			}
-		}
-		return newList;
+	// Obviously it would be better not to generate the diff at all...
+	private static boolean shouldIgnoreDiff(Diff d) {
+		return d.getKind() == DifferenceKind.ADD && d.getMatch().getRight() == null;
 	}
 
 	public static void mergeRootElement(final Resource resource,
