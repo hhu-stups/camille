@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eventb.texteditor.feature_3.5.2.qualifier.jar" id="org.eventb.texteditor.feature" version="3.5.2.qualifier">
+   <feature id="org.eventb.texteditor.feature" version="0.0.0">
       <category name="org.eventb.texteditor.feature.category"/>
    </feature>
 
