@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eventb.texteditor.feature"
-      label="Camille TextEditor"
+      label="Camille Text Editor"
       version="3.5.2.qualifier"
-      provider-name="Heinrich-Heine University Dusseldorf"
+      provider-name="HHU Düsseldorf STUPS Group"
       plugin="org.eventb.texteditor.ui">
 
    <description>

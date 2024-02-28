@@ -16,5 +16,5 @@ Export-Package: de.be4.eventb.core.parser,
  de.be4.eventb.core.parser.parser,
  de.hhu.stups.sablecc.patch,
  org.eventb.texteditor.parsers
-Bundle-Vendor: Heinrich-Heine University Dusseldorf
+Bundle-Vendor: HHU Düsseldorf STUPS Group
 Bundle-ActivationPolicy: lazy

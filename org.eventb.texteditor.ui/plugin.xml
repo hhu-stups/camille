@@ -71,7 +71,7 @@
             category="org.eventb.ui.preferences.eventB"
             class="org.eventb.texteditor.ui.preferences.TextEditorPreferencePage"
             id="org.eventb.texteditor.ui.preferences"
-            name="Camille TextEditor">
+            name="Camille Text Editor">
       </page>
       <page
             category="org.eventb.texteditor.ui.preferences"
