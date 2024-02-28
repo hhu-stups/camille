@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/guava-14.0.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jsr305-1.3.9.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/bparser-2.4.40.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/eventbstruct-2.4.40.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/parserbase-2.4.40.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/prologlib-2.4.40.jar"/>
 	<classpathentry kind="output" path="bin"/>
+	<classpathentry exported="true" kind="lib" path="lib/eventbstruct-2.13.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/sablecc-runtime-3.7.0.jar"/>
 </classpath>
