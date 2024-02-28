@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.eventb.texteditor</groupId>
 		<artifactId>org.eventb.texteditor.parent</artifactId>
-		<version>3.6.0-SNAPSHOT</version>
+		<version>3.6.1-SNAPSHOT</version>
 		<relativePath>../org.eventb.texteditor.parent/pom.xml</relativePath>
 	</parent>
 

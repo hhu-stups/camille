@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.texteditor.feature"
       label="Camille Text Editor"
-      version="3.6.0.qualifier"
+      version="3.6.1.qualifier"
       provider-name="HHU Düsseldorf STUPS Group"
       plugin="org.eventb.texteditor.ui">
 
