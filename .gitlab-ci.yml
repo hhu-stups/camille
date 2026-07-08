@@ -1,6 +1,6 @@
 build:
   stage: build
-  image: maven:3-eclipse-temurin-17
+  image: maven:3-eclipse-temurin-21
   script:
     - mvn -Dmaven.repo.local="$CI_PROJECT_DIR/maven_repo_local" -f org.eventb.texteditor.parent/pom.xml install
   cache:
