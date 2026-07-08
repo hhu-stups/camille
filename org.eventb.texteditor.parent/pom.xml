@@ -29,9 +29,9 @@
 		</repository>
 
 		<repository>
-			<id>rodin_plugins</id>
+			<id>eventb_soton_plugins</id>
 			<layout>p2</layout>
-			<url>https://rodin-b-sharp.sourceforge.net/updates/</url>
+			<url>https://eventb-soton.github.io/updateSite/releases/</url>
 		</repository>
 	</repositories>
 
