@@ -16,9 +16,9 @@ Building the project requires at least Java 21 and Maven 3.9.
 
 ```sh
 $ cd org.eventb.texteditor.parent
-$ mvn clean verify 
+$ mvn clean verify
 ```
-  
+
 This will produce a p2 repository (update site) in org.eventb.texteditor.repository/target/repository
 
 We autmatically produce nightly builds that can be installed using the repository located at https://stups.hhu-hosting.de/rodin/camille/develop/.
