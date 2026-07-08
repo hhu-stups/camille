@@ -18,13 +18,14 @@
 		<repository>
 			<id>eclipse</id>
 			<layout>p2</layout>
-			<url>https://download.eclipse.org/releases/2023-12/</url>
+			<!-- Eclipse 4.38 -->
+			<url>https://download.eclipse.org/releases/2025-12/</url>
 		</repository>
 
 		<repository>
 			<id>rodin_core</id>
 			<layout>p2</layout>
-			<url>https://rodin-b-sharp.sourceforge.net/core-updates/</url>
+			<url>https://rodin-b-sharp.sourceforge.net/core-updates/3.10/</url>
 		</repository>
 
 		<repository>
