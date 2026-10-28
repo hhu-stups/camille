@@ -25,10 +25,16 @@ import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.ui.util.EditUIUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.link.LinkedModeUI;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.LineChangeHover;
+import org.eclipse.text.undo.DocumentUndoEvent;
+import org.eclipse.text.undo.DocumentUndoManagerRegistry;
+import org.eclipse.text.undo.IDocumentUndoListener;
+import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -75,6 +81,46 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	 */
 	private final ReentrantLock buildLock = new ReentrantLock();
 
+	/*
+	 * Undo support: The reconciler automatically replaces ASCII notation by
+	 * mathematical symbols (e.g. ":" by "\u2208"). If the user undoes such a
+	 * replacement, the reconciler must not immediately redo it, otherwise
+	 * Ctrl+Z seems to have no effect. So after an undo/redo the automatic
+	 * translation is paused until the user edits the document again.
+	 */
+	private volatile boolean translationSuppressedByUndo = false;
+	private volatile boolean undoInProgress = false;
+	private IDocument trackedDocument;
+	private IDocumentUndoManager trackedUndoManager;
+
+	private final IDocumentUndoListener undoListener = new IDocumentUndoListener() {
+		@Override
+		public void documentUndoNotification(final DocumentUndoEvent event) {
+			final int type = event.getEventType();
+			if ((type & (DocumentUndoEvent.ABOUT_TO_UNDO | DocumentUndoEvent.ABOUT_TO_REDO)) != 0) {
+				undoInProgress = true;
+			}
+			if ((type & (DocumentUndoEvent.UNDONE | DocumentUndoEvent.REDONE)) != 0) {
+				undoInProgress = false;
+				translationSuppressedByUndo = true;
+			}
+		}
+	};
+
+	private final IDocumentListener editListener = new IDocumentListener() {
+		@Override
+		public void documentAboutToBeChanged(final DocumentEvent event) {
+			// IGNORE
+		}
+
+		@Override
+		public void documentChanged(final DocumentEvent event) {
+			if (!undoInProgress) {
+				// a regular edit: automatic translation may continue
+				translationSuppressedByUndo = false;
+			}
+		}
+	};
 
 	public EventBTextEditor() {
 		activeListener = new ActivateListener();
@@ -127,6 +173,7 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		resource = null;
 
 		registerChangeListener(oldInput, getEditorInput());
+		installUndoTracking(getDocumentProvider().getDocument(getEditorInput()));
 		presentationReconciler.setInputResource(getResource());
 
 		adjustLabels();
@@ -190,6 +237,8 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	public void dispose() {
 		getSite().getPage().removePartListener(activeListener);
 		registerChangeListener(getEditorInput(), null);
+		installUndoTracking(null);
+
 		final IEditorInput input = getEditorInput();
 		if (input != null) {
 			// release the cached AST of this editor (memory leak)
@@ -223,6 +272,36 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		}
 	}
 
+	private void installUndoTracking(final IDocument document) {
+		if (trackedDocument == document) {
+			return;
+		}
+
+		if (trackedDocument != null) {
+			trackedDocument.removeDocumentListener(editListener);
+			if (trackedUndoManager != null) {
+				trackedUndoManager.removeDocumentUndoListener(undoListener);
+			}
+			DocumentUndoManagerRegistry.disconnect(trackedDocument);
+			trackedDocument = null;
+			trackedUndoManager = null;
+		}
+
+		if (document != null) {
+			DocumentUndoManagerRegistry.connect(document);
+			trackedDocument = document;
+			trackedUndoManager = DocumentUndoManagerRegistry
+					.getDocumentUndoManager(document);
+			if (trackedUndoManager != null) {
+				trackedUndoManager.addDocumentUndoListener(undoListener);
+			}
+			document.addDocumentListener(editListener);
+		}
+
+		translationSuppressedByUndo = false;
+		undoInProgress = false;
+	}
+
 	/**
 	 * @return the lock that has to be held while the text is parsed and merged
 	 *         into the EMF model
@@ -238,6 +317,17 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		final ISourceViewer viewer = getSourceViewer();
 		return viewer != null && viewer.getTextWidget() != null
 				&& !viewer.getTextWidget().isDisposed();
+	}
+
+	/**
+	 * Returns whether ASCII notation in formulas should currently be replaced
+	 * by mathematical symbols in the text. This is disabled by the user
+	 * preference or temporarily after an undo/redo (see above).
+	 */
+	public boolean isAutoTranslationActive() {
+		return !translationSuppressedByUndo
+				&& TextEditorPlugin.getPlugin().getPreferenceStore()
+						.getBoolean(TextEditorPlugin.PREF_AUTO_TRANSLATE);
 	}
 
 	public Resource getResource() {

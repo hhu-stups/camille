@@ -166,7 +166,8 @@ public class FormulaTranslator {
 		final Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
-				if (!targetEditor.isEditorAlive()) {
+				if (!targetEditor.isEditorAlive()
+						|| !targetEditor.isAutoTranslationActive()) {
 					return;
 				}
 				if (snapshot != null && !snapshot.isUpToDate()) {

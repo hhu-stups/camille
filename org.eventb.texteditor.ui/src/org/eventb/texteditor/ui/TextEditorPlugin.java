@@ -46,6 +46,13 @@ public final class TextEditorPlugin extends EMFPlugin {
 	public static final String FORMAT_COMMAND_ID = "org.eventb.texteditor.command.format";
 
 	/**
+	 * Preference key: automatically replace ASCII notation in formulas by
+	 * mathematical symbols while typing
+	 */
+	public static final String PREF_AUTO_TRANSLATE = PLUGIN_ID
+			+ ".autoTranslate";
+
+	/**
 	 * Singleton instance of EMFPlugin
 	 */
 	public static final TextEditorPlugin INSTANCE = new TextEditorPlugin();
