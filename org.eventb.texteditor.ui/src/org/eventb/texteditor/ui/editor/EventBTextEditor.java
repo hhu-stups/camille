@@ -439,13 +439,13 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	}
 
 	@Override
-	public Object getAdapter(final Class adapter) {
+	public <T> T getAdapter(final Class<T> adapter) {
 		if (IGotoMarker.class.equals(adapter)) {
-			return getGotoMarker();
+			return adapter.cast(getGotoMarker());
 		}
 
-		if (adapter.equals(IContentOutlinePage.class)) {
-			return getContentOutlinePage();
+		if (IContentOutlinePage.class.equals(adapter)) {
+			return adapter.cast(getContentOutlinePage());
 		}
 
 		return super.getAdapter(adapter);

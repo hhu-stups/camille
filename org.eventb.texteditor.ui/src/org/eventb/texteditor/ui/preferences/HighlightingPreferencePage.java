@@ -163,7 +163,7 @@ public class HighlightingPreferencePage extends PreferencePage implements
 	}
 
 	public void init(final IWorkbench workbench) {
-		// TODO Auto-generated method stub
+		// nothing to initialize
 	}
 
 	private class Field {

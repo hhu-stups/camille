@@ -80,7 +80,7 @@ import org.eventb.texttools.Constants;
 public class DefaultContentAssist extends TemplateCompletionProcessor {
 
 	public enum ContextType {
-		Unkown(PREFIX + "unknown"), Anywhere(PREFIX + "anywhere"), Machine(
+		Unknown(PREFIX + "unknown"), Anywhere(PREFIX + "anywhere"), Machine(
 				PREFIX + "machine"), Context(PREFIX + "context"), Events(PREFIX
 				+ "events");
 
@@ -611,7 +611,7 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 	protected TemplateContextType getContextType(final ITextViewer viewer,
 			final IRegion region) {
 		// we don't care about context types here
-		return new TemplateContextType(ContextType.Unkown.key);
+		return new TemplateContextType(ContextType.Unknown.key);
 	}
 
 	@Override

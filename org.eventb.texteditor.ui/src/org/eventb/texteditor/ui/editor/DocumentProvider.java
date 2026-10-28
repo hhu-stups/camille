@@ -369,8 +369,7 @@ public class DocumentProvider extends FileDocumentProvider {
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 
 		/* make all trimmed lines one single undo step */
-		final IRewriteTarget rewriteTarget = (IRewriteTarget) editor
-				.getAdapter(IRewriteTarget.class);
+		final IRewriteTarget rewriteTarget = editor.getAdapter(IRewriteTarget.class);
 		if (rewriteTarget != null) {
 			rewriteTarget.beginCompoundChange();
 		}

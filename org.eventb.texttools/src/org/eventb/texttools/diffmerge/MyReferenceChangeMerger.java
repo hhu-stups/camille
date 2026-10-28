@@ -511,10 +511,6 @@ public class MyReferenceChangeMerger extends AbstractMerger {
 			expectedValue = valueMatch.getRight();
 		}
 
-		//System.out.println("VALUE:"+diff.getValue());
-		//System.out.println("LEFT:"+safeEGet(currentContainer, reference));
-		//System.out.println("MATCH:"+expectedValue);
-
 		// We have the container, reference and value to remove. Expected value can be null when the
 		// deletion was made on both side (i.e. a pseudo delete)
 		if (reference.isMany()) {
@@ -525,8 +521,6 @@ public class MyReferenceChangeMerger extends AbstractMerger {
 			 * deleted? Can it happen? For now, remove the first occurence we find.
 			 */
 			targetList.remove(expectedValue);
-			//System.out.println("REMOVE:"+expectedValue);
-			//System.out.println("NEW LIST:"+safeEGet(currentContainer, reference));
 			}
 		} else if (reference.isContainment() && expectedValue != null) {
 			EcoreUtil.remove(expectedValue);

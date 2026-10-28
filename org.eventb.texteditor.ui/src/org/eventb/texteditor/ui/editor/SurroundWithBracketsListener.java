@@ -78,8 +78,7 @@ public class SurroundWithBracketsListener implements VerifyKeyListener {
 		final int offset = selection.x;
 		final int length = selection.y;
 
-		final IRewriteTarget rewriteTarget = (IRewriteTarget) editor
-				.getAdapter(IRewriteTarget.class);
+		final IRewriteTarget rewriteTarget = editor.getAdapter(IRewriteTarget.class);
 		if (rewriteTarget != null) {
 			rewriteTarget.beginCompoundChange();
 		}

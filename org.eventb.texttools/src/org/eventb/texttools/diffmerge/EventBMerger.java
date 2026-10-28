@@ -9,6 +9,7 @@ import org.eclipse.emf.compare.merge.ReferenceChangeMerger;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eventb.emf.core.EventBObject;
+import org.eventb.texttools.PersistenceHelper;
 import org.eventb.texttools.TextPositionUtil;
 
 public class EventBMerger extends AbstractMerger {
@@ -62,8 +63,6 @@ public class EventBMerger extends AbstractMerger {
 
 		if (rm.isMergerFor(diff)) {
 			ReferenceChange d = (ReferenceChange) diff;
-			//System.out.println("REF CHANGE:"+d.getReference());
-			//System.out.println("REF VALUE:"+ d.getValue());
 			rm.copyRightToLeft(diff,null);
 			Object l = left.eGet(d.getReference());
 			Object r = right.eGet(d.getReference());
@@ -74,8 +73,6 @@ public class EventBMerger extends AbstractMerger {
 
 		if (am.isMergerFor(diff)) {
 			AttributeChange d = (AttributeChange) diff;
-			//System.out.println("ATTR CHANGE:"+d.getAttribute());
-			//System.out.println("ATTR VALUE:"+ d.getValue());
 			am.copyRightToLeft(diff,null);
 			Object l = left.eGet(d.getAttribute());
 			Object r = right.eGet(d.getAttribute());
@@ -84,7 +81,9 @@ public class EventBMerger extends AbstractMerger {
 			return;
 		}
 
-		System.out.println("DIFF:"+diff.getClass()+"  LEFT:"+left+ "  -  RIGHT:"+right);
-		
+		if (PersistenceHelper.DEBUG) {
+			System.out.println("Unhandled diff: " + diff.getClass() + "  LEFT:" + left
+					+ "  -  RIGHT:" + right);
+		}
 	}
 }
