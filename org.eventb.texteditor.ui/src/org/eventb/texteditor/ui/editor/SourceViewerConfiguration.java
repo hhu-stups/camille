@@ -46,6 +46,9 @@ public class SourceViewerConfiguration extends TextSourceViewerConfiguration {
 				PartitionScanner.CONTENT_TYPE_STRUCTURAL_KEYWORD);
 		assistant.setContentAssistProcessor(processor,
 				PartitionScanner.CONTENT_TYPE_FORMULA_KEYWORD);
+		// labels ("@inv1") form their own partition, needed for label proposals
+		assistant.setContentAssistProcessor(processor,
+				PartitionScanner.CONTENT_TYPE_LABEL);
 
 		assistant
 				.setInformationControlCreator(getInformationControlCreator(sourceViewer));
