@@ -46,17 +46,11 @@ import org.eventb.emf.core.AttributeType;
 import org.eventb.emf.core.CoreFactory;
 import org.eventb.emf.core.EventBElement;
 import org.eventb.emf.core.EventBNamedCommentedComponentElement;
+import org.eventb.emf.core.machine.Machine;
 import org.eventb.texttools.diffmerge.EventBDiffProcessor;
 import org.eventb.texttools.diffmerge.EventBEObjectMatcher;
 import org.eventb.texttools.diffmerge.EventBMerger;
 import org.eventb.texttools.prettyprint.PrettyPrinter;
-
-import de.be4.eventb.core.parser.BException;
-import de.be4.eventb.core.parser.EventBParser;
-import de.be4.eventb.core.parser.node.AContextParseUnit;
-import de.be4.eventb.core.parser.node.AMachineParseUnit;
-import de.be4.eventb.core.parser.node.PParseUnit;
-import de.be4.eventb.core.parser.node.Start;
 
 
 public class PersistenceHelper {
@@ -250,6 +244,29 @@ public class PersistenceHelper {
 		final EventBNamedCommentedComponentElement component = getComponent(resource);
 		if (component != null) {
 			// FIXME Hier stimmt die Reihenfolge noch
+			if (component.eClass() != newVersion.eClass()) {
+				/*
+				 * E.g. a context pasted into a machine file. Comparing both
+				 * would delete the complete content of the component.
+				 */
+				TextToolsPlugin.getDefault().getLog().warn(
+						"Not merging " + newVersion.eClass().getName()
+								+ " into " + component.eClass().getName()
+								+ " '" + component.getName() + "'");
+				return;
+			}
+
+			if (component.getName() != null
+					&& !component.getName().equals(newVersion.getName())) {
+				/*
+				 * The component name is defined by the file name. If the text
+				 * contains a different name (e.g. copied from another file),
+				 * the root elements would not match and the whole content of
+				 * the component would be discarded.
+				 */
+				newVersion.setName(component.getName());
+			}
+
 			long start = System.currentTimeMillis();
 			mergeComponents(component, newVersion, monitor);
 			long end = System.currentTimeMillis();
@@ -277,51 +294,8 @@ public class PersistenceHelper {
 			// we should find a text representation in the EMF
 			final String text = getTextAnnotation(resource);
 
-			/*
-			 * workaround for Bug #3305107
-			 * 
-			 * When a machine- or contextfile is renamed the lastmodified date
-			 * does not change. Since isTextUptodate() compares timestamps only,
-			 * it returns true for renamed files.
-			 */
-			boolean namesMatch = true;
-			final EventBNamedCommentedComponentElement rootElement = getComponent(resource);
-			if (rootElement != null) {
-				final EventBParser parser = new EventBParser();
-				try {
-					Start start = parser.parse(text, false);
-					// System.out.println(start);
-					PParseUnit pParseUnit = start.getPParseUnit();
-					String parsedName = null;
-					if (pParseUnit instanceof AMachineParseUnit) {
-						parsedName = ((AMachineParseUnit) start.getPParseUnit())
-								.getName().getText();
-					}
-					if (pParseUnit instanceof AContextParseUnit) {
-						parsedName = ((AContextParseUnit) start.getPParseUnit())
-								.getName().getText();
-					}
-
-					if (parsedName != null) {
-						if (!parsedName.equals(rootElement.getName())) {
-							namesMatch = false;
-							System.err
-									.println("Conflicting names of ParseUnit! Expected name: '"
-											+ rootElement.getName()
-											+ "' actual name: '"
-											+ parsedName
-											+ "'! Prettyprinting unit...");
-						}
-					}
-				} catch (BException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			/* End of woraround */
-
-			if (text != null && namesMatch) {
-				return text;
+			if (text != null) {
+				return adaptComponentName(text, getComponent(resource));
 			}
 		}
 
@@ -341,6 +315,41 @@ public class PersistenceHelper {
 			throw new IOException(
 					"Cannot find load Event-B component: No machine/context found");
 		}
+	}
+
+	/**
+	 * Makes sure the name in the text matches the name of the component.
+	 * <p>
+	 * When a machine/context file is renamed in Rodin, or text from another
+	 * component was pasted and saved, the stored text still contains the old
+	 * name. Previously the whole text was thrown away in this case and
+	 * replaced by a pretty-print of the database (losing comments, formatting
+	 * and - if saving had failed - the user's changes). Now only the name is
+	 * replaced.
+	 * </p>
+	 */
+	private static String adaptComponentName(final String text,
+			final EventBNamedCommentedComponentElement rootElement) {
+		if (rootElement == null || rootElement.getName() == null) {
+			return text;
+		}
+
+		final ComponentNameUtil.NameInfo nameInfo = ComponentNameUtil
+				.findComponentName(text);
+		if (nameInfo == null || nameInfo.name.equals(rootElement.getName())) {
+			// unparsable text is shown as is, the editor will mark the errors
+			return text;
+		}
+
+		final ComponentNameUtil.Kind expectedKind = rootElement instanceof Machine ? ComponentNameUtil.Kind.MACHINE
+				: ComponentNameUtil.Kind.CONTEXT;
+		if (nameInfo.kind != expectedKind) {
+			// wrong component type, the editor reports this as an error
+			return text;
+		}
+
+		return ComponentNameUtil.replaceComponentName(text, nameInfo,
+				rootElement.getName());
 	}
 
 	public static String getTextAnnotation(final Resource resource) {
