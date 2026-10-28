@@ -28,9 +28,11 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.link.LinkedModeUI;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.LineChangeHover;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.text.undo.DocumentUndoEvent;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoListener;
@@ -353,12 +355,29 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 			getSite().getShell().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
+					if (!isEditorAlive() || !isEditable()) {
+						return;
+					}
+
 					final IDocument document = getDocumentProvider()
 							.getDocument(getEditorInput());
-					final int offset = getCursorOffset();
+
+					/*
+					 * Replace the current selection (if any) like typing
+					 * does, instead of inserting in front of it.
+					 */
+					int offset = getCursorOffset();
+					int length = 0;
+					final ISelection selection = getSelectionProvider()
+							.getSelection();
+					if (selection instanceof ITextSelection
+							&& ((ITextSelection) selection).getOffset() >= 0) {
+						offset = ((ITextSelection) selection).getOffset();
+						length = ((ITextSelection) selection).getLength();
+					}
 
 					try {
-						document.replace(offset, 0, symbol);
+						document.replace(offset, length, symbol);
 
 						if (correctCursorPosition) {
 							setCurserOffset(offset + symbol.length());
@@ -390,11 +409,17 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 
 	public void setCurserOffset(final int offsetInDocument) {
 		final ISourceViewer sourceViewer = getSourceViewer();
-		if (sourceViewer != null) {
+		if (sourceViewer != null && sourceViewer.getTextWidget() != null
+				&& !sourceViewer.getTextWidget().isDisposed()) {
 			final int widgetOffset = modelOffset2WidgetOffset(sourceViewer,
-					offsetInDocument);
+					Math.max(0, offsetInDocument));
+			if (widgetOffset < 0) {
+				// offset is in a collapsed region or outside of the document
+				return;
+			}
 			final StyledText textWidget = sourceViewer.getTextWidget();
-			textWidget.setCaretOffset(widgetOffset);
+			textWidget.setCaretOffset(Math.min(widgetOffset,
+					textWidget.getCharCount()));
 		}
 	}
 
@@ -487,8 +512,11 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 			if (input instanceof IFileEditorInput) {
 				final IFile file = ((IFileEditorInput) input).getFile();
 				String name = file.getName();
-				name = name.substring(0, name.length()
-						- file.getFileExtension().length() - 1);
+				final String extension = file.getFileExtension();
+				if (extension != null) {
+					name = name.substring(0, name.length() - extension.length()
+							- 1);
+				}
 				setPartName(name);
 			}
 		}

@@ -99,8 +99,13 @@ public class PersistenceHelper {
 			long textTimestamp = getTextTimestamp(resource);
 			// if(textTimestamp == -1)
 			// textTimestamp = System.currentTimeMillis();
-			resource.setTimeStamp(textTimestamp);
-			getIResource(resource).setLocalTimeStamp(textTimestamp);
+			if (textTimestamp >= 0) {
+				resource.setTimeStamp(textTimestamp);
+				final IResource file = getIResource(resource);
+				if (file != null && file.exists()) {
+					file.setLocalTimeStamp(textTimestamp);
+				}
+			}
 		} catch (final IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					TextToolsPlugin.PLUGIN_ID, "Saving to RodinDB failed", e));
@@ -424,6 +429,9 @@ public class PersistenceHelper {
 
 		try {
 			final IResource file = getIResource(resource);
+			if (file == null) {
+				return false;
+			}
 			// refresh to get latest timestamp
 			file.refreshLocal(IResource.DEPTH_ONE, null);
 			final long resourceTimestamp = file.getLocalTimeStamp();
