@@ -11,6 +11,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -24,6 +25,7 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eventb.texteditor.ui.build.ReconcilingStrategy;
 import org.eventb.texteditor.ui.editor.codecompletion.DefaultContentAssist;
 import org.eventb.texteditor.ui.editor.hover.EventBTextHover;
+import org.eventb.texteditor.ui.editor.navigation.DeclarationHyperlinkDetector;
 import org.eventb.texteditor.ui.reconciler.EventBPresentationReconciler;
 import org.eventb.texteditor.ui.reconciler.partitioning.PartitionScanner;
 
@@ -32,6 +34,7 @@ public class SourceViewerConfiguration extends TextSourceViewerConfiguration {
 	private final EventBTextEditor editor;
 	private EventBPresentationReconciler presentationReconciler;
 	private EventBTextHover textHover;
+	private DeclarationHyperlinkDetector declarationDetector;
 
 	public SourceViewerConfiguration(final EventBTextEditor editor,
 			final IPreferenceStore preferenceStore) {
@@ -91,6 +94,34 @@ public class SourceViewerConfiguration extends TextSourceViewerConfiguration {
 			}
 		}
 		return textHover;
+	}
+
+	@Override
+	public IHyperlinkDetector[] getHyperlinkDetectors(
+			final ISourceViewer sourceViewer) {
+		final IHyperlinkDetector[] others = super
+				.getHyperlinkDetectors(sourceViewer);
+		final IHyperlinkDetector[] result = new IHyperlinkDetector[1 + (others != null ? others.length
+				: 0)];
+		result[0] = getDeclarationDetector(sourceViewer);
+		if (others != null) {
+			System.arraycopy(others, 0, result, 1, others.length);
+		}
+		return result;
+	}
+
+	/**
+	 * @return the detector for "jump to declaration" (Ctrl/Cmd+click, F3)
+	 */
+	public DeclarationHyperlinkDetector getDeclarationDetector(
+			final ISourceViewer sourceViewer) {
+		if (declarationDetector == null) {
+			// shares the information read from the Rodin database
+			declarationDetector = new DeclarationHyperlinkDetector(editor,
+					(EventBTextHover) getTextHover(sourceViewer,
+							IDocument.DEFAULT_CONTENT_TYPE));
+		}
+		return declarationDetector;
 	}
 
 	@Override

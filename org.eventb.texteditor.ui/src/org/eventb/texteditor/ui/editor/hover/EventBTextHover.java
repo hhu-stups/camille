@@ -331,9 +331,17 @@ public class EventBTextHover implements ITextHover, ITextHoverExtension,
 	}
 
 	/**
+	 * @return the current information about the component (read from the
+	 *         Rodin database)
+	 */
+	public HoverIndex getIndex() {
+		return index;
+	}
+
+	/**
 	 * @return label of the event the offset is in, or <code>null</code>
 	 */
-	static String findEvent(final String text, final int offset) {
+	public static String findEvent(final String text, final int offset) {
 		final Matcher events = EVENTS.matcher(text);
 		if (!events.find() || events.start() > offset) {
 			return null;
