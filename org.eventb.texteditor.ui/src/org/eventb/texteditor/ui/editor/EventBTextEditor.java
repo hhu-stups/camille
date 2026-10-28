@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -39,6 +40,8 @@ import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoListener;
 import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -55,6 +58,7 @@ import org.eventb.emf.core.context.ContextPackage;
 import org.eventb.emf.core.machine.MachinePackage;
 import org.eventb.texteditor.ui.Images;
 import org.eventb.texteditor.ui.TextEditorPlugin;
+import org.eventb.texteditor.ui.build.Builder;
 import org.eventb.texteditor.ui.outline.OutlinePage;
 import org.eventb.texteditor.ui.outline.RevealSelectionListener;
 import org.eventb.texteditor.ui.reconciler.EventBPresentationReconciler;
@@ -165,6 +169,60 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 					.prependVerifyKeyListener(new SurroundWithBracketsListener(
 							this, viewer));
 		}
+
+		/*
+		 * "{}" is only translated to the empty set when something is typed
+		 * after it, or when the editor loses the focus.
+		 */
+		if (viewer != null && viewer.getTextWidget() != null) {
+			viewer.getTextWidget().addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(final FocusEvent e) {
+					translatePendingEmptySets();
+				}
+			});
+		}
+	}
+
+	private void translatePendingEmptySets() {
+		if (!isAutoTranslationActive() || isInLinkedMode()
+				|| getDocumentProvider() == null) {
+			return;
+		}
+
+		final IDocument document = getDocumentProvider().getDocument(
+				getEditorInput());
+		if (document == null || !document.get().contains("{}")) {
+			return;
+		}
+
+		/*
+		 * Run a build in the background. Its translation is applied in the UI
+		 * thread; if the editor still has no focus then, "{}" is translated
+		 * too.
+		 */
+		final Job job = new Job("Translating Event-B symbols") {
+			@Override
+			protected IStatus run(final IProgressMonitor monitor) {
+				if (isEditorAlive()) {
+					new Builder().run(EventBTextEditor.this, document, monitor);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule(100);
+	}
+
+	/**
+	 * @return <code>true</code> if the text widget has the keyboard focus.
+	 *         Must be called in the UI thread.
+	 */
+	public boolean hasTextFocus() {
+		final ISourceViewer viewer = getSourceViewer();
+		return viewer != null && viewer.getTextWidget() != null
+				&& !viewer.getTextWidget().isDisposed()
+				&& viewer.getTextWidget().isFocusControl();
 	}
 
 	@Override
