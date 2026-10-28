@@ -29,6 +29,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.link.LinkedModeUI;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.LineChangeHover;
@@ -38,6 +39,7 @@ import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoListener;
 import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -150,6 +152,19 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		showChangeInformation(false);
 
 		setEditorContextMenuId(TextEditorPlugin.TEXTEDITOR_CONTEXTMENU_ID);
+	}
+
+	@Override
+	public void createPartControl(final Composite parent) {
+		super.createPartControl(parent);
+
+		// select text and type "(", "[" or "{" to put it into brackets
+		final ISourceViewer viewer = getSourceViewer();
+		if (viewer instanceof ITextViewerExtension) {
+			((ITextViewerExtension) viewer)
+					.prependVerifyKeyListener(new SurroundWithBracketsListener(
+							this, viewer));
+		}
 	}
 
 	@Override
