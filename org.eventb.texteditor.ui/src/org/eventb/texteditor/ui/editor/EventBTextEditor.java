@@ -25,13 +25,18 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.ui.util.EditUIUtil;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.link.LinkedModeUI;
+import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
+import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.LineChangeHover;
 import org.eclipse.jface.viewers.ISelection;
@@ -51,8 +56,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eventb.emf.core.context.ContextPackage;
 import org.eventb.emf.core.machine.MachinePackage;
@@ -82,6 +89,10 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	private boolean resourceChangedWhileDirty;
 
 	private volatile boolean inLinkedMode = false;
+
+	private final DefaultCharacterPairMatcher bracketMatcher = new DefaultCharacterPairMatcher(
+			new char[] { '(', ')', '[', ']', '{', '}' },
+			IDocumentExtension3.DEFAULT_PARTITIONING);
 
 	/**
 	 * Serializes background builds (reconciler) and foreground builds (save,
@@ -144,6 +155,14 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
+
+		/*
+		 * Camille's own preferences (e.g. bracket matching) in front of the
+		 * general text editor preferences.
+		 */
+		setPreferenceStore(new ChainedPreferenceStore(new IPreferenceStore[] {
+				TextEditorPlugin.getPlugin().getPreferenceStore(),
+				getPreferenceStore() }));
 
 		setDocumentProvider(new DocumentProvider(this));
 		final SourceViewerConfiguration viewerConfiguration = new SourceViewerConfiguration(
@@ -223,6 +242,51 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		return viewer != null && viewer.getTextWidget() != null
 				&& !viewer.getTextWidget().isDisposed()
 				&& viewer.getTextWidget().isFocusControl();
+	}
+
+	/*
+	 * Highlighting of matching brackets
+	 */
+	@Override
+	protected void configureSourceViewerDecorationSupport(
+			final SourceViewerDecorationSupport support) {
+		support.setCharacterPairMatcher(bracketMatcher);
+		support.setMatchingCharacterPainterPreferenceKeys(
+				TextEditorPlugin.PREF_MATCHING_BRACKETS,
+				TextEditorPlugin.PREF_MATCHING_BRACKETS_COLOR,
+				TextEditorPlugin.PREF_BRACKET_AT_CARET,
+				TextEditorPlugin.PREF_ENCLOSING_BRACKETS);
+		super.configureSourceViewerDecorationSupport(support);
+	}
+
+	/**
+	 * Moves the cursor to the bracket matching the one in front of the
+	 * cursor.
+	 *
+	 * @return <code>false</code> if there is no matching bracket
+	 */
+	public boolean gotoMatchingBracket() {
+		final ISourceViewer viewer = getSourceViewer();
+		if (viewer == null || viewer.getDocument() == null) {
+			return false;
+		}
+
+		final IDocument document = viewer.getDocument();
+		final int caret = getCursorOffset();
+		final IRegion match = bracketMatcher.match(document, caret);
+		if (match == null || match.getLength() < 2) {
+			return false;
+		}
+
+		/*
+		 * The match covers both brackets. The cursor is behind one of them,
+		 * put it behind the other one.
+		 */
+		final int target = bracketMatcher.getAnchor() == ICharacterPairMatcher.LEFT ? match
+				.getOffset() + match.getLength()
+				: match.getOffset() + 1;
+		selectAndReveal(target, 0);
+		return true;
 	}
 
 	@Override
@@ -313,6 +377,7 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		getSite().getPage().removePartListener(activeListener);
 		registerChangeListener(getEditorInput(), null);
 		installUndoTracking(null);
+		bracketMatcher.dispose();
 
 		final IEditorInput input = getEditorInput();
 		if (input != null) {
