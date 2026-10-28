@@ -14,6 +14,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
@@ -35,9 +36,7 @@ import org.eclipse.jface.text.templates.TemplateVariable;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
-import org.eventb.texteditor.ui.TextEditorPlugin;
 import org.eventb.texteditor.ui.editor.EventBTextEditor;
 
 public class EventBTemplateProposal extends TemplateProposal implements
@@ -48,13 +47,16 @@ public class EventBTemplateProposal extends TemplateProposal implements
 
 	private IRegion fSelectedRegion; // initialized by apply()
 	private InclusivePositionUpdater fUpdater;
+	private final EventBTextEditor editor;
 
 	public EventBTemplateProposal(final Template template,
 			final TemplateContext context, final IRegion region,
-			final Image image, final int relevance) {
+			final Image image, final int relevance,
+			final EventBTextEditor editor) {
 		super(template, context, region, image, relevance);
 
 		fRegion = region;
+		this.editor = editor;
 	}
 
 	/**
@@ -94,6 +96,14 @@ public class EventBTemplateProposal extends TemplateProposal implements
 				start = getReplaceOffset();
 				final int shift = start - oldReplaceOffset;
 				final int end = Math.max(getReplaceEndOffset(), offset + shift);
+
+				/*
+				 * The templates are stored with "\r" line breaks. Inserting them
+				 * as they are produced mixed line delimiters in the document.
+				 * Also indent follow-up lines like the line we insert into.
+				 */
+				adaptLineDelimitersAndIndentation(templateBuffer, document,
+						start);
 
 				// insert template string
 				final String templateString = templateBuffer.getString();
@@ -154,7 +164,6 @@ public class EventBTemplateProposal extends TemplateProposal implements
 			if (hasPositions) {
 				model.forceInstall();
 
-				final EventBTextEditor editor = getEventBEditor();
 				if (editor != null) {
 					model.addLinkingListener(new EditorSynchronizer(editor));
 				}
@@ -181,14 +190,54 @@ public class EventBTemplateProposal extends TemplateProposal implements
 
 	}
 
-	private EventBTextEditor getEventBEditor() {
-		final IEditorPart part = TextEditorPlugin.getPlugin().getActivePage()
-				.getActiveEditor();
-		if (part instanceof EventBTextEditor) {
-			return (EventBTextEditor) part;
-		} else {
-			return null;
+	private static void adaptLineDelimitersAndIndentation(
+			final TemplateBuffer buffer, final IDocument document,
+			final int insertOffset) throws BadLocationException {
+		final String delimiter = TextUtilities.getDefaultLineDelimiter(document);
+
+		// leading whitespace of the line we are inserting into
+		final IRegion line = document.getLineInformationOfOffset(insertOffset);
+		final String linePrefix = document.get(line.getOffset(), insertOffset
+				- line.getOffset());
+		int indentEnd = 0;
+		while (indentEnd < linePrefix.length()
+				&& Character.isWhitespace(linePrefix.charAt(indentEnd))) {
+			indentEnd++;
 		}
+		final String indentation = linePrefix.substring(0, indentEnd);
+
+		final String original = buffer.getString();
+		final StringBuilder result = new StringBuilder(original.length());
+		// maps offsets of the original string to the new string
+		final int[] offsetMap = new int[original.length() + 1];
+
+		for (int i = 0; i < original.length(); i++) {
+			offsetMap[i] = result.length();
+			final char c = original.charAt(i);
+			if (c == '\r' || c == '\n') {
+				if (c == '\r' && i + 1 < original.length()
+						&& original.charAt(i + 1) == '\n') {
+					i++;
+					offsetMap[i] = result.length();
+				}
+				result.append(delimiter).append(indentation);
+			} else {
+				result.append(c);
+			}
+		}
+		offsetMap[original.length()] = result.length();
+
+		final TemplateVariable[] variables = buffer.getVariables();
+		for (final TemplateVariable variable : variables) {
+			final int[] offsets = variable.getOffsets();
+			final int[] newOffsets = new int[offsets.length];
+			for (int i = 0; i < offsets.length; i++) {
+				newOffsets[i] = offsetMap[Math.min(offsets[i], original.length())];
+			}
+			variable.setOffsets(newOffsets);
+		}
+
+		buffer.setContent(result.toString(), variables);
 	}
 
 	private void ensurePositionCategoryInstalled(final IDocument document,

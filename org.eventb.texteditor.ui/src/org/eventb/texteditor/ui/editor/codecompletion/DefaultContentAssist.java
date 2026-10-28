@@ -11,9 +11,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -27,7 +37,11 @@ import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
+import org.eventb.emf.core.machine.Event;
+import org.eventb.emf.core.machine.Machine;
 import org.eventb.texteditor.ui.Images;
 import org.eventb.texteditor.ui.TextEditorPlugin;
 import org.eventb.texteditor.ui.build.dom.DomManager;
@@ -79,6 +93,7 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 
 	private static final ICompletionProposal[] NO_PROPOSALS = new ICompletionProposal[0];
 	private static final String PREFIX = "org.eventb.texteditor.";
+	private static final String INITIALISATION = "INITIALISATION";
 
 	private ContributionTemplateStore templateStore;
 	private final DomManager domManager = TextEditorPlugin.getDomManager();
@@ -92,6 +107,7 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 	private IDom scopingDom;
 	private Type componentType;
 	private IDocument document;
+	private String text;
 	private ITextViewer viewer;
 	private boolean offsetInEvents;
 
@@ -108,6 +124,23 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 			setupContextInfo(viewer, offset);
 
 			final List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+
+			// "@" starts a label: offer the next free label of the section
+			if (prefix.startsWith("@")) {
+				computeLabelProposals(proposals);
+				return sort(proposals);
+			}
+
+			// names of machines/contexts/events after sees, refines, extends
+			if (computeReferenceProposals(proposals)) {
+				return sort(proposals);
+			}
+
+			// event names after "event"
+			if (computeEventNameProposals(proposals)) {
+				return sort(proposals);
+			}
+
 			computeIdentifierProposals(proposals);
 			computeKeywordProposals(proposals);
 			computeTemplateProposals(proposals);
@@ -125,7 +158,7 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 			final TemplateContext context, final IRegion region,
 			final int relevance) {
 		return new EventBTemplateProposal(template, context, region,
-				getImage(template), relevance);
+				getImage(template), relevance, editor);
 	}
 
 	private void setupContextInfo(final ITextViewer viewer, int offset)
@@ -134,6 +167,7 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 		offset = adjustOffset(viewer, offset);
 
 		document = viewer.getDocument();
+		text = document.get();
 		contentType = document.getContentType(offset);
 		prefix = extractPrefix(viewer, offset);
 		region = new Region(offset - prefix.length(), prefix.length());
@@ -142,7 +176,7 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 		 * indexOf() returns -1 if there is no EVENTS section (e.g. in
 		 * contexts), which wrongly treated every position as "inside events"
 		 */
-		final int eventsOffset = document.get().indexOf(Constants.EVENTS);
+		final int eventsOffset = text.indexOf(Constants.EVENTS);
 		offsetInEvents = eventsOffset >= 0 && offset >= eventsOffset;
 
 		dom = domManager.getDom(editor.getResource());
@@ -162,6 +196,259 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
 	}
 
+	@Override
+	public char[] getCompletionProposalAutoActivationCharacters() {
+		// typing "@" proposes the next label, e.g. "@inv3"
+		return new char[] { '@' };
+	}
+
+	@Override
+	protected String extractPrefix(final ITextViewer viewer, final int offset) {
+		final IDocument doc = viewer.getDocument();
+		if (offset > doc.getLength()) {
+			return "";
+		}
+
+		try {
+			int i = offset;
+			while (i > 0 && isIdentifierPart(doc.getChar(i - 1))) {
+				i--;
+			}
+			// include a leading "@" of labels
+			if (i > 0 && doc.getChar(i - 1) == '@') {
+				i--;
+			}
+			return doc.get(i, offset - i);
+		} catch (final BadLocationException e) {
+			return "";
+		}
+	}
+
+	private static boolean isIdentifierPart(final char c) {
+		return Character.isJavaIdentifierPart(c) || c == '\'';
+	}
+
+	private void computeLabelProposals(final List<ICompletionProposal> proposals) {
+		final String labelPrefix = StructureAnalyzer.labelPrefixForSection(
+				text, region.getOffset());
+		if (labelPrefix == null) {
+			return;
+		}
+
+		final int number = StructureAnalyzer.nextLabelNumber(text,
+				region.getOffset(), labelPrefix);
+		final String label = "@" + labelPrefix + number;
+		if (label.startsWith(prefix)) {
+			addProposal(proposals, label + " ", label, "next free label",
+					getLabelImage(labelPrefix), 120);
+		}
+	}
+
+	private Image getLabelImage(final String labelPrefix) {
+		if ("inv".equals(labelPrefix)) {
+			return Images.getImage(Images.IMG_INVARIANT);
+		}
+		if ("axm".equals(labelPrefix)) {
+			return Images.getImage(Images.IMG_AXIOM);
+		}
+		if ("grd".equals(labelPrefix)) {
+			return Images.getImage(Images.IMG_GUARD);
+		}
+		return Images.getImage(Images.IMG_ACTION);
+	}
+
+	/**
+	 * Proposes contexts after <code>sees</code>/<code>extends</code> (of a
+	 * context), machines after <code>refines</code> (of a machine) and the
+	 * abstract events after <code>refines</code>/<code>extends</code> of an
+	 * event.
+	 *
+	 * @return <code>true</code> if we are in such a reference list
+	 */
+	private boolean computeReferenceProposals(
+			final List<ICompletionProposal> proposals) {
+		if (!IDocument.DEFAULT_CONTENT_TYPE.equals(contentType)) {
+			return false;
+		}
+
+		final String keyword = StructureAnalyzer.findReferenceKeyword(text,
+				region.getOffset());
+		if (keyword == null) {
+			return false;
+		}
+
+		final boolean isContextFile = "buc".equals(getFileExtension());
+		final boolean inEvents = StructureAnalyzer.isInEventsSection(text,
+				region.getOffset());
+
+		if (Constants.SEES.equals(keyword)
+				|| (Constants.EXTENDS.equals(keyword) && isContextFile)) {
+			for (final String name : getComponentNames("buc")) {
+				addProposal(proposals, name, name, "context " + name,
+						Images.getImage(Images.IMG_CONTEXT), 110);
+			}
+		} else if (Constants.REFINES.equals(keyword) && !inEvents) {
+			for (final String name : getComponentNames("bum")) {
+				addProposal(proposals, name, name, "machine " + name,
+						Images.getImage(Images.IMG_MACHINE), 110);
+			}
+		} else {
+			for (final String name : getAbstractEventNames()) {
+				addProposal(proposals, name, name, "abstract event " + name,
+						Images.getImage(Images.IMG_EVENT), 110);
+			}
+		}
+
+		return !proposals.isEmpty();
+	}
+
+	/**
+	 * Proposes event names after <code>event</code>: INITIALISATION (if
+	 * missing) and abstract events that are not refined yet.
+	 */
+	private boolean computeEventNameProposals(
+			final List<ICompletionProposal> proposals) {
+		if (!IDocument.DEFAULT_CONTENT_TYPE.equals(contentType)
+				|| !Constants.EVENT.equals(StructureAnalyzer.previousWord(
+						text, region.getOffset()))) {
+			return false;
+		}
+
+		final Set<String> existing = StructureAnalyzer.findEventNames(text);
+		// the event that is being typed does not count
+		existing.remove(prefix);
+
+		final Set<String> candidates = new LinkedHashSet<String>();
+		candidates.add(INITIALISATION);
+		candidates.addAll(getAbstractEventNames());
+
+		for (final String name : candidates) {
+			if (!existing.contains(name)) {
+				addProposal(proposals, name, name,
+						INITIALISATION.equals(name) ? "initialisation event"
+								: "refine abstract event " + name,
+						Images.getImage(Images.IMG_EVENT), 110);
+			}
+		}
+
+		return !proposals.isEmpty();
+	}
+
+	private void addProposal(final List<ICompletionProposal> proposals,
+			final String replacement, final String display,
+			final String description, final Image image, final int relevance) {
+		if (!replacement.startsWith(prefix)) {
+			return;
+		}
+		final EventBCompletionProposal proposal = new EventBCompletionProposal(
+				replacement, region.getOffset(), prefix.length(),
+				replacement.length(), image, display, null, description);
+		proposal.changeRelevance(relevance);
+		proposals.add(proposal);
+	}
+
+	private IFile getFile() {
+		final IEditorInput input = editor.getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			return ((IFileEditorInput) input).getFile();
+		}
+		return null;
+	}
+
+	private String getFileExtension() {
+		final IFile file = getFile();
+		return file != null ? file.getFileExtension() : null;
+	}
+
+	/**
+	 * @return names of all components with the given extension in the same
+	 *         project (without the edited one)
+	 */
+	private Set<String> getComponentNames(final String extension) {
+		final Set<String> result = new TreeSet<String>();
+		final IFile file = getFile();
+		if (file == null) {
+			return result;
+		}
+
+		try {
+			for (final IResource member : file.getParent().members()) {
+				if (member instanceof IFile
+						&& extension.equals(member.getFileExtension())
+						&& !member.equals(file)) {
+					result.add(member.getFullPath().removeFileExtension()
+							.lastSegment());
+				}
+			}
+		} catch (final CoreException e) {
+			// IGNORE, no proposals then
+		}
+
+		return result;
+	}
+
+	/**
+	 * @return names of the events of the refined (abstract) machine(s)
+	 */
+	private Set<String> getAbstractEventNames() {
+		final Set<String> result = new TreeSet<String>();
+
+		// 1. from the DOM (no loading necessary)
+		if (dom instanceof MachineDom) {
+			try {
+				for (final MachineDom refined : ((MachineDom) dom)
+						.getRefinedMachines()) {
+					addEventNames(refined.getEventBElement(), result);
+				}
+			} catch (final RuntimeException e) {
+				// IGNORE, DOM may be in an inconsistent state while typing
+			}
+		}
+
+		// 2. fall back to the refined machines' files
+		if (result.isEmpty()) {
+			final IFile file = getFile();
+			if (file != null) {
+				for (final String name : StructureAnalyzer
+						.findRefinedMachines(text)) {
+					final IFile abstractFile = file.getParent().getFile(
+							new Path(name + ".bum"));
+					if (!abstractFile.exists()) {
+						continue;
+					}
+					try {
+						final Resource resource = editor
+								.getEditingDomain()
+								.getResourceSet()
+								.getResource(
+										URI.createPlatformResourceURI(
+												abstractFile.getFullPath()
+														.toString(), true),
+										true);
+						for (final EObject content : resource.getContents()) {
+							addEventNames(content, result);
+						}
+					} catch (final RuntimeException e) {
+						// IGNORE, file cannot be loaded
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private static void addEventNames(final Object machine,
+			final Set<String> result) {
+		if (machine instanceof Machine) {
+			for (final Event event : ((Machine) machine).getEvents()) {
+				if (event.getName() != null) {
+					result.add(event.getName());
+				}
+			}
+		}
+	}
+
 	private void computeTemplateProposals(
 			final List<ICompletionProposal> proposals) {
 		final Template[] templates = getTemplates();
@@ -171,7 +458,7 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 			if (template.getName().startsWith(prefix)) {
 				final EventBTemplateProposal proposal = new EventBTemplateProposal(
 						template, context, region, getImage(template),
-						getRelevance(template, prefix));
+						getRelevance(template, prefix), editor);
 
 				proposals.add(proposal);
 			}

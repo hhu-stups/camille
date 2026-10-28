@@ -49,6 +49,6 @@ public interface Constants {
 
 	public static final String[] formula_keywords = { "BOOL", "FALSE", "TRUE",
 			"bool", "card", "dom", "finite", "id", "inter", "max", "min",
-			"mod", "pred", "prj1", "prj2", "ran", "succ", "union", "\u2115",
+			"mod", "partition", "pred", "prj1", "prj2", "ran", "succ", "union", "\u2115",
 			"\u2115\u0031", "\u2119", "\u2119\u0031", "\u2124" };
 }
