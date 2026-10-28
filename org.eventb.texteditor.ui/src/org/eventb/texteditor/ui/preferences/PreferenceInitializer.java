@@ -43,6 +43,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		setDefaultValues(Parameter, COLOR_BLUE, ITALIC);
 		setDefaultValues(Constant, COLOR_BLUE, BOLD);
 		setDefaultValues(Set, COLOR_DARK_GREEN, BOLD);
+
+		store.setDefault(TextEditorPlugin.PREF_AUTO_TRANSLATE, true);
 	}
 
 	private void setDefaultValues(final ESyntaxElement element,

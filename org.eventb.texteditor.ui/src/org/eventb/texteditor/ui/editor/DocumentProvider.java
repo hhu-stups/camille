@@ -25,6 +25,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -260,6 +261,13 @@ public class DocumentProvider extends FileDocumentProvider {
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		int cursorOffset = editor.getCursorOffset();
 
+		/* make all trimmed lines one single undo step */
+		final IRewriteTarget rewriteTarget = (IRewriteTarget) editor
+				.getAdapter(IRewriteTarget.class);
+		if (rewriteTarget != null) {
+			rewriteTarget.beginCompoundChange();
+		}
+
 		try {
 			final int removedChars = TrimLinesAction.trimLines(document, 0,
 					document.getNumberOfLines() - 1, subMonitor.newChild(1));
@@ -270,6 +278,10 @@ public class DocumentProvider extends FileDocumentProvider {
 		} catch (final BadLocationException e) {
 			// IGNORE
 			return cursorOffset;
+		} finally {
+			if (rewriteTarget != null) {
+				rewriteTarget.endCompoundChange();
+			}
 		}
 	}
 

@@ -135,46 +135,39 @@ public class TrimLinesAction extends TextEditorAction {
 			return 0;
 		}
 
+		final int lastLine = Math.min(endLine, document.getNumberOfLines() - 1);
 		int removeChars = 0;
-		final StringBuffer buffer = new StringBuffer();
-		subMonitor.setWorkRemaining(endLine - startLine + 1);
+		subMonitor.setWorkRemaining(lastLine - startLine + 1);
 
-		for (int line = startLine; line <= endLine; line++) {
-			final String trimmedLine = trim(document, line);
-			buffer.append(trimmedLine);
-			removeChars += document.getLineLength(line) - trimmedLine.length();
+		/*
+		 * Only touch lines that actually have trailing whitespace and process
+		 * them bottom-up so the offsets of the remaining lines stay valid.
+		 * Replacing the whole document (as done before) reset all positions
+		 * and annotations, created a huge undo step and made Ctrl+Z after a
+		 * save jump to the beginning of the file.
+		 */
+		for (int line = lastLine; line >= startLine; line--) {
+			final int lineOffset = document.getLineOffset(line);
+			final int contentLength = document.getLineLength(line)
+					- getLineDelimiterLength(document, line);
+
+			int trimmedLength = contentLength;
+			while (trimmedLength > 0
+					&& Character.isWhitespace(document.getChar(lineOffset
+							+ trimmedLength - 1))) {
+				trimmedLength--;
+			}
+
+			if (trimmedLength < contentLength) {
+				document.replace(lineOffset + trimmedLength, contentLength
+						- trimmedLength, "");
+				removeChars += contentLength - trimmedLength;
+			}
 
 			subMonitor.worked(1);
 		}
 
-		final int startLineOffset = document.getLineOffset(startLine);
-		final int endLineOffset = document.getLineOffset(endLine)
-				+ document.getLineLength(endLine);
-		final String replaceString = buffer.toString();
-
-		document.replace(startLineOffset, endLineOffset - startLineOffset,
-				replaceString);
-		subMonitor.worked(1);
-
 		return removeChars;
-	}
-
-	private static String trim(final IDocument document, final int line)
-			throws BadLocationException {
-		final int lineOffset = document.getLineOffset(line);
-		final int lineDelimiterLength = getLineDelimiterLength(document, line);
-		int lineLength = document.getLineLength(line) - lineDelimiterLength;
-
-		// correct new line length until no trailing whitespace left
-		while (lineLength > 0
-				&& Character.isWhitespace(document.getChar(lineOffset
-						+ lineLength - 1))) {
-			lineLength--;
-		}
-
-		final String lineDelimiter = lineDelimiterLength > 0 ? document
-				.getLineDelimiter(line) : "";
-		return document.get(lineOffset, lineLength) + lineDelimiter;
 	}
 
 	private static int getLineDelimiterLength(final IDocument document,
