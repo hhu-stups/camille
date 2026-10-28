@@ -7,6 +7,7 @@
 package org.eventb.texteditor.ui.reconciler;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.text.IDocument;
@@ -37,9 +38,10 @@ public class EventBPresentationReconciler extends PresentationReconciler
 	private static final DomManager domManager = TextEditorPlugin
 			.getDomManager();
 	private SemanticTokenScanner semanticScanner;
-	private ITextViewer viewer;
+	private volatile ITextViewer viewer;
 	private IComponentDom dom = null;
 	private Resource resource;
+	private final AtomicBoolean refreshPending = new AtomicBoolean(false);
 
 	public EventBPresentationReconciler() {
 		super();
@@ -68,14 +70,28 @@ public class EventBPresentationReconciler extends PresentationReconciler
 	}
 
 	public void reconcilePresentation() {
-		if (viewer == null && viewer.getTextWidget() == null
-				&& viewer.getTextWidget().isDisposed()) {
+		final ITextViewer currentViewer = viewer;
+		if (currentViewer == null || currentViewer.getTextWidget() == null
+				|| currentViewer.getTextWidget().isDisposed()) {
 			return;
 		}
 
-		viewer.getTextWidget().getDisplay().asyncExec(new Runnable() {
+		/*
+		 * Coalesce requests: DOM changes may arrive in quick succession (also
+		 * from other open editors). Repainting the whole document for each
+		 * of them made the UI sluggish.
+		 */
+		if (!refreshPending.compareAndSet(false, true)) {
+			return;
+		}
+
+		currentViewer.getTextWidget().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				viewer.invalidateTextPresentation();
+				refreshPending.set(false);
+				if (currentViewer.getTextWidget() != null
+						&& !currentViewer.getTextWidget().isDisposed()) {
+					currentViewer.invalidateTextPresentation();
+				}
 			}
 		});
 	}
@@ -91,6 +107,7 @@ public class EventBPresentationReconciler extends PresentationReconciler
 	public void uninstall() {
 		domManager.removeDomChangeListener(this);
 		super.uninstall();
+		viewer = null;
 
 		setInputResource(null);
 	}

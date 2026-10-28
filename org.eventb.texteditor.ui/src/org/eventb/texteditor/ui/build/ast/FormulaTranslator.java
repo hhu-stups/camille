@@ -6,12 +6,15 @@
 
 package org.eventb.texteditor.ui.build.ast;
 
-import org.eclipse.core.runtime.Assert;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.swt.widgets.Display;
 import org.eventb.emf.core.EventBNamedCommentedExpressionElement;
 import org.eventb.emf.core.EventBElement;
@@ -20,6 +23,7 @@ import org.eventb.emf.core.EventBNamedCommentedPredicateElement;
 import org.eventb.emf.core.context.Context;
 import org.eventb.emf.core.machine.Action;
 import org.eventb.emf.core.machine.Machine;
+import org.eventb.texteditor.ui.build.DocumentSnapshot;
 import org.eventb.texteditor.ui.editor.EventBTextEditor;
 import org.eventb.texttools.TextPositionUtil;
 import org.eventb.texttools.model.texttools.TextRange;
@@ -28,12 +32,14 @@ import org.rodinp.keyboard.core.RodinKeyboardCore;
 public class FormulaTranslator {
 	private IDocument document;
 	private EventBTextEditor editor;
+	private final List<Replacement> pendingReplacements = new ArrayList<Replacement>();
 
 	public void translateFormulas(
 			final EventBNamedCommentedComponentElement astRoot,
 			final IDocument document, final EventBTextEditor editor) {
 		this.document = document;
 		this.editor = editor;
+		pendingReplacements.clear();
 
 		// traverse tree using an iterator
 		final TreeIterator<EObject> iterator = EcoreUtil.getAllContents(
@@ -54,6 +60,8 @@ public class FormulaTranslator {
 				switcher.doSwitch(iterator.next());
 			}
 		}
+
+		applyReplacements();
 	}
 
 	public void replace(final EventBNamedCommentedPredicateElement predicate) {
@@ -109,53 +117,138 @@ public class FormulaTranslator {
 
 	private void updateDocument(final String input,
 			final String translatedInput, final TextRange range) {
+		if (range == null) {
+			// no position information, cannot update the text
+			return;
+		}
+
 		/*
 		 * Check length and fill output string with whitespaces to length of
 		 * input. So we avoid position changes for the following text elements.
 		 * Output should always be <= input.
 		 */
 		final int lengthDiff = input.length() - translatedInput.length();
-		Assert.isTrue(lengthDiff >= 0,
-				"Expecting length of translated formula to be less or equal to original length");
+		if (lengthDiff < 0) {
+			// should not happen, but never corrupt the user's text
+			return;
+		}
 		final String filledString = fillOutput(translatedInput, lengthDiff);
 
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					int cursorOffset = -1;
-					if (editor != null) {
-						cursorOffset = editor.getCursorOffset();
-					}
-
-					/*
-					 * Replace text in document. Important: Don't use length
-					 * from TextRange because it's only set to the short new
-					 * version without the trailing whitespaces.
-					 */
-					final int startOffset = range.getOffset();
-					document.replace(startOffset, filledString.length(),
-							filledString);
-
-					// correct cursor position afterwards
-					if (editor != null && cursorOffset >= 0) {
-						correctCursorPosition(cursorOffset, range, lengthDiff);
-					}
-				} catch (final BadLocationException e) {
-					// IGNORE, cannot fix it anyway
-				}
-			}
-		});
+		pendingReplacements.add(new Replacement(range.getOffset(), input,
+				filledString, translatedInput.length()));
 	}
 
-	private void correctCursorPosition(final int oldOffset,
-			final TextRange range, final int lengthCorrection) {
-		// was cursor in changed region?
-		if (oldOffset >= range.getOffset()
-				&& oldOffset <= range.getOffset() + range.getLength()
-						+ lengthCorrection) {
-			// then move cursor to front a bit
-			editor.setCurserOffset(oldOffset - lengthCorrection);
+	/**
+	 * Writes all collected translations back into the editor's document.
+	 * <p>
+	 * All replacements of one build are applied together as one undoable
+	 * change, and only if the document has not been modified since it was
+	 * parsed. Otherwise the stored offsets would point to the wrong text and
+	 * the user's input could be overwritten. In that case nothing is done;
+	 * the next reconcile run will try again.
+	 * </p>
+	 */
+	private void applyReplacements() {
+		if (pendingReplacements.isEmpty() || editor == null) {
+			return;
+		}
+
+		final List<Replacement> replacements = new ArrayList<Replacement>(
+				pendingReplacements);
+		pendingReplacements.clear();
+
+		final DocumentSnapshot snapshot = document instanceof DocumentSnapshot ? (DocumentSnapshot) document
+				: null;
+		final IDocument target = snapshot != null ? snapshot.getOriginal()
+				: document;
+		final EventBTextEditor targetEditor = editor;
+
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				if (!targetEditor.isEditorAlive()) {
+					return;
+				}
+				if (snapshot != null && !snapshot.isUpToDate()) {
+					return;
+				}
+				// only ever modify the document shown in the editor
+				if (targetEditor.getDocumentProvider() == null
+						|| target != targetEditor.getDocumentProvider()
+								.getDocument(targetEditor.getEditorInput())) {
+					return;
+				}
+				applyReplacements(targetEditor, target, replacements);
+			}
+		};
+
+		if (Display.getCurrent() != null) {
+			// we are in the UI thread already (e.g. while saving)
+			runnable.run();
+		} else {
+			Display.getDefault().asyncExec(runnable);
+		}
+	}
+
+	private static void applyReplacements(final EventBTextEditor editor,
+			final IDocument target, final List<Replacement> replacements) {
+		final int cursorOffset = editor.getCursorOffset();
+		int newCursorOffset = cursorOffset;
+
+		final IRewriteTarget rewriteTarget = (IRewriteTarget) editor
+				.getAdapter(IRewriteTarget.class);
+		if (rewriteTarget != null) {
+			rewriteTarget.beginCompoundChange();
+		}
+
+		try {
+			for (final Replacement replacement : replacements) {
+				try {
+					final int offset = replacement.offset;
+					final int length = replacement.original.length();
+
+					// only replace if the text is still what we parsed
+					if (offset < 0 || offset + length > target.getLength()
+							|| !replacement.original.equals(target.get(offset,
+									length))) {
+						continue;
+					}
+
+					target.replace(offset, length, replacement.replacement);
+
+					// keep cursor inside the translated formula
+					if (cursorOffset >= offset
+							&& cursorOffset <= offset + length) {
+						newCursorOffset = Math.min(cursorOffset, offset
+								+ replacement.visibleLength);
+					}
+				} catch (final BadLocationException e) {
+					// IGNORE, text changed in the meantime
+				}
+			}
+		} finally {
+			if (rewriteTarget != null) {
+				rewriteTarget.endCompoundChange();
+			}
+		}
+
+		if (newCursorOffset != cursorOffset) {
+			editor.setCurserOffset(newCursorOffset);
+		}
+	}
+
+	private static final class Replacement {
+		final int offset;
+		final String original;
+		final String replacement;
+		final int visibleLength;
+
+		Replacement(final int offset, final String original,
+				final String replacement, final int visibleLength) {
+			this.offset = offset;
+			this.original = original;
+			this.replacement = replacement;
+			this.visibleLength = visibleLength;
 		}
 	}
 
@@ -176,6 +269,9 @@ public class FormulaTranslator {
 			final String oldContent, final String newContent) {
 		final TextRange range = TextPositionUtil.getInternalPosition(parent,
 				oldContent);
+		if (range == null) {
+			return null;
+		}
 
 		range.setLength(newContent.length());
 		TextPositionUtil.replaceInternalPosition(parent, oldContent,

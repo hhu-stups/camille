@@ -14,8 +14,11 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eventb.texteditor.ui.TextEditorPlugin;
 
 public class ModelChangeListener implements IResourceChangeListener,
 		IResourceDeltaVisitor {
@@ -36,7 +39,12 @@ public class ModelChangeListener implements IResourceChangeListener,
 				delta.accept(this);
 			}
 		} catch (final CoreException x) {
-			// TODO log exception
+			TextEditorPlugin
+					.getPlugin()
+					.getLog()
+					.log(new Status(IStatus.WARNING,
+							TextEditorPlugin.PLUGIN_ID,
+							"Error while processing resource change", x));
 		}
 	}
 
@@ -64,7 +72,7 @@ public class ModelChangeListener implements IResourceChangeListener,
 			// is change affecting content?
 			if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 				// has editor unsaved changes?
-				if (editor.isDirty()) {
+				if (!editor.isSaving() && editor.isDirty()) {
 					// notify editor about change
 					editor.changeWhileDirty();
 				}

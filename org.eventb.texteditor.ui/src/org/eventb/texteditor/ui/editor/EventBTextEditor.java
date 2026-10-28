@@ -9,10 +9,13 @@ package org.eventb.texteditor.ui.editor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
@@ -58,13 +61,20 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	private Resource resource;
 	private ModelChangeListener modelChangeListener;
 	private AdapterFactoryEditingDomain editingDomain;
-	private boolean isCurrentlySaving = false;
+	private volatile boolean isCurrentlySaving = false;
 	private EventBPresentationReconciler presentationReconciler;
 	private final IPartListener activeListener;
 
 	private boolean resourceChangedWhileDirty;
 
-	private boolean inLinkedMode = false;
+	private volatile boolean inLinkedMode = false;
+
+	/**
+	 * Serializes background builds (reconciler) and foreground builds (save,
+	 * format) which both work on the same EMF model.
+	 */
+	private final ReentrantLock buildLock = new ReentrantLock();
+
 
 	public EventBTextEditor() {
 		activeListener = new ActivateListener();
@@ -180,7 +190,54 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	public void dispose() {
 		getSite().getPage().removePartListener(activeListener);
 		registerChangeListener(getEditorInput(), null);
+		final IEditorInput input = getEditorInput();
+		if (input != null) {
+			// release the cached AST of this editor (memory leak)
+			TextEditorPlugin.getDomManager().removeParseResult(input);
+		}
+
 		super.dispose();
+	}
+
+	@Override
+	protected void performSave(final boolean overwrite,
+			final IProgressMonitor progressMonitor) {
+		/*
+		 * Wait (briefly) for a running background build to finish before the
+		 * save operation locks the workspace. Otherwise both would modify the
+		 * same EMF model concurrently.
+		 */
+		boolean locked = false;
+		try {
+			locked = buildLock.tryLock(2, TimeUnit.SECONDS);
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+
+		try {
+			super.performSave(overwrite, progressMonitor);
+		} finally {
+			if (locked) {
+				buildLock.unlock();
+			}
+		}
+	}
+
+	/**
+	 * @return the lock that has to be held while the text is parsed and merged
+	 *         into the EMF model
+	 */
+	public ReentrantLock getBuildLock() {
+		return buildLock;
+	}
+
+	/**
+	 * @return <code>true</code> if the editor's widget still exists
+	 */
+	public boolean isEditorAlive() {
+		final ISourceViewer viewer = getSourceViewer();
+		return viewer != null && viewer.getTextWidget() != null
+				&& !viewer.getTextWidget().isDisposed();
 	}
 
 	public Resource getResource() {

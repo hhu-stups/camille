@@ -184,22 +184,29 @@ public class DocumentProvider extends FileDocumentProvider {
 					4);
 
 			editor.setIsSaving(true);
-			final Resource resource = getResourceForElement((IEditorInput) element);
+			try {
+				final Resource resource = getResourceForElement((IEditorInput) element);
 
-			// trim lines to remove trailing whitespaces
-			final int newCursorOffset = trimLines(document, subMonitor
-					.newChild(1));
+				// trim lines to remove trailing whitespaces
+				final int newCursorOffset = trimLines(document, subMonitor
+						.newChild(1));
 
-			// parse and translate formulas
-			reconcileContent(resource, document, subMonitor.newChild(1));
-			subMonitor.worked(1);
+				// parse and translate formulas
+				reconcileContent(resource, document, subMonitor.newChild(1));
+				subMonitor.worked(1);
 
-			PersistenceHelper.saveText(resource, overwrite, subMonitor
-					.newChild(1));
+				PersistenceHelper.saveText(resource, overwrite, subMonitor
+						.newChild(1));
 
-			editor.setIsSaving(false);
-			editor.setCurserOffset(newCursorOffset);
-			editor.selectAndReveal(newCursorOffset, 0);
+				editor.setCurserOffset(newCursorOffset);
+				editor.selectAndReveal(newCursorOffset, 0);
+			} finally {
+				/*
+				 * Never leave the editor in "saving" state, the reconciler
+				 * would stay disabled after a failed save.
+				 */
+				editor.setIsSaving(false);
+			}
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR,
 					TextEditorPlugin.PLUGIN_ID, "Unsupported target element: "

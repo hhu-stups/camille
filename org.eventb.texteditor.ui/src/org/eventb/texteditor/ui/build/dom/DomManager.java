@@ -6,12 +6,13 @@
 
 package org.eventb.texteditor.ui.build.dom;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.ui.IEditorInput;
@@ -23,10 +24,13 @@ import org.eventb.emf.core.machine.Machine;
 public class DomManager {
 
 	private final Map<Resource, IComponentDom> lastDom = new HashMap<Resource, IComponentDom>();
-	private final Map<IEditorInput, ParseResult> lastParseResults = new HashMap<IEditorInput, ParseResult>();
+	/*
+	 * The following collections are accessed concurrently by the reconciler thread(s) and the UI thread.
+	 */
+	private final Map<IEditorInput, ParseResult> lastParseResults = new ConcurrentHashMap<IEditorInput, ParseResult>();
 
-	private final Set<IDomChangeListener> domListeners = new HashSet<IDomChangeListener>();
-	private final Map<IEditorInput, List<IParseResultListener>> parseResultListeners = new HashMap<IEditorInput, List<IParseResultListener>>();
+	private final Set<IDomChangeListener> domListeners = new CopyOnWriteArraySet<IDomChangeListener>();
+	private final Map<IEditorInput, List<IParseResultListener>> parseResultListeners = new ConcurrentHashMap<IEditorInput, List<IParseResultListener>>();
 
 	public void storeDom(final IComponentDom dom) {
 		if (dom != null) {
@@ -143,45 +147,66 @@ public class DomManager {
 	 * @return
 	 */
 	public ParseResult getLastParseResult(final IEditorInput editorInput) {
+		if (editorInput == null) {
+			return null;
+		}
 		return lastParseResults.get(editorInput);
+	}
+
+	/**
+	 * Forgets the last parse result for the given editor input. Must be
+	 * called when the editor is closed, otherwise the AST and the complete
+	 * text are kept in memory forever.
+	 *
+	 * @param editorInput
+	 */
+	public void removeParseResult(final IEditorInput editorInput) {
+		if (editorInput != null) {
+			lastParseResults.remove(editorInput);
+		}
 	}
 
 	public void addParseResultListener(final IEditorInput editorInput,
 			final IParseResultListener listener) {
-		if (!parseResultListeners.containsKey(editorInput)) {
-			final ArrayList<IParseResultListener> list = new ArrayList<IParseResultListener>();
+		synchronized (parseResultListeners) {
+			List<IParseResultListener> list = parseResultListeners
+					.get(editorInput);
+			if (list == null) {
+				list = new CopyOnWriteArrayList<IParseResultListener>();
+				parseResultListeners.put(editorInput, list);
+			}
 			list.add(listener);
-			parseResultListeners.put(editorInput, list);
-		} else {
-			parseResultListeners.get(editorInput).add(listener);
 		}
 	}
 
 	public void removeParseResultListener(final IEditorInput editorInput,
 			final IParseResultListener listener) {
-		if (parseResultListeners.containsKey(editorInput)) {
+		synchronized (parseResultListeners) {
 			final List<IParseResultListener> list = parseResultListeners
 					.get(editorInput);
-			list.remove(listener);
+			if (list != null) {
+				list.remove(listener);
 
-			if (list.isEmpty()) {
-				parseResultListeners.remove(editorInput);
+				if (list.isEmpty()) {
+					parseResultListeners.remove(editorInput);
+				}
 			}
 		}
 	}
 
 	private void notifyParseResultListeners(final IEditorInput editorInput,
 			final ParseResult parseResult) {
-		if (parseResultListeners.containsKey(editorInput)) {
-			for (final IParseResultListener listener : parseResultListeners
-					.get(editorInput)) {
+		final List<IParseResultListener> list = parseResultListeners
+				.get(editorInput);
+		if (list != null) {
+			for (final IParseResultListener listener : list) {
 				listener.parseResultChanged(parseResult);
 			}
 		}
 	}
 
 	public void addDomChangeListener(final IDomChangeListener listener) {
-		if (listener != null && !domListeners.contains(listener)) {
+		if (listener != null) {
 			domListeners.add(listener);
 		}
 	}
