@@ -39,6 +39,10 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage
 		addField(new ColorFieldEditor(
 				TextEditorPlugin.PREF_MATCHING_BRACKETS_COLOR,
 				"Matching brackets &color:", getFieldEditorParent()));
+
+		addField(new BooleanFieldEditor(TextEditorPlugin.PREF_FOLDING,
+				"Enable &folding (for newly opened editors)",
+				getFieldEditorParent()));
 	}
 
 	public void init(final IWorkbench workbench) {
