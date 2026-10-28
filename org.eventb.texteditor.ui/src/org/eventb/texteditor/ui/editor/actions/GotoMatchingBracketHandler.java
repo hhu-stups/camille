@@ -22,7 +22,7 @@ public class GotoMatchingBracketHandler extends AbstractHandler {
 		final IEditorPart editor = HandlerUtil.getActiveEditor(event);
 		if (editor instanceof EventBTextEditor
 				&& !((EventBTextEditor) editor).gotoMatchingBracket()) {
-			HandlerUtil.getActiveShell(event).getDisplay().beep();
+			editor.getSite().getShell().getDisplay().beep();
 		}
 		return null;
 	}
