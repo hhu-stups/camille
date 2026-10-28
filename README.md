@@ -11,7 +11,7 @@ The update site should be preconfigured in Rodin - if not, add it using the URL 
 
 ## Building Camille
 
-Building the project requires at least Java 21 and Maven 3.9.
+Building the project requires at least Java 21 and Maven 3.9 (Maven 3.10 is supported as well).
 (At runtime, the plugin is still compatible with Java 8.)
 
 ```sh

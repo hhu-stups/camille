@@ -30,7 +30,15 @@
 					<!-- Prevent copying all the Eclipse plugin jars into lib as well. -->
 					<!-- We only want the plain Maven dependencies above. -->
 					<excludeTypes>eclipse-plugin</excludeTypes>
-					<outputDirectory>${project.basedir}/lib</outputDirectory>
+					<!-- Only the jars listed in Bundle-ClassPath are needed. -->
+					<includeArtifactIds>eventbstruct,sablecc-runtime</includeArtifactIds>
+					<!--
+						The jars are placed directly in the bundle root (not in lib/).
+						Tycho turns Bundle-ClassPath entries into Maven classifiers,
+						and since Maven 3.10 classifiers must not contain '/'
+						("Invalid Collect Request ... Invalid classifier: lib/...").
+					-->
+					<outputDirectory>${project.basedir}</outputDirectory>
 					<overWriteSnapshots>true</overWriteSnapshots>
 				</configuration>
 				<executions>

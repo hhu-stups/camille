@@ -4,6 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
-	<classpathentry exported="true" kind="lib" path="lib/eventbstruct-2.13.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/sablecc-runtime-3.7.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="eventbstruct-2.13.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="sablecc-runtime-3.7.0.jar"/>
 </classpath>
