@@ -105,6 +105,11 @@
             id="org.eventb.texteditor.command.openDeclaration"
             name="Open Declaration">
       </command>
+      <command
+            description="Renames the variable, constant, carrier set, parameter or event at the cursor in all machines and contexts"
+            id="org.eventb.texteditor.command.rename"
+            name="Rename">
+      </command>
    </extension>
    <extension point="org.eclipse.ui.menus">
     <menuContribution locationURI="popup:#texteditor.context.menu?after=additions">
@@ -118,6 +123,11 @@
               commandId="org.eventb.texteditor.command.openDeclaration"
               label="Open Declaration"
               tooltip="Opens the declaration of the name at the cursor">
+        </command>
+        <command
+              commandId="org.eventb.texteditor.command.rename"
+              label="Rename..."
+              tooltip="Renames the variable, constant, carrier set, parameter or event at the cursor">
         </command>
      </menuContribution>
    </extension>
@@ -140,11 +150,29 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="F3">
       </key>
+      <key
+            commandId="org.eventb.texteditor.command.rename"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+R">
+      </key>
    </extension>
    <extension point="org.eclipse.ui.handlers">
       <handler
             class="org.eventb.texteditor.ui.editor.actions.OpenDeclarationHandler"
             commandId="org.eventb.texteditor.command.openDeclaration">
+          <activeWhen>
+             <with
+                   variable="activeEditorId">
+                   <equals
+                         value="org.eventb.texteditor.ui.texteditor">
+                   </equals>
+             </with>
+          </activeWhen>
+      </handler>
+      <handler
+            class="org.eventb.texteditor.ui.editor.actions.RenameHandler"
+            commandId="org.eventb.texteditor.command.rename">
           <activeWhen>
              <with
                    variable="activeEditorId">

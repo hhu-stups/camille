@@ -22,7 +22,7 @@ public class OpenDeclarationHandler extends AbstractHandler {
 		final IEditorPart editor = HandlerUtil.getActiveEditor(event);
 		if (editor instanceof EventBTextEditor
 				&& !((EventBTextEditor) editor).openDeclaration()) {
-			HandlerUtil.getActiveShell(event).getDisplay().beep();
+			editor.getSite().getShell().getDisplay().beep();
 		}
 		return null;
 	}
