@@ -9,16 +9,21 @@ package org.eventb.texteditor.ui.editor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eventb.texteditor.ui.build.ReconcilingStrategy;
 import org.eventb.texteditor.ui.editor.codecompletion.DefaultContentAssist;
+import org.eventb.texteditor.ui.editor.hover.EventBTextHover;
 import org.eventb.texteditor.ui.reconciler.EventBPresentationReconciler;
 import org.eventb.texteditor.ui.reconciler.partitioning.PartitionScanner;
 
@@ -26,6 +31,7 @@ public class SourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	private final EventBTextEditor editor;
 	private EventBPresentationReconciler presentationReconciler;
+	private EventBTextHover textHover;
 
 	public SourceViewerConfiguration(final EventBTextEditor editor,
 			final IPreferenceStore preferenceStore) {
@@ -56,6 +62,42 @@ public class SourceViewerConfiguration extends TextSourceViewerConfiguration {
 		assistant.setAutoActivationDelay(500);
 
 		return assistant;
+	}
+
+	@Override
+	public ITextHover getTextHover(final ISourceViewer sourceViewer,
+			final String contentType) {
+		// one hover for all content types, it holds the hover index
+		if (textHover == null) {
+			/*
+			 * Replaces the standard text hover. Annotations are filtered with
+			 * the same preferences as there.
+			 */
+			textHover = new EventBTextHover(editor, sourceViewer,
+					new EventBTextHover.AnnotationFilter() {
+						@Override
+						public boolean isShown(final Annotation annotation) {
+							return isShownInText(annotation);
+						}
+					});
+			if (sourceViewer.getTextWidget() != null) {
+				sourceViewer.getTextWidget().addDisposeListener(
+						new DisposeListener() {
+							@Override
+							public void widgetDisposed(final DisposeEvent e) {
+								textHover.dispose();
+							}
+						});
+			}
+		}
+		return textHover;
+	}
+
+	@Override
+	public ITextHover getTextHover(final ISourceViewer sourceViewer,
+			final String contentType, final int stateMask) {
+		// independent of modifier keys
+		return getTextHover(sourceViewer, contentType);
 	}
 
 	@Override
