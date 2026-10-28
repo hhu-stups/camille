@@ -62,6 +62,9 @@ public final class TextEditorPlugin extends EMFPlugin {
 	public static final String PREF_BRACKET_AT_CARET = PLUGIN_ID
 			+ ".highlightBracketAtCaret";
 
+	/** Preference key: enable folding of clauses, events and comments */
+	public static final String PREF_FOLDING = PLUGIN_ID + ".folding";
+
 	/** ID of the "Go to Matching Bracket" command */
 	public static final String GOTO_MATCHING_BRACKET_COMMAND_ID = "org.eventb.texteditor.command.gotoMatchingBracket";
 

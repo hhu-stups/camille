@@ -25,6 +25,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.ui.util.EditUIUtil;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -40,6 +42,9 @@ import org.eclipse.jface.text.link.LinkedModeUI;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.projection.ProjectionSupport;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.text.source.LineChangeHover;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.text.undo.DocumentUndoEvent;
@@ -60,6 +65,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -68,6 +74,8 @@ import org.eventb.emf.core.machine.MachinePackage;
 import org.eventb.texteditor.ui.Images;
 import org.eventb.texteditor.ui.TextEditorPlugin;
 import org.eventb.texteditor.ui.build.Builder;
+import org.eventb.texteditor.ui.editor.folding.FoldingRegionFinder;
+import org.eventb.texteditor.ui.editor.folding.FoldingStructureProvider;
 import org.eventb.texteditor.ui.outline.OutlinePage;
 import org.eventb.texteditor.ui.outline.RevealSelectionListener;
 import org.eventb.texteditor.ui.reconciler.EventBPresentationReconciler;
@@ -95,6 +103,10 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	private final DefaultCharacterPairMatcher bracketMatcher = new DefaultCharacterPairMatcher(
 			new char[] { '(', ')', '[', ']', '{', '}' },
 			IDocumentExtension3.DEFAULT_PARTITIONING);
+
+	/* Folding */
+	private ProjectionSupport projectionSupport;
+	private FoldingStructureProvider foldingProvider;
 
 	/**
 	 * Serializes background builds (reconciler) and foreground builds (save,
@@ -179,9 +191,23 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		setEditorContextMenuId(TextEditorPlugin.TEXTEDITOR_CONTEXTMENU_ID);
 	}
 
+	/*
+	 * Same as in AbstractDecoratedTextEditor, but with a ProjectionViewer
+	 * which supports folding.
+	 */
+	@Override
+	protected ISourceViewer createSourceViewer(final Composite parent,
+			final IVerticalRuler ruler, final int styles) {
+		final ISourceViewer viewer = new ProjectionViewer(parent, ruler,
+				getOverviewRuler(), isOverviewRulerVisible(), styles);
+		getSourceViewerDecorationSupport(viewer);
+		return viewer;
+	}
+
 	@Override
 	public void createPartControl(final Composite parent) {
 		super.createPartControl(parent);
+		installFolding();
 
 		// select text and type "(", "[" or "{" to put it into brackets
 		final ISourceViewer viewer = getSourceViewer();
@@ -202,6 +228,113 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 					translatePendingEmptySets();
 				}
 			});
+		}
+	}
+
+	private void installFolding() {
+		if (!(getSourceViewer() instanceof ProjectionViewer)) {
+			return;
+		}
+		final ProjectionViewer viewer = (ProjectionViewer) getSourceViewer();
+
+		projectionSupport = new ProjectionSupport(viewer, getAnnotationAccess(),
+				getSharedColors());
+		// show errors and warnings of collapsed regions
+		projectionSupport
+				.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error");
+		projectionSupport
+				.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning");
+		projectionSupport.install();
+
+		foldingProvider = new FoldingStructureProvider(viewer);
+		foldingProvider.install();
+
+		if (getPreferenceStore().getBoolean(TextEditorPlugin.PREF_FOLDING)) {
+			viewer.doOperation(ProjectionViewer.TOGGLE);
+		}
+	}
+
+	/**
+	 * Collapses or expands all regions of the given kind, e.g. all events.
+	 */
+	public void setFoldingCollapsed(final FoldingRegionFinder.Kind kind,
+			final boolean collapse) {
+		if (foldingProvider != null) {
+			foldingProvider.setCollapsed(kind, collapse);
+		}
+	}
+
+	private boolean isFoldingActive() {
+		return getSourceViewer() instanceof ProjectionViewer
+				&& ((ProjectionViewer) getSourceViewer()).isProjectionMode();
+	}
+
+	@Override
+	protected void rulerContextMenuAboutToShow(final IMenuManager menu) {
+		super.rulerContextMenuAboutToShow(menu);
+
+		if (!(getSourceViewer() instanceof ProjectionViewer)) {
+			return;
+		}
+		final ProjectionViewer viewer = (ProjectionViewer) getSourceViewer();
+		final IMenuManager folding = new MenuManager("&Folding",
+				"org.eventb.texteditor.ui.folding");
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, folding);
+
+		final Action enable = new Action("&Enable Folding", Action.AS_CHECK_BOX) {
+			@Override
+			public void run() {
+				viewer.doOperation(ProjectionViewer.TOGGLE);
+			}
+		};
+		enable.setChecked(isFoldingActive());
+		folding.add(enable);
+
+		folding.add(new FoldingOperationAction("E&xpand All", viewer,
+				ProjectionViewer.EXPAND_ALL));
+		folding.add(new FoldingOperationAction("Co&llapse All", viewer,
+				ProjectionViewer.COLLAPSE_ALL));
+		folding.add(new FoldingKindAction("Collapse E&vents",
+				FoldingRegionFinder.Kind.EVENT, true));
+		folding.add(new FoldingKindAction("Collapse &Comments",
+				FoldingRegionFinder.Kind.COMMENT, true));
+	}
+
+	private static class FoldingOperationAction extends Action {
+		private final ProjectionViewer viewer;
+		private final int operation;
+
+		FoldingOperationAction(final String text,
+				final ProjectionViewer viewer, final int operation) {
+			super(text);
+			this.viewer = viewer;
+			this.operation = operation;
+			setEnabled(viewer.canDoOperation(operation));
+		}
+
+		@Override
+		public void run() {
+			if (viewer.canDoOperation(operation)) {
+				viewer.doOperation(operation);
+			}
+		}
+	}
+
+	private class FoldingKindAction extends Action {
+		private final FoldingRegionFinder.Kind kind;
+		private final boolean collapse;
+
+		FoldingKindAction(final String text,
+				final FoldingRegionFinder.Kind kind, final boolean collapse) {
+			super(text);
+			this.kind = kind;
+			this.collapse = collapse;
+			setEnabled(isFoldingActive());
+		}
+
+		@Override
+		public void run() {
+			setFoldingCollapsed(kind, collapse);
 		}
 	}
 
@@ -402,6 +535,14 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		registerChangeListener(getEditorInput(), null);
 		installUndoTracking(null);
 		bracketMatcher.dispose();
+		if (foldingProvider != null) {
+			foldingProvider.uninstall();
+			foldingProvider = null;
+		}
+		if (projectionSupport != null) {
+			projectionSupport.dispose();
+			projectionSupport = null;
+		}
 
 		final IEditorInput input = getEditorInput();
 		if (input != null) {
@@ -593,6 +734,14 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 
 		if (IContentOutlinePage.class.equals(adapter)) {
 			return adapter.cast(getContentOutlinePage());
+		}
+
+		if (projectionSupport != null) {
+			final Object projectionAdapter = projectionSupport.getAdapter(
+					getSourceViewer(), adapter);
+			if (projectionAdapter != null) {
+				return adapter.cast(projectionAdapter);
+			}
 		}
 
 		return super.getAdapter(adapter);
