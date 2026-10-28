@@ -126,7 +126,13 @@ public class FormatHandler extends AbstractHandler {
 					TextEditorPlugin.SYNTAXERROR_MARKER_ID, true,
 					IResource.DEPTH_INFINITE);
 
-			return markers.length > 0;
+			// warnings (e.g. a differing component name) do not block formatting
+			for (final IMarker marker : markers) {
+				if (marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR) == IMarker.SEVERITY_ERROR) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		return true;

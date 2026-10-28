@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,6 +38,9 @@ import org.eventb.texteditor.ui.build.Builder;
 import org.eventb.texteditor.ui.build.dom.DomManager.ParseResult;
 import org.eventb.texteditor.ui.reconciler.partitioning.PartitionScanner;
 import org.eventb.texteditor.ui.reconciler.partitioning.Partitioner;
+import org.eventb.texttools.ComponentNameUtil;
+import org.eventb.texttools.ComponentNameUtil.Kind;
+import org.eventb.texttools.ComponentNameUtil.NameInfo;
 import org.eventb.texttools.PersistenceHelper;
 
 public class DocumentProvider extends FileDocumentProvider {
@@ -193,6 +197,9 @@ public class DocumentProvider extends FileDocumentProvider {
 				// trim lines to remove trailing whitespaces
 				trimLines(document, subMonitor.newChild(1));
 
+				// the component name must match the file name
+				adaptComponentName(element, document);
+
 				// parse and translate formulas
 				final long stampBefore = getModificationStamp(document);
 				reconcileContent(resource, document, subMonitor.newChild(1));
@@ -230,6 +237,40 @@ public class DocumentProvider extends FileDocumentProvider {
 			throw new CoreException(new Status(IStatus.ERROR,
 					TextEditorPlugin.PLUGIN_ID, "Unsupported target element: "
 							+ element));
+		}
+	}
+
+	/**
+	 * If the text was copied from another machine/context, its name differs
+	 * from the file name. Rodin always uses the file name, so we adapt the
+	 * text before saving. Previously the mismatch made the merge into the
+	 * Rodin database fail and the editor content was replaced by the old
+	 * content.
+	 */
+	private void adaptComponentName(final Object element,
+			final IDocument document) {
+		if (!(element instanceof IFileEditorInput)) {
+			return;
+		}
+
+		final IFile file = ((IFileEditorInput) element).getFile();
+		final Kind expectedKind = ComponentNameUtil.kindForFileExtension(file
+				.getFileExtension());
+		final String expectedName = file.getFullPath().removeFileExtension()
+				.lastSegment();
+
+		final NameInfo nameInfo = ComponentNameUtil.findComponentName(document
+				.get());
+		if (nameInfo == null || nameInfo.kind != expectedKind
+				|| nameInfo.name.equals(expectedName)) {
+			return;
+		}
+
+		try {
+			document.replace(nameInfo.offset, nameInfo.getLength(),
+					expectedName);
+		} catch (final BadLocationException e) {
+			// IGNORE, the model merge renames the component anyway
 		}
 	}
 
