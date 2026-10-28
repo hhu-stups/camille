@@ -9,6 +9,7 @@ package org.eventb.texteditor.ui.outline;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -50,7 +51,9 @@ public class ContentProvider implements ITreeContentProvider,
 	 */
 	private final Map<Event, Object[]> eventChildren = new HashMap<Event, Object[]>();
 
-	private TreeViewer viewer;
+	private volatile TreeViewer viewer;
+
+	private final AtomicBoolean refreshPending = new AtomicBoolean(false);
 
 	private Object currentInput;
 
@@ -202,22 +205,37 @@ public class ContentProvider implements ITreeContentProvider,
 	}
 
 	private void refresh() {
-		if (viewer != null && viewer.getControl() != null
-				&& !viewer.getControl().isDisposed()) {
-			viewer.refresh();
-			viewer.expandAll();
+		final TreeViewer currentViewer = viewer;
+		if (currentViewer != null && currentViewer.getControl() != null
+				&& !currentViewer.getControl().isDisposed()) {
+			currentViewer.getControl().setRedraw(false);
+			try {
+				currentViewer.refresh();
+				currentViewer.expandAll();
+			} finally {
+				currentViewer.getControl().setRedraw(true);
+			}
 		}
 	}
 
 	public void parseResultChanged(final ParseResult parseResult) {
-		if (viewer != null && viewer.getControl() != null
-				&& !viewer.getControl().isDisposed()) {
+		final TreeViewer currentViewer = viewer;
+		if (currentViewer != null && currentViewer.getControl() != null
+				&& !currentViewer.getControl().isDisposed()) {
 			// remove our now old cache so it can be rebuild
-			clearCache();
+			synchronized (this) {
+				clearCache();
+			}
+
+			// coalesce refreshes, one pending refresh is enough
+			if (!refreshPending.compareAndSet(false, true)) {
+				return;
+			}
 
 			// refresh the viewer async because we might not be in the UI thread
-			viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			currentViewer.getControl().getDisplay().asyncExec(new Runnable() {
 				public void run() {
+					refreshPending.set(false);
 					refresh();
 				}
 			});

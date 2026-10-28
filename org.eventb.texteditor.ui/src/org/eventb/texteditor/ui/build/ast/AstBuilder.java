@@ -120,23 +120,42 @@ public class AstBuilder implements IBuildPhase {
 		try {
 			component = textParser.parse(document);
 		} catch (final ParseException e) {
-			final IParseProblemWrapper wrappedException = new ParseExceptionWrapperDiagnostic(
-					document, e);
-
-			final BasicDiagnostic diagnostic = new BasicDiagnostic(
-					Diagnostic.ERROR, TextEditorPlugin.PLUGIN_ID, 0, e
-							.getLocalizedMessage(), new Object[] { resource,
-							wrappedException });
-
-			try {
-				helper.createMarkers(diagnostic);
-			} catch (final CoreException ex) {
-				TextEditorPlugin.getPlugin().getLog().log(
-						new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID,
-								"Could not create markers", ex));
-			}
+			reportParseProblem(helper, resource, document, e);
+		} catch (final RuntimeException e) {
+			/*
+			 * Unexpected failure inside the parser or the AST transformation.
+			 * Report it as a syntax problem instead of letting it kill the
+			 * reconciler thread.
+			 */
+			TextEditorPlugin.getPlugin().getLog().log(
+					new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID,
+							"Unexpected error while parsing", e));
+			final String message = e.getLocalizedMessage() != null ? e
+					.getLocalizedMessage() : e.getClass().getSimpleName();
+			reportParseProblem(helper, resource, document, new ParseException(
+					"Internal parser error: " + message, 0, 0, 1));
 		}
 
 		return component;
+	}
+
+	private void reportParseProblem(final MarkerHelper helper,
+			final Resource resource, final IDocument document,
+			final ParseException e) {
+		final IParseProblemWrapper wrappedException = new ParseExceptionWrapperDiagnostic(
+				document, e);
+
+		final BasicDiagnostic diagnostic = new BasicDiagnostic(
+				Diagnostic.ERROR, TextEditorPlugin.PLUGIN_ID, 0, e
+						.getLocalizedMessage(), new Object[] { resource,
+						wrappedException });
+
+		try {
+			helper.createMarkers(diagnostic);
+		} catch (final CoreException ex) {
+			TextEditorPlugin.getPlugin().getLog().log(
+					new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID,
+							"Could not create markers", ex));
+		}
 	}
 }
