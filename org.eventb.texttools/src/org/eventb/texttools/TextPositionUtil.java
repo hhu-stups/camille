@@ -59,14 +59,48 @@ public class TextPositionUtil {
 
 	public static void annotatePosition(final EventBObject element,
 			final TextRange range) {
-		if (range != null) {
-			final Annotation annotation = CoreFactoryImpl.eINSTANCE
-					.createAnnotation();
-			annotation.setEventBObject(element);
-			annotation.setSource(TextPositionUtil.ANNOTATION_TEXTRANGE);
-			annotation.getContents().add(range);
-			element.getAnnotations().add(annotation);
+		if (element == null || range == null) {
+			return;
 		}
+
+		/*
+		 * If the range already belongs to another element (e.g. when
+		 * positions are copied from the parsed AST into the Rodin model), use
+		 * a copy. Adding it directly would move it (EMF containment) and the
+		 * AST would lose its positions.
+		 */
+		final TextRange rangeToStore = range.eContainer() != null ? copy(range)
+				: range;
+
+		/*
+		 * Replace an existing position instead of adding another annotation.
+		 * Otherwise the annotations piled up with every save and
+		 * getTextRange() kept returning the oldest, outdated position.
+		 */
+		final Annotation existing = element.getAnnotation(ANNOTATION_TEXTRANGE);
+		if (existing != null) {
+			existing.getContents().clear();
+			existing.getContents().add(rangeToStore);
+			return;
+		}
+
+		final Annotation annotation = CoreFactoryImpl.eINSTANCE
+				.createAnnotation();
+		annotation.setEventBObject(element);
+		annotation.setSource(TextPositionUtil.ANNOTATION_TEXTRANGE);
+		annotation.getContents().add(rangeToStore);
+		element.getAnnotations().add(annotation);
+	}
+
+	private static TextRange copy(final TextRange range) {
+		final TextRange result = TexttoolsFactory.eINSTANCE.createTextRange();
+		result.setOffset(range.getOffset());
+		result.setLength(range.getLength());
+		if (range.getSubTextRanges() != null) {
+			result.setSubTextRanges(new HashMap<String, TextRange>(range
+					.getSubTextRanges()));
+		}
+		return result;
 	}
 
 	public static void annotatePosition(final EventBObject element,

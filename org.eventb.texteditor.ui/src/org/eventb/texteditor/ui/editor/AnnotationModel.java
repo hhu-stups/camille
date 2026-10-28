@@ -7,6 +7,7 @@
 package org.eventb.texteditor.ui.editor;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -25,7 +26,9 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
@@ -110,6 +113,32 @@ public class AnnotationModel extends AbstractMarkerAnnotationModel {
 				break;
 			}
 		}
+
+		/*
+		 * These sets were collected but never applied before. As a result,
+		 * error annotations stayed in the editor after the problem had been
+		 * fixed (whenever more than one marker changed at once).
+		 */
+		if (!removedMarkers.isEmpty()) {
+			removeMarkerAnnotations(removedMarkers);
+		}
+
+		for (final IMarker marker : modifiedMarkers) {
+			modifyMarkerAnnotation(marker);
+		}
+	}
+
+	private void removeMarkerAnnotations(final HashSet<IMarker> markers) {
+		final java.util.List<Annotation> toRemove = new java.util.ArrayList<Annotation>();
+		final Iterator<?> iterator = getAnnotationIterator(false);
+		while (iterator.hasNext()) {
+			final Object next = iterator.next();
+			if (next instanceof MarkerAnnotation
+					&& markers.contains(((MarkerAnnotation) next).getMarker())) {
+				toRemove.add((Annotation) next);
+			}
+		}
+		removeAnnotations(toRemove, false, true);
 	}
 
 	public AnnotationModel(final IResource fileResource,
@@ -160,6 +189,11 @@ public class AnnotationModel extends AbstractMarkerAnnotationModel {
 		final IInternalElement rodinElement = RodinMarkerUtil
 				.getInternalElement(marker);
 
+		if (rodinElement == null || rodinResource == null) {
+			// marker is not attached to an element we know
+			return new Region(0, 0);
+		}
+
 		// special case for references (sees, refines, ...)
 		if (isReferenceElement(rodinElement)) {
 			return handleReferenceElement(rodinElement);
@@ -167,6 +201,10 @@ public class AnnotationModel extends AbstractMarkerAnnotationModel {
 
 		final EventBObject eventBObject = rodinResource.getMap().get(
 				rodinElement);
+		if (eventBObject == null) {
+			// element unknown, e.g. model not yet updated after an edit
+			return new Region(0, 0);
+		}
 
 		if (charStart >= 0 && charEnd >= 0) {
 			/*
@@ -176,7 +214,7 @@ public class AnnotationModel extends AbstractMarkerAnnotationModel {
 			return getRegionInFormula(eventBObject, charStart, charEnd);
 
 		} else if (onlyLabelIsRelevant(marker, eventBObject)) {
-			final TextRange range = TextPositionUtil.getInternalPosition(
+			final TextRange range = getInternalPosition(
 					eventBObject, ((EventBNamed) eventBObject).getName());
 
 			if (range != null) {
@@ -194,6 +232,19 @@ public class AnnotationModel extends AbstractMarkerAnnotationModel {
 		}
 
 		return new Region(0, 0);
+	}
+
+	/**
+	 * Null-safe variant of {@link TextPositionUtil#getInternalPosition}, which
+	 * throws an assertion error for <code>null</code> keys (e.g. an empty
+	 * predicate or a missing label).
+	 */
+	private static TextRange getInternalPosition(final EventBObject element,
+			final String key) {
+		if (element == null || key == null) {
+			return null;
+		}
+		return TextPositionUtil.getInternalPosition(element, key);
 	}
 
 	private boolean isReferenceElement(final IInternalElement rodinElement) {
@@ -224,7 +275,10 @@ public class AnnotationModel extends AbstractMarkerAnnotationModel {
 							.getAbstractContextName();
 				}
 
-				final TextRange range = TextPositionUtil.getInternalPosition(
+				if (name == null) {
+					return new Region(0, 0);
+				}
+				final TextRange range = getInternalPosition(
 						parent, name);
 				if (range != null) {
 					return new Region(range.getOffset(), range.getLength());
@@ -276,13 +330,13 @@ public class AnnotationModel extends AbstractMarkerAnnotationModel {
 		TextRange range = null;
 
 		if (eventBObject instanceof EventBPredicate) {
-			range = TextPositionUtil.getInternalPosition(eventBObject,
+			range = getInternalPosition(eventBObject,
 					((EventBPredicate) eventBObject).getPredicate());
 		} else if (eventBObject instanceof Action) {
-			range = TextPositionUtil.getInternalPosition(eventBObject,
+			range = getInternalPosition(eventBObject,
 					((Action) eventBObject).getAction());
 		} else if (eventBObject instanceof EventBExpression) {
-			range = TextPositionUtil.getInternalPosition(eventBObject,
+			range = getInternalPosition(eventBObject,
 					((EventBExpression) eventBObject).getExpression());
 		}
 
