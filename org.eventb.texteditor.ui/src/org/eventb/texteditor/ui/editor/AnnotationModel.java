@@ -138,7 +138,16 @@ public class AnnotationModel extends AbstractMarkerAnnotationModel {
 				toRemove.add((Annotation) next);
 			}
 		}
-		removeAnnotations(toRemove, false, true);
+
+		/*
+		 * Only remove the annotations. The markers are already gone. (Using
+		 * removeAnnotations(..., modelInitiated=true) tried to delete them
+		 * again, which fails inside a resource change notification: "The
+		 * resource tree is locked for modifications".)
+		 */
+		for (final Annotation annotation : toRemove) {
+			removeAnnotation(annotation, false);
+		}
 	}
 
 	public AnnotationModel(final IResource fileResource,
