@@ -52,7 +52,6 @@ import org.eventb.texttools.diffmerge.EventBEObjectMatcher;
 import org.eventb.texttools.diffmerge.EventBMerger;
 import org.eventb.texttools.prettyprint.PrettyPrinter;
 
-
 public class PersistenceHelper {
 
 	public static final Boolean DEBUG = false;
@@ -71,28 +70,14 @@ public class PersistenceHelper {
 			final boolean overwrite, final IProgressMonitor monitor)
 			throws CoreException {
 		try {
-			//System.out.println("SAVING");
 			resource.save(Collections.EMPTY_MAP);
-			//resource.unload();
-			//resource.load(Collections.EMPTY_MAP);
-			//System.out.println("SAVING DONE");
 
 			/*
-			 * Try to set timestamp to the same as in the annotation. Setting on
-			 * both Resource and IResource to be save.
+			 * Set the file's timestamp to the one stored with the text
+			 * representation, so that isTextUptodate() recognizes the text as
+			 * current when the file is opened again.
 			 */
-			// final long textTimestamp = getTextTimestamp(resource);
-			// REMOVED WORKAROUND BELOW: a better fix is to not ignore
-			// attributes in EventBReferencesCheck
-			// --- TODO: Workaround for save bug. The method getTextTimestamp
-			// --- returns in some cases -1 (no time annotation exists). I
-			// noticed
-			// --- that many different instances of the same resource exist.
-			// Some
-			// --- are annotated, the others not.
-			long textTimestamp = getTextTimestamp(resource);
-			// if(textTimestamp == -1)
-			// textTimestamp = System.currentTimeMillis();
+			final long textTimestamp = getTextTimestamp(resource);
 			if (textTimestamp >= 0) {
 				resource.setTimeStamp(textTimestamp);
 				final IResource file = getIResource(resource);
@@ -243,7 +228,6 @@ public class PersistenceHelper {
 			final IProgressMonitor monitor) {
 		final EventBNamedCommentedComponentElement component = getComponent(resource);
 		if (component != null) {
-			// FIXME Hier stimmt die Reihenfolge noch
 			if (component.eClass() != newVersion.eClass()) {
 				/*
 				 * E.g. a context pasted into a machine file. Comparing both
@@ -276,7 +260,6 @@ public class PersistenceHelper {
 				System.out
 						.println("Time to merge components: " + (end - start));
 			}
-			// Hier stimmt die Reihenfolge in component nicht mehr
 		} else {
 			resource.getContents().add(newVersion);
 		}
@@ -431,10 +414,6 @@ public class PersistenceHelper {
 	 */
 	private static boolean isTextUptodate(final Resource resource) {
 		final long textTimestamp = getTextTimestamp(resource);
-
-		if (true) {
-			// return false;
-		}
 
 		try {
 			final IResource file = getIResource(resource);

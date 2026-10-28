@@ -7,13 +7,11 @@
 package org.eventb.texteditor.ui.editor;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IEditorInput;
@@ -80,25 +78,6 @@ public class ModelChangeListener implements IResourceChangeListener,
 		}
 
 		return false;
-	}
-
-	/**
-	 * Computes the initial modification stamp for the given resource.
-	 * 
-	 * @param resource
-	 *            the resource
-	 * @return the modification stamp
-	 */
-	protected long computeModificationStamp(final IResource resource) {
-		long modificationStamp = resource.getModificationStamp();
-
-		final IPath path = resource.getLocation();
-		if (path == null) {
-			return modificationStamp;
-		}
-
-		modificationStamp = path.toFile().lastModified();
-		return modificationStamp;
 	}
 
 	private IFile getFile() {
