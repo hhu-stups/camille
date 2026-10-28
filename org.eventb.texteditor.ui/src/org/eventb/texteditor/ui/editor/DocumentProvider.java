@@ -23,6 +23,7 @@ import org.eclipse.emf.edit.ui.util.EditUIUtil;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -182,36 +183,102 @@ public class DocumentProvider extends FileDocumentProvider {
 
 		if (element instanceof IEditorInput) {
 			final SubMonitor subMonitor = SubMonitor.convert(monitor, "Saving",
-					4);
+					5);
 
 			editor.setIsSaving(true);
 			try {
 				final Resource resource = getResourceForElement((IEditorInput) element);
+				final int[] cursor = rememberCursor(document);
 
 				// trim lines to remove trailing whitespaces
-				final int newCursorOffset = trimLines(document, subMonitor
-						.newChild(1));
+				trimLines(document, subMonitor.newChild(1));
 
 				// parse and translate formulas
+				final long stampBefore = getModificationStamp(document);
 				reconcileContent(resource, document, subMonitor.newChild(1));
-				subMonitor.worked(1);
 
-				PersistenceHelper.saveText(resource, overwrite, subMonitor
-						.newChild(1));
+				if (stampBefore != getModificationStamp(document)) {
+					/*
+					 * The formula translation changed the text (padding with
+					 * blanks). Trim again and update the model so that the
+					 * stored text matches the editor content exactly. Otherwise
+					 * the editor is dirty again right after saving.
+					 */
+					trimLines(document, null);
+					reconcileContent(resource, document, subMonitor.newChild(1));
+				} else {
+					subMonitor.worked(1);
+				}
 
-				editor.setCurserOffset(newCursorOffset);
-				editor.selectAndReveal(newCursorOffset, 0);
-			} finally {
+				PersistenceHelper.saveText(resource, overwrite,
+						subMonitor.newChild(1));
+
 				/*
-				 * Never leave the editor in "saving" state, the reconciler
-				 * would stay disabled after a failed save.
+				 * We bypass FileDocumentProvider's own saving. So we have to
+				 * update the modification stamp ourselves. Otherwise the file
+				 * synchronizer believes the file was changed by someone else
+				 * and reloads/re-parses/re-merges the whole component right
+				 * after each save (UI freeze, cursor jumps).
 				 */
+				updateModificationStamp(element);
+
+				restoreCursor(document, cursor);
+			} finally {
 				editor.setIsSaving(false);
 			}
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR,
 					TextEditorPlugin.PLUGIN_ID, "Unsupported target element: "
 							+ element));
+		}
+	}
+
+	private void updateModificationStamp(final Object element) {
+		final ElementInfo info = getElementInfo(element);
+		if (info instanceof FileInfo && element instanceof IFileEditorInput) {
+			((FileInfo) info).fModificationStamp = computeModificationStamp(((IFileEditorInput) element)
+					.getFile());
+		}
+	}
+
+	private static long getModificationStamp(final IDocument document) {
+		if (document instanceof IDocumentExtension4) {
+			return ((IDocumentExtension4) document).getModificationStamp();
+		}
+		return document.get().hashCode();
+	}
+
+	/**
+	 * @return line and column of the cursor
+	 */
+	private int[] rememberCursor(final IDocument document) {
+		final int offset = editor.getCursorOffset();
+		try {
+			final int line = document.getLineOfOffset(offset);
+			return new int[] { line, offset - document.getLineOffset(line) };
+		} catch (final BadLocationException e) {
+			return new int[] { 0, 0 };
+		}
+	}
+
+	/**
+	 * Puts the cursor back to the same line and column (or the end of the
+	 * line if it became shorter by trimming).
+	 */
+	private void restoreCursor(final IDocument document, final int[] cursor) {
+		try {
+			final int line = Math.min(cursor[0],
+					document.getNumberOfLines() - 1);
+			final int lineOffset = document.getLineOffset(line);
+			final String delimiter = document.getLineDelimiter(line);
+			final int lineLength = document.getLineLength(line)
+					- (delimiter != null ? delimiter.length() : 0);
+			final int offset = lineOffset + Math.min(cursor[1], lineLength);
+
+			editor.setCurserOffset(offset);
+			editor.selectAndReveal(offset, 0);
+		} catch (final BadLocationException e) {
+			// IGNORE, cursor stays where it is
 		}
 	}
 
@@ -257,9 +324,8 @@ public class DocumentProvider extends FileDocumentProvider {
 		}
 	}
 
-	private int trimLines(final IDocument document, final SubMonitor monitor) {
+	private void trimLines(final IDocument document, final SubMonitor monitor) {
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
-		int cursorOffset = editor.getCursorOffset();
 
 		/* make all trimmed lines one single undo step */
 		final IRewriteTarget rewriteTarget = (IRewriteTarget) editor
@@ -269,15 +335,10 @@ public class DocumentProvider extends FileDocumentProvider {
 		}
 
 		try {
-			final int removedChars = TrimLinesAction.trimLines(document, 0,
+			TrimLinesAction.trimLines(document, 0,
 					document.getNumberOfLines() - 1, subMonitor.newChild(1));
-			cursorOffset -= removedChars;
-
-			return cursorOffset < document.getLength() ? cursorOffset
-					: document.getLength() - 1;
 		} catch (final BadLocationException e) {
 			// IGNORE
-			return cursorOffset;
 		} finally {
 			if (rewriteTarget != null) {
 				rewriteTarget.endCompoundChange();
