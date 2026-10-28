@@ -7,6 +7,8 @@
 package org.eventb.texteditor.ui.build.ast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
@@ -76,7 +78,7 @@ public class FormulaTranslator {
 				final TextRange range = updatePosition(predicate, input,
 						translatedInput);
 
-				updateDocument(input, translatedInput, range);
+				updateDocument(input, range);
 			}
 		}
 	}
@@ -93,7 +95,7 @@ public class FormulaTranslator {
 				final TextRange range = updatePosition(expression, input,
 						translatedInput);
 
-				updateDocument(input, translatedInput, range);
+				updateDocument(input, range);
 			}
 		}
 	}
@@ -110,32 +112,22 @@ public class FormulaTranslator {
 				final TextRange range = updatePosition(action, input,
 						translatedInput);
 
-				updateDocument(input, translatedInput, range);
+				updateDocument(input, range);
 			}
 		}
 	}
 
-	private void updateDocument(final String input,
-			final String translatedInput, final TextRange range) {
+	private void updateDocument(final String input, final TextRange range) {
 		if (range == null) {
 			// no position information, cannot update the text
 			return;
 		}
 
 		/*
-		 * Check length and fill output string with whitespaces to length of
-		 * input. So we avoid position changes for the following text elements.
-		 * Output should always be <= input.
+		 * The text is translated when it is applied in the UI thread, because
+		 * the handling of "{}" depends on the editor state at that time.
 		 */
-		final int lengthDiff = input.length() - translatedInput.length();
-		if (lengthDiff < 0) {
-			// should not happen, but never corrupt the user's text
-			return;
-		}
-		final String filledString = fillOutput(translatedInput, lengthDiff);
-
-		pendingReplacements.add(new Replacement(range.getOffset(), input,
-				filledString, translatedInput.length()));
+		pendingReplacements.add(new Replacement(range.getOffset(), input));
 	}
 
 	/**
@@ -196,13 +188,35 @@ public class FormulaTranslator {
 		final int cursorOffset = editor.getCursorOffset();
 		int newCursorOffset = cursorOffset;
 
+		/*
+		 * "{}" is translated to the empty set only when something follows it
+		 * or the editor does not have the focus (any more). See
+		 * translateForEditor().
+		 */
+		final boolean focused = editor.hasTextFocus();
+
+		/*
+		 * Apply from the end of the document to the beginning, so the offsets
+		 * of the remaining replacements stay valid. (The translated text used
+		 * to be padded with blanks to keep all offsets unchanged. Those blanks
+		 * looked like text typed after "{}".)
+		 */
+		final List<Replacement> sorted = new ArrayList<Replacement>(
+				replacements);
+		Collections.sort(sorted, new Comparator<Replacement>() {
+			@Override
+			public int compare(final Replacement r1, final Replacement r2) {
+				return Integer.compare(r2.offset, r1.offset);
+			}
+		});
+
 		final IRewriteTarget rewriteTarget = editor.getAdapter(IRewriteTarget.class);
 		if (rewriteTarget != null) {
 			rewriteTarget.beginCompoundChange();
 		}
 
 		try {
-			for (final Replacement replacement : replacements) {
+			for (final Replacement replacement : sorted) {
 				try {
 					final int offset = replacement.offset;
 					final int length = replacement.original.length();
@@ -214,13 +228,27 @@ public class FormulaTranslator {
 						continue;
 					}
 
-					target.replace(offset, length, replacement.replacement);
+					// formulas do not include trailing blanks, look them up
+					final char followingChar = offset + length < target
+							.getLength() ? target.getChar(offset + length)
+							: '\n';
+					final String translated = translateForEditor(
+							replacement.original, followingChar, !focused);
+					if (translated.length() > length
+							|| translated.equals(replacement.original)) {
+						continue;
+					}
 
-					// keep cursor inside the translated formula
+					target.replace(offset, length, translated);
+
+					// keep the cursor at the same position in the text
 					if (cursorOffset >= offset
 							&& cursorOffset <= offset + length) {
+						// inside the formula, like before
 						newCursorOffset = Math.min(cursorOffset, offset
-								+ replacement.visibleLength);
+								+ translated.length());
+					} else if (cursorOffset > offset + length) {
+						newCursorOffset -= length - translated.length();
 					}
 				} catch (final BadLocationException e) {
 					// IGNORE, text changed in the meantime
@@ -237,31 +265,56 @@ public class FormulaTranslator {
 		}
 	}
 
+	private static final String EMPTY_SET_BRACES = "{}";
+
+	/*
+	 * Placeholder for "{}" that must not be translated yet. Characters from
+	 * the Unicode private use area do not occur in Event-B text and are not
+	 * touched by the Rodin keyboard translation.
+	 */
+	private static final String PROTECTED_BRACES = "\uE000\uE001";
+
+	/**
+	 * Translates the formula text like the Rodin keyboard, except that
+	 * <code>{}</code> stays as it is while nothing follows it in its line (or
+	 * <code>translateAllBraces</code> is set). Until something is typed after
+	 * it, <code>{}</code> is usually the beginning of a set whose elements are
+	 * entered next. The formula in the Rodin database is always translated
+	 * completely.
+	 *
+	 * @param followingChar
+	 *            the character after the formula in the document
+	 */
+	static String translateForEditor(final String input,
+			final char followingChar, final boolean translateAllBraces) {
+		if (translateAllBraces || !input.contains(EMPTY_SET_BRACES)) {
+			return RodinKeyboardCore.translate(input);
+		}
+
+		final StringBuilder protectedInput = new StringBuilder(input);
+		int index = input.indexOf(EMPTY_SET_BRACES);
+		while (index >= 0) {
+			final int next = index + EMPTY_SET_BRACES.length();
+			final char following = next < input.length() ? input.charAt(next)
+					: followingChar;
+			if (following == '\n' || following == '\r') {
+				// nothing typed after "{}" yet
+				protectedInput.replace(index, next, PROTECTED_BRACES);
+			}
+			index = input.indexOf(EMPTY_SET_BRACES, next);
+		}
+
+		return RodinKeyboardCore.translate(protectedInput.toString()).replace(
+				PROTECTED_BRACES, EMPTY_SET_BRACES);
+	}
+
 	private static final class Replacement {
 		final int offset;
 		final String original;
-		final String replacement;
-		final int visibleLength;
 
-		Replacement(final int offset, final String original,
-				final String replacement, final int visibleLength) {
+		Replacement(final int offset, final String original) {
 			this.offset = offset;
 			this.original = original;
-			this.replacement = replacement;
-			this.visibleLength = visibleLength;
-		}
-	}
-
-	private String fillOutput(final String output, final int count) {
-		if (count > 0) {
-			final StringBuilder buffer = new StringBuilder(output);
-			for (int i = 0; i < count; i++) {
-				buffer.append(' ');
-			}
-
-			return buffer.toString();
-		} else {
-			return output;
 		}
 	}
 
