@@ -6,6 +6,7 @@
 
 package org.eventb.texteditor.ui.outline;
 
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -56,7 +57,22 @@ public class RevealSelectionListener implements ISelectionChangedListener {
 		}
 
 		if (range != null) {
-			editor.selectAndReveal(range.getOffset(), range.getLength());
+			/*
+			 * The outline shows the last successful parse result, which can be
+			 * older than the current text. Clamp the range to the document,
+			 * otherwise selectAndReveal throws an exception.
+			 */
+			final IDocument document = editor.getDocumentProvider() != null ? editor
+					.getDocumentProvider().getDocument(editor.getEditorInput())
+					: null;
+			if (document == null) {
+				return;
+			}
+			final int length = document.getLength();
+			final int offset = Math.max(0, Math.min(range.getOffset(), length));
+			final int rangeLength = Math.max(0,
+					Math.min(range.getLength(), length - offset));
+			editor.selectAndReveal(offset, rangeLength);
 		}
 	}
 }

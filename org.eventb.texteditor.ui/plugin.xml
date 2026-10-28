@@ -7,6 +7,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.eventb.texteditor.ui.editor.EventBTextEditor"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
             id="org.eventb.texteditor.ui.texteditor"
             name="Camille Text Editor">

@@ -138,10 +138,16 @@ public class DefaultContentAssist extends TemplateCompletionProcessor {
 		prefix = extractPrefix(viewer, offset);
 		region = new Region(offset - prefix.length(), prefix.length());
 
+		/*
+		 * indexOf() returns -1 if there is no EVENTS section (e.g. in
+		 * contexts), which wrongly treated every position as "inside events"
+		 */
 		final int eventsOffset = document.get().indexOf(Constants.EVENTS);
-		offsetInEvents = offset >= eventsOffset;
+		offsetInEvents = eventsOffset >= 0 && offset >= eventsOffset;
 
 		dom = domManager.getDom(editor.getResource());
+		scopingDom = null;
+		componentType = null;
 
 		if (dom != null) {
 			scopingDom = dom.getScopingDom(offset);

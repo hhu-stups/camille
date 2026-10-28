@@ -69,7 +69,7 @@ public class Parser {
 				throw new ParseException(
 						adjustMessage(ex.getLocalizedMessage()),
 						ex.getLastLine() - 1, ex.getLastPos() - 1,
-						lastText.length());
+						lastText != null ? lastText.length() : 1);
 			}
 
 			if (cause instanceof EventBParseException) {
@@ -83,11 +83,16 @@ public class Parser {
 				}
 			}
 
-			throw new ParseException(e.getLocalizedMessage(), 0, 0, 1);
+			throw new ParseException(adjustMessage(e.getLocalizedMessage()),
+					0, 0, 1);
 		}
 	}
 
 	private String adjustMessage(final String localizedMessage) {
+		if (localizedMessage == null || localizedMessage.trim().isEmpty()) {
+			return "Syntax error";
+		}
+
 		final StringBuilder result = new StringBuilder(localizedMessage);
 
 		// remove position information if found
@@ -97,6 +102,9 @@ public class Parser {
 		}
 
 		// make sure first character is upercase
+		if (result.length() == 0) {
+			return "Syntax error";
+		}
 		result.setCharAt(0, Character.toUpperCase(result.charAt(0)));
 
 		return result.toString().trim();
