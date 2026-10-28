@@ -52,6 +52,19 @@ public final class TextEditorPlugin extends EMFPlugin {
 	public static final String PREF_AUTO_TRANSLATE = PLUGIN_ID
 			+ ".autoTranslate";
 
+	/** Preference keys: highlight the bracket matching the one at the cursor */
+	public static final String PREF_MATCHING_BRACKETS = PLUGIN_ID
+			+ ".matchingBrackets";
+	public static final String PREF_MATCHING_BRACKETS_COLOR = PLUGIN_ID
+			+ ".matchingBracketsColor";
+	public static final String PREF_ENCLOSING_BRACKETS = PLUGIN_ID
+			+ ".enclosingBrackets";
+	public static final String PREF_BRACKET_AT_CARET = PLUGIN_ID
+			+ ".highlightBracketAtCaret";
+
+	/** ID of the "Go to Matching Bracket" command */
+	public static final String GOTO_MATCHING_BRACKET_COMMAND_ID = "org.eventb.texteditor.command.gotoMatchingBracket";
+
 	/**
 	 * Singleton instance of EMFPlugin
 	 */

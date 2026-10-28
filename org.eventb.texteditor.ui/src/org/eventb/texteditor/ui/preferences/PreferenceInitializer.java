@@ -45,6 +45,13 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		setDefaultValues(Set, COLOR_DARK_GREEN, BOLD);
 
 		store.setDefault(TextEditorPlugin.PREF_AUTO_TRANSLATE, true);
+
+		store.setDefault(TextEditorPlugin.PREF_MATCHING_BRACKETS, true);
+		PreferenceConverter.setDefault(store,
+				TextEditorPlugin.PREF_MATCHING_BRACKETS_COLOR, new RGB(128,
+						128, 128));
+		store.setDefault(TextEditorPlugin.PREF_ENCLOSING_BRACKETS, false);
+		store.setDefault(TextEditorPlugin.PREF_BRACKET_AT_CARET, false);
 	}
 
 	private void setDefaultValues(final ESyntaxElement element,

@@ -7,6 +7,7 @@
 package org.eventb.texteditor.ui.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -24,6 +25,20 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage
 		addField(new BooleanFieldEditor(TextEditorPlugin.PREF_AUTO_TRANSLATE,
 				"&Replace ASCII notation by mathematical symbols while typing "
 						+ "(e.g. ':' → '∈')", getFieldEditorParent()));
+
+		addField(new BooleanFieldEditor(
+				TextEditorPlugin.PREF_MATCHING_BRACKETS,
+				"Highlight &matching brackets", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(
+				TextEditorPlugin.PREF_ENCLOSING_BRACKETS,
+				"Highlight &enclosing brackets", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(
+				TextEditorPlugin.PREF_BRACKET_AT_CARET,
+				"Highlight the bracket at the &cursor too",
+				getFieldEditorParent()));
+		addField(new ColorFieldEditor(
+				TextEditorPlugin.PREF_MATCHING_BRACKETS_COLOR,
+				"Matching brackets &color:", getFieldEditorParent()));
 	}
 
 	public void init(final IWorkbench workbench) {
