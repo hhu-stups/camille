@@ -32,6 +32,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.link.LinkedModeUI;
@@ -257,6 +259,28 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 				TextEditorPlugin.PREF_BRACKET_AT_CARET,
 				TextEditorPlugin.PREF_ENCLOSING_BRACKETS);
 		super.configureSourceViewerDecorationSupport(support);
+	}
+
+	/**
+	 * Opens the declaration of the name at the cursor.
+	 *
+	 * @return <code>false</code> if no declaration was found
+	 */
+	public boolean openDeclaration() {
+		final ISourceViewer viewer = getSourceViewer();
+		if (viewer == null
+				|| !(getSourceViewerConfiguration() instanceof SourceViewerConfiguration)) {
+			return false;
+		}
+
+		final IHyperlink[] links = ((SourceViewerConfiguration) getSourceViewerConfiguration())
+				.getDeclarationDetector(viewer).detectHyperlinks(viewer,
+						new Region(getCursorOffset(), 0), false);
+		if (links == null || links.length == 0) {
+			return false;
+		}
+		links[0].open();
+		return true;
 	}
 
 	/**
