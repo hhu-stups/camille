@@ -24,6 +24,7 @@ import org.eclipse.emf.compare.Diff;
 import org.eclipse.emf.compare.DifferenceKind;
 import org.eclipse.emf.compare.DifferenceState;
 import org.eclipse.emf.compare.EMFCompare;
+import org.eclipse.emf.compare.Match;
 import org.eclipse.emf.compare.diff.DefaultDiffEngine;
 import org.eclipse.emf.compare.diff.IDiffEngine;
 import org.eclipse.emf.compare.match.DefaultComparisonFactory;
@@ -49,6 +50,7 @@ import org.eventb.emf.core.EventBNamedCommentedComponentElement;
 import org.eventb.emf.core.machine.Machine;
 import org.eventb.texttools.diffmerge.EventBDiffProcessor;
 import org.eventb.texttools.diffmerge.EventBEObjectMatcher;
+import org.eventb.texttools.model.texttools.TextRange;
 import org.eventb.texttools.diffmerge.EventBMerger;
 import org.eventb.texttools.prettyprint.PrettyPrinter;
 
@@ -207,9 +209,39 @@ public class PersistenceHelper {
 			}
 		}
 
+		/*
+		 * The merge only transfers the text positions of elements that have
+		 * changed. All other elements kept the positions of an older text (or
+		 * none, e.g. after loading from the Rodin database). Problem markers
+		 * of the static checker are placed in the editor with the help of
+		 * these positions, so they were missing or shifted.
+		 */
+		for (final Match match : comparison.getMatches()) {
+			updateTextPositions(match);
+		}
+
 		long timeApply = System.currentTimeMillis();
 		if (DEBUG) {
 			System.out.println("Merging changes took " + (timeApply - timeCompare) + " ms");
+		}
+	}
+
+	/**
+	 * Copies the text positions of the parsed elements (right side) to the
+	 * matching elements of the model (left side), recursively.
+	 */
+	private static void updateTextPositions(final Match match) {
+		final EObject left = match.getLeft();
+		final EObject right = match.getRight();
+		if (left instanceof EventBElement && right instanceof EventBElement) {
+			final TextRange range = TextPositionUtil
+					.getTextRange((EventBElement) right);
+			if (range != null) {
+				TextPositionUtil.annotatePosition((EventBElement) left, range);
+			}
+		}
+		for (final Match submatch : match.getSubmatches()) {
+			updateTextPositions(submatch);
 		}
 	}
 
