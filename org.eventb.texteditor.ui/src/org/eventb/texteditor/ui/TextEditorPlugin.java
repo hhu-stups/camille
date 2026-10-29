@@ -69,6 +69,9 @@ public final class TextEditorPlugin extends EMFPlugin {
 	public static final String PREF_MARK_OCCURRENCES = PLUGIN_ID
 			+ ".markOccurrences";
 
+	/** Preference key: color labels by the status of their proof obligations */
+	public static final String PREF_PROOF_STATUS = PLUGIN_ID + ".proofStatus";
+
 	/** ID of the "Go to Matching Bracket" command */
 	public static final String GOTO_MATCHING_BRACKET_COMMAND_ID = "org.eventb.texteditor.command.gotoMatchingBracket";
 

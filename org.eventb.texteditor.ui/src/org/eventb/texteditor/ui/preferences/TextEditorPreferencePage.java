@@ -45,6 +45,10 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage
 				"Mark &occurrences of the name at the cursor",
 				getFieldEditorParent()));
 
+		addField(new BooleanFieldEditor(TextEditorPlugin.PREF_PROOF_STATUS,
+				"Color &labels by the status of their proof obligations",
+				getFieldEditorParent()));
+
 		addField(new BooleanFieldEditor(TextEditorPlugin.PREF_FOLDING,
 				"Enable &folding (for newly opened editors)",
 				getFieldEditorParent()));

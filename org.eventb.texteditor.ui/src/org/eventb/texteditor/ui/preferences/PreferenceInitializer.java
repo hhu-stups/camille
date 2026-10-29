@@ -56,6 +56,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(TextEditorPlugin.PREF_FOLDING, true);
 
 		store.setDefault(TextEditorPlugin.PREF_MARK_OCCURRENCES, true);
+
+		store.setDefault(TextEditorPlugin.PREF_PROOF_STATUS, true);
 	}
 
 	private void setDefaultValues(final ESyntaxElement element,

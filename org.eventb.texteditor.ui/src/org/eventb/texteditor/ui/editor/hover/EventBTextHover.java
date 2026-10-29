@@ -7,6 +7,7 @@
 package org.eventb.texteditor.ui.editor.hover;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -45,6 +46,10 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eventb.texteditor.ui.TextEditorPlugin;
 import org.eventb.texteditor.ui.editor.EventBTextEditor;
+import org.eventb.texteditor.ui.editor.proofstatus.ProofObligationHoverInput;
+import org.eventb.texteditor.ui.editor.proofstatus.ProofObligationInformationControl;
+import org.eventb.texteditor.ui.editor.proofstatus.ProofStatusIndex.ProofObligation;
+import org.eventb.texteditor.ui.editor.proofstatus.ProofStatusSupport;
 
 /**
  * Text hover of the Camille editor (issue #4): shows problem messages and
@@ -88,6 +93,22 @@ public class EventBTextHover implements ITextHover, ITextHoverExtension,
 	private final AnnotationFilter annotationFilter;
 
 	private volatile HoverIndex index = HoverIndex.EMPTY;
+
+	/** the kind of the last hover, decides about the information control */
+	private volatile boolean lastWasProofObligations = false;
+
+	// the same information control as the standard text hover
+	private final IInformationControlCreator textControlCreator = new IInformationControlCreator() {
+		@Override
+		public IInformationControl createInformationControl(final Shell parent) {
+			return new DefaultInformationControl(parent,
+					EditorsUI.getTooltipAffordanceString());
+		}
+	};
+
+	// labels: their proof obligations
+	private final IInformationControlCreator proofObligationControlCreator = new ProofObligationInformationControl.Creator(
+			EditorsUI.getTooltipAffordanceString());
 
 	private final Job indexJob = new Job("Updating Camille hover information") {
 		@Override
@@ -263,10 +284,42 @@ public class EventBTextHover implements ITextHover, ITextHoverExtension,
 			}
 		}
 
+		final String result;
 		if (problems != null && info != null) {
-			return problems + "<br><br>" + info;
+			result = problems + "<br><br>" + info;
+		} else {
+			result = problems != null ? problems : info;
 		}
-		return problems != null ? problems : info;
+
+		// labels (and event names): proof obligations
+		final ProofStatusSupport proofStatus = editor.getProofStatusSupport();
+		if (proofStatus != null && document != null) {
+			final List<ProofObligation> obligations = proofStatus
+					.getObligations(ProofStatusSupport.findLabel(
+							document.get(), region.getOffset()));
+			if (!obligations.isEmpty()) {
+				lastWasProofObligations = true;
+				return new ProofObligationHoverInput(
+						result != null ? htmlToText(result) : "",
+						componentName(), obligations);
+			}
+		}
+
+		lastWasProofObligations = false;
+		return result;
+	}
+
+	private String componentName() {
+		final IFile file = getFile();
+		return file != null ? file.getFullPath().removeFileExtension()
+				.lastSegment() : "";
+	}
+
+	/** the hover texts are simple HTML: bold, line breaks, entities */
+	private static String htmlToText(final String html) {
+		return html.replace("<br>", "\n").replaceAll("<[^>]*>", "")
+				.replace("&lt;", "<").replace("&gt;", ">")
+				.replace("&amp;", "&");
 	}
 
 	/**
@@ -284,7 +337,9 @@ public class EventBTextHover implements ITextHover, ITextHoverExtension,
 		while (iterator.hasNext()) {
 			final Annotation annotation = iterator.next();
 			if (annotation.isMarkedDeleted() || annotation.getText() == null
-					|| !annotationFilter.isShown(annotation)) {
+					|| !annotationFilter.isShown(annotation)
+					|| annotation.getType().startsWith(
+							ProofStatusSupport.TYPE_PREFIX)) {
 				continue;
 			}
 			final Position position = model.getPosition(annotation);
@@ -357,14 +412,11 @@ public class EventBTextHover implements ITextHover, ITextHoverExtension,
 
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
-		// the same information control as the standard text hover
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(
-					final Shell parent) {
-				return new DefaultInformationControl(parent,
-						EditorsUI.getTooltipAffordanceString());
-			}
-		};
+		/*
+		 * Called by the hover manager right after getHoverInfo2(), so the
+		 * control matches the computed information.
+		 */
+		return lastWasProofObligations ? proofObligationControlCreator
+				: textControlCreator;
 	}
 }

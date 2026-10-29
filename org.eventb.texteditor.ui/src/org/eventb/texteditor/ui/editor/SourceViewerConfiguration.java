@@ -28,6 +28,7 @@ import org.eventb.texteditor.ui.build.ReconcilingStrategy;
 import org.eventb.texteditor.ui.editor.codecompletion.DefaultContentAssist;
 import org.eventb.texteditor.ui.editor.hover.EventBTextHover;
 import org.eventb.texteditor.ui.editor.navigation.DeclarationHyperlinkDetector;
+import org.eventb.texteditor.ui.editor.proofstatus.ProofObligationHyperlinkDetector;
 import org.eventb.texteditor.ui.editor.quickfix.EventBQuickAssistProcessor;
 import org.eventb.texteditor.ui.reconciler.EventBPresentationReconciler;
 import org.eventb.texteditor.ui.reconciler.partitioning.PartitionScanner;
@@ -118,11 +119,13 @@ public class SourceViewerConfiguration extends TextSourceViewerConfiguration {
 			final ISourceViewer sourceViewer) {
 		final IHyperlinkDetector[] others = super
 				.getHyperlinkDetectors(sourceViewer);
-		final IHyperlinkDetector[] result = new IHyperlinkDetector[1 + (others != null ? others.length
+		final IHyperlinkDetector[] result = new IHyperlinkDetector[2 + (others != null ? others.length
 				: 0)];
 		result[0] = getDeclarationDetector(sourceViewer);
+		// labels: open their proof obligations in the prover
+		result[1] = new ProofObligationHyperlinkDetector(editor);
 		if (others != null) {
-			System.arraycopy(others, 0, result, 1, others.length);
+			System.arraycopy(others, 0, result, 2, others.length);
 		}
 		return result;
 	}
