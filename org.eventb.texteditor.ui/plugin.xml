@@ -116,6 +116,18 @@
       <type
             name="org.eventb.texteditor.ui.occurrences">
       </type>
+      <type
+            name="org.eventb.texteditor.ui.proof.discharged">
+      </type>
+      <type
+            name="org.eventb.texteditor.ui.proof.reviewed">
+      </type>
+      <type
+            name="org.eventb.texteditor.ui.proof.partial">
+      </type>
+      <type
+            name="org.eventb.texteditor.ui.proof.pending">
+      </type>
    </extension>
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
@@ -141,6 +153,102 @@
             isGoToNextNavigationTargetKey="camilleIsOccurrenceGoToNextNavigationTarget"
             isGoToNextNavigationTarget="false"
             isGoToPreviousNavigationTargetKey="camilleIsOccurrenceGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
+      </specification>
+      <specification
+            annotationType="org.eventb.texteditor.ui.proof.discharged"
+            label="Event-B Labels: All Proof Obligations Discharged (Camille)"
+            textPreferenceKey="camilleProofDischargedIndication"
+            textPreferenceValue="false"
+            highlightPreferenceKey="camilleProofDischargedHighlighting"
+            highlightPreferenceValue="true"
+            textStylePreferenceKey="camilleProofDischargedTextStyle"
+            textStylePreferenceValue="NONE"
+            contributesToHeader="false"
+            overviewRulerPreferenceKey="camilleProofDischargedIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="false"
+            verticalRulerPreferenceKey="camilleProofDischargedIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            colorPreferenceKey="camilleProofDischargedIndicationColor"
+            colorPreferenceValue="170,230,170"
+            presentationLayer="3"
+            showInNextPrevDropdownToolbarActionKey="camilleProofDischargedShowInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTargetKey="camilleProofDischargedIsGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="camilleProofDischargedIsGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
+      </specification>
+      <specification
+            annotationType="org.eventb.texteditor.ui.proof.reviewed"
+            label="Event-B Labels: Proof Obligations Reviewed (Camille)"
+            textPreferenceKey="camilleProofReviewedIndication"
+            textPreferenceValue="false"
+            highlightPreferenceKey="camilleProofReviewedHighlighting"
+            highlightPreferenceValue="true"
+            textStylePreferenceKey="camilleProofReviewedTextStyle"
+            textStylePreferenceValue="NONE"
+            contributesToHeader="false"
+            overviewRulerPreferenceKey="camilleProofReviewedIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="false"
+            verticalRulerPreferenceKey="camilleProofReviewedIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            colorPreferenceKey="camilleProofReviewedIndicationColor"
+            colorPreferenceValue="170,200,255"
+            presentationLayer="3"
+            showInNextPrevDropdownToolbarActionKey="camilleProofReviewedShowInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTargetKey="camilleProofReviewedIsGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="camilleProofReviewedIsGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
+      </specification>
+      <specification
+            annotationType="org.eventb.texteditor.ui.proof.partial"
+            label="Event-B Labels: Some Proof Obligations Discharged (Camille)"
+            textPreferenceKey="camilleProofPartialIndication"
+            textPreferenceValue="false"
+            highlightPreferenceKey="camilleProofPartialHighlighting"
+            highlightPreferenceValue="true"
+            textStylePreferenceKey="camilleProofPartialTextStyle"
+            textStylePreferenceValue="NONE"
+            contributesToHeader="false"
+            overviewRulerPreferenceKey="camilleProofPartialIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            verticalRulerPreferenceKey="camilleProofPartialIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            colorPreferenceKey="camilleProofPartialIndicationColor"
+            colorPreferenceValue="255,235,130"
+            presentationLayer="3"
+            showInNextPrevDropdownToolbarActionKey="camilleProofPartialShowInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTargetKey="camilleProofPartialIsGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="camilleProofPartialIsGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
+      </specification>
+      <specification
+            annotationType="org.eventb.texteditor.ui.proof.pending"
+            label="Event-B Labels: No Proof Obligation Discharged (Camille)"
+            textPreferenceKey="camilleProofPendingIndication"
+            textPreferenceValue="false"
+            highlightPreferenceKey="camilleProofPendingHighlighting"
+            highlightPreferenceValue="true"
+            textStylePreferenceKey="camilleProofPendingTextStyle"
+            textStylePreferenceValue="NONE"
+            contributesToHeader="false"
+            overviewRulerPreferenceKey="camilleProofPendingIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            verticalRulerPreferenceKey="camilleProofPendingIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            colorPreferenceKey="camilleProofPendingIndicationColor"
+            colorPreferenceValue="255,170,170"
+            presentationLayer="3"
+            showInNextPrevDropdownToolbarActionKey="camilleProofPendingShowInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTargetKey="camilleProofPendingIsGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="camilleProofPendingIsGoToPreviousNavigationTarget"
             isGoToPreviousNavigationTarget="false">
       </specification>
    </extension>
