@@ -28,6 +28,12 @@ import org.eventb.texttools.Constants;
  * The search is text based, so it also works for unsaved text with syntax
  * errors.
  * </p>
+ * <p>
+ * Identifiers bound by quantifiers, lambdas or set comprehensions are only
+ * searched in the scope of their binder (see {@link BoundIdentifiers}), and
+ * a free identifier is not found where an identifier of the same name is
+ * bound.
+ * </p>
  */
 public final class OccurrencesFinder {
 
@@ -45,8 +51,8 @@ public final class OccurrencesFinder {
 	 * @return the occurrences (without primes), empty if there is no
 	 *         identifier at the offset
 	 */
-	public static List<Position> find(final EventBTokens tokens,
-			final int offset) {
+	public static List<Position> find(final String text,
+			final EventBTokens tokens, final int offset) {
 		final List<Position> result = new ArrayList<Position>();
 
 		final int index = tokens.indexAt(offset);
@@ -62,10 +68,29 @@ public final class OccurrencesFinder {
 			return result;
 		}
 
+		final BoundIdentifiers bound = new BoundIdentifiers(text, tokens);
+
+		// a bound identifier: only in the scope of its binder
+		final BoundIdentifiers.Binding binding = bound.bindingOf(name,
+				token.offset);
+		if (binding != null) {
+			for (int i = 0; i < tokens.getTokens().size(); i++) {
+				final Token other = tokens.get(i);
+				if (other.offset >= binding.start
+						&& other.offset < binding.end
+						&& other.kind == Kind.IDENTIFIER
+						&& name.equals(EventBTokens.unprimed(other.text))
+						&& bound.bindingOf(name, other.offset) == binding) {
+					result.add(new Position(other.offset, name.length()));
+				}
+			}
+			return result;
+		}
+
 		// a parameter: only in its event
 		final EventBlock event = tokens.eventOf(index);
 		if (event != null && declaresParameter(tokens, event, name)) {
-			collect(tokens, name, event.first, event.last, result);
+			collect(tokens, bound, name, event.first, event.last, result);
 			return result;
 		}
 
@@ -73,11 +98,12 @@ public final class OccurrencesFinder {
 		for (final EventBlock other : tokens.getEvents()) {
 			if (declaresParameter(tokens, other, name)) {
 				// skip events with a parameter of the same name
-				collect(tokens, name, start, other.first - 1, result);
+				collect(tokens, bound, name, start, other.first - 1, result);
 				start = other.last + 1;
 			}
 		}
-		collect(tokens, name, start, tokens.getTokens().size() - 1, result);
+		collect(tokens, bound, name, start, tokens.getTokens().size() - 1,
+				result);
 		return result;
 	}
 
@@ -91,12 +117,14 @@ public final class OccurrencesFinder {
 		return false;
 	}
 
-	private static void collect(final EventBTokens tokens, final String name,
+	private static void collect(final EventBTokens tokens,
+			final BoundIdentifiers bound, final String name,
 			final int first, final int last, final List<Position> result) {
 		for (int i = Math.max(0, first); i <= last; i++) {
 			final Token token = tokens.get(i);
 			if (token.kind == Kind.IDENTIFIER && !tokens.isStructuralName(i)
-					&& name.equals(EventBTokens.unprimed(token.text))) {
+					&& name.equals(EventBTokens.unprimed(token.text))
+					&& bound.bindingOf(name, token.offset) == null) {
 				result.add(new Position(token.offset, name.length()));
 			}
 		}
