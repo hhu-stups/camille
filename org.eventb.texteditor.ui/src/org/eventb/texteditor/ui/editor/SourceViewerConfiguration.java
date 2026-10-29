@@ -15,6 +15,8 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.source.Annotation;
@@ -26,6 +28,7 @@ import org.eventb.texteditor.ui.build.ReconcilingStrategy;
 import org.eventb.texteditor.ui.editor.codecompletion.DefaultContentAssist;
 import org.eventb.texteditor.ui.editor.hover.EventBTextHover;
 import org.eventb.texteditor.ui.editor.navigation.DeclarationHyperlinkDetector;
+import org.eventb.texteditor.ui.editor.quickfix.EventBQuickAssistProcessor;
 import org.eventb.texteditor.ui.reconciler.EventBPresentationReconciler;
 import org.eventb.texteditor.ui.reconciler.partitioning.PartitionScanner;
 
@@ -64,6 +67,20 @@ public class SourceViewerConfiguration extends TextSourceViewerConfiguration {
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);
 
+		return assistant;
+	}
+
+	/**
+	 * Quick fixes (Ctrl+1), e.g. declaring an undeclared variable.
+	 */
+	@Override
+	public IQuickAssistAssistant getQuickAssistAssistant(
+			final ISourceViewer sourceViewer) {
+		final QuickAssistAssistant assistant = new QuickAssistAssistant();
+		assistant.setQuickAssistProcessor(new EventBQuickAssistProcessor(
+				editor));
+		assistant
+				.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 		return assistant;
 	}
 
