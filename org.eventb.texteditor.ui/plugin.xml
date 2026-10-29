@@ -111,6 +111,39 @@
             name="Rename">
       </command>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors.annotationTypes">
+      <type
+            name="org.eventb.texteditor.ui.occurrences">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="org.eventb.texteditor.ui.occurrences"
+            label="Event-B Occurrences (Camille)"
+            textPreferenceKey="camilleOccurrenceIndication"
+            textPreferenceValue="false"
+            highlightPreferenceKey="camilleOccurrenceHighlighting"
+            highlightPreferenceValue="true"
+            textStylePreferenceKey="camilleOccurrenceTextStyle"
+            textStylePreferenceValue="NONE"
+            contributesToHeader="false"
+            overviewRulerPreferenceKey="camilleOccurrenceIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            verticalRulerPreferenceKey="camilleOccurrenceIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            colorPreferenceKey="camilleOccurrenceIndicationColor"
+            colorPreferenceValue="212,212,212"
+            presentationLayer="4"
+            showInNextPrevDropdownToolbarActionKey="camilleShowOccurrenceInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="camilleIsOccurrenceGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="camilleIsOccurrenceGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
+      </specification>
+   </extension>
    <extension point="org.eclipse.ui.menus">
     <menuContribution locationURI="popup:#texteditor.context.menu?after=additions">
         <command
