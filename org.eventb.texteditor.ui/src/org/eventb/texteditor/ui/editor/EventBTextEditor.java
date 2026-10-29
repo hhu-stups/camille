@@ -104,6 +104,8 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 			new char[] { '(', ')', '[', ']', '{', '}' },
 			IDocumentExtension3.DEFAULT_PARTITIONING);
 
+	private MathSymbolFontSupport mathSymbolFontSupport;
+
 	/* Folding */
 	private ProjectionSupport projectionSupport;
 	private FoldingStructureProvider foldingProvider;
@@ -207,6 +209,10 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 	@Override
 	public void createPartControl(final Composite parent) {
 		super.createPartControl(parent);
+
+		// display the four special operators (e.g. relational override)
+		mathSymbolFontSupport = new MathSymbolFontSupport(getSourceViewer());
+		mathSymbolFontSupport.install();
 		installFolding();
 
 		// select text and type "(", "[" or "{" to put it into brackets
@@ -535,6 +541,10 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		registerChangeListener(getEditorInput(), null);
 		installUndoTracking(null);
 		bracketMatcher.dispose();
+		if (mathSymbolFontSupport != null) {
+			mathSymbolFontSupport.uninstall();
+			mathSymbolFontSupport = null;
+		}
 		if (foldingProvider != null) {
 			foldingProvider.uninstall();
 			foldingProvider = null;
