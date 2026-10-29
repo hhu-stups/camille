@@ -60,6 +60,8 @@ public final class EventBTokens {
 		public int last;
 		/** indices of the names in the refines/extends clause */
 		public final List<Integer> references = new ArrayList<Integer>();
+		/** indices of the parameters declared in the any section */
+		public final List<Integer> parameters = new ArrayList<Integer>();
 		/** indices of the witness labels in the with section */
 		public final List<Integer> witnessLabels = new ArrayList<Integer>();
 
@@ -188,6 +190,7 @@ public final class EventBTokens {
 		EventBlock current = null;
 		boolean inReferences = false;
 		boolean inWitnesses = false;
+		boolean inParameters = false;
 		boolean inComponentReferences = false;
 
 		for (int i = 0; i < tokens.size(); i++) {
@@ -228,6 +231,7 @@ public final class EventBTokens {
 				}
 				inReferences = false;
 				inWitnesses = false;
+				inParameters = false;
 				if (hasLabel) {
 					i++;
 				}
@@ -245,10 +249,14 @@ public final class EventBTokens {
 					|| token.is(Constants.EXTENDS)) {
 				inReferences = true;
 				inWitnesses = false;
+				inParameters = false;
 			} else if (token.kind == Kind.IDENTIFIER
 					&& EVENT_SECTIONS.contains(token.text)) {
 				inReferences = false;
 				inWitnesses = token.is(Constants.WITH);
+				inParameters = token.is(Constants.ANY);
+			} else if (inParameters && token.kind == Kind.IDENTIFIER) {
+				current.parameters.add(i);
 			} else if (inReferences && token.kind == Kind.IDENTIFIER) {
 				current.references.add(i);
 				structuralNames.add(i);

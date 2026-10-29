@@ -76,6 +76,7 @@ import org.eventb.texteditor.ui.TextEditorPlugin;
 import org.eventb.texteditor.ui.build.Builder;
 import org.eventb.texteditor.ui.editor.folding.FoldingRegionFinder;
 import org.eventb.texteditor.ui.editor.folding.FoldingStructureProvider;
+import org.eventb.texteditor.ui.editor.occurrences.MarkOccurrencesSupport;
 import org.eventb.texteditor.ui.outline.OutlinePage;
 import org.eventb.texteditor.ui.outline.RevealSelectionListener;
 import org.eventb.texteditor.ui.reconciler.EventBPresentationReconciler;
@@ -105,6 +106,7 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 			IDocumentExtension3.DEFAULT_PARTITIONING);
 
 	private MathSymbolFontSupport mathSymbolFontSupport;
+	private MarkOccurrencesSupport markOccurrencesSupport;
 
 	/* Folding */
 	private ProjectionSupport projectionSupport;
@@ -213,6 +215,11 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		// display the four special operators (e.g. relational override)
 		mathSymbolFontSupport = new MathSymbolFontSupport(getSourceViewer());
 		mathSymbolFontSupport.install();
+
+		// highlight the occurrences of the name at the cursor
+		markOccurrencesSupport = new MarkOccurrencesSupport(this,
+				getSourceViewer(), getPreferenceStore());
+		markOccurrencesSupport.install();
 		installFolding();
 
 		// select text and type "(", "[" or "{" to put it into brackets
@@ -541,6 +548,10 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		registerChangeListener(getEditorInput(), null);
 		installUndoTracking(null);
 		bracketMatcher.dispose();
+		if (markOccurrencesSupport != null) {
+			markOccurrencesSupport.uninstall();
+			markOccurrencesSupport = null;
+		}
 		if (mathSymbolFontSupport != null) {
 			mathSymbolFontSupport.uninstall();
 			mathSymbolFontSupport = null;

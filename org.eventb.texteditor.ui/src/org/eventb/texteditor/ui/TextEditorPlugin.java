@@ -65,6 +65,10 @@ public final class TextEditorPlugin extends EMFPlugin {
 	/** Preference key: enable folding of clauses, events and comments */
 	public static final String PREF_FOLDING = PLUGIN_ID + ".folding";
 
+	/** Preference key: highlight the occurrences of the name at the cursor */
+	public static final String PREF_MARK_OCCURRENCES = PLUGIN_ID
+			+ ".markOccurrences";
+
 	/** ID of the "Go to Matching Bracket" command */
 	public static final String GOTO_MATCHING_BRACKET_COMMAND_ID = "org.eventb.texteditor.command.gotoMatchingBracket";
 

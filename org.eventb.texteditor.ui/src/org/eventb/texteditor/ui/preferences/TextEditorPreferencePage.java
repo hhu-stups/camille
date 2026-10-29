@@ -40,6 +40,11 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage
 				TextEditorPlugin.PREF_MATCHING_BRACKETS_COLOR,
 				"Matching brackets &color:", getFieldEditorParent()));
 
+		addField(new BooleanFieldEditor(
+				TextEditorPlugin.PREF_MARK_OCCURRENCES,
+				"Mark &occurrences of the name at the cursor",
+				getFieldEditorParent()));
+
 		addField(new BooleanFieldEditor(TextEditorPlugin.PREF_FOLDING,
 				"Enable &folding (for newly opened editors)",
 				getFieldEditorParent()));
