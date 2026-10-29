@@ -33,7 +33,8 @@ import org.eventb.texttools.Constants;
  * as variable (with typing invariant and initialisation), as parameter of the
  * event (with typing guard), as constant (with typing axiom) or carrier set,
  * or add the context that declares it to the <code>sees</code> or
- * <code>extends</code> clause.
+ * <code>extends</code> clause. If a known name differs only in upper/lower
+ * case, the name can be replaced by it.
  * <p>
  * The analysis is text based (unsaved changes count) and uses the Rodin
  * database only for the elements of other components.
@@ -121,8 +122,29 @@ public final class DeclarationQuickFixes {
 		if (isInClause(tokenIndex, Constants.VARIABLES, Constants.CONSTANTS,
 				Constants.SETS)
 				|| (event != null && event.parameters.contains(tokenIndex))
-				|| isDeclared() || isBound()) {
+				|| isBound()) {
 			return result;
+		}
+
+		final Set<String> visible = visibleNames();
+		if (visible.contains(name)) {
+			return result;
+		}
+
+		final Set<String> candidates = new LinkedHashSet<String>(visible);
+		for (final String keyword : Constants.formula_keywords) {
+			if (Character.isLetter(keyword.charAt(0))
+					&& keyword.charAt(0) < 128) {
+				candidates.add(keyword);
+			}
+		}
+		final Token token = tokens.get(tokenIndex);
+		for (final String candidate : candidates) {
+			if (candidate.equalsIgnoreCase(name)) {
+				result.add(new Fix("Change to '" + candidate + "'",
+						Images.IMG_VARIABLE, new TextChange().replace(
+								token.offset, name.length(), candidate)));
+			}
 		}
 
 		final boolean isMachine = tokens.getTokens().size() > 0
@@ -150,8 +172,12 @@ public final class DeclarationQuickFixes {
 	 * Is the name declared?
 	 */
 
-	private boolean isDeclared() {
-		final Set<String> declared = new HashSet<String>();
+	/**
+	 * @return the variables, constants, sets and parameters that can be used
+	 *         at the position of the name
+	 */
+	private Set<String> visibleNames() {
+		final Set<String> declared = new LinkedHashSet<String>();
 
 		// in this text
 		for (int i = 0; i < tokens.getTokens().size(); i++) {
@@ -166,22 +192,16 @@ public final class DeclarationQuickFixes {
 				declared.add(tokens.get(index).text);
 			}
 		}
-		if (declared.contains(name)) {
-			return true;
-		}
-
 		if (structure == null) {
-			return false;
+			return declared;
 		}
 
 		// seen/extended contexts
 		final Set<String> contexts = new LinkedHashSet<String>();
 		contexts.addAll(namesInClause(Constants.SEES));
 		contexts.addAll(namesInClause(Constants.EXTENDS));
-		if (structure.constantsOf(structure.contextClosure(contexts))
-				.contains(name)) {
-			return true;
-		}
+		declared.addAll(structure.constantsOf(structure
+				.contextClosure(contexts)));
 
 		// abstract machines (disappearing variables, abstract parameters)
 		final List<String> refines = namesInClause(Constants.REFINES);
@@ -190,23 +210,20 @@ public final class DeclarationQuickFixes {
 		final Set<String> visited = new HashSet<String>();
 		boolean first = true;
 		while (machine != null && visited.add(machine.name)) {
-			if (machine.variables.contains(name)) {
-				return true;
-			}
+			declared.addAll(machine.variables);
 			if (first && event != null) {
 				for (final int index : event.references) {
 					final Event abstractEvent = machine.events.get(tokens
 							.get(index).text);
-					if (abstractEvent != null
-							&& abstractEvent.parameters.contains(name)) {
-						return true;
+					if (abstractEvent != null) {
+						declared.addAll(abstractEvent.parameters);
 					}
 				}
 			}
 			first = false;
 			machine = structure.getAbstractMachine(machine);
 		}
-		return false;
+		return declared;
 	}
 
 	/**
