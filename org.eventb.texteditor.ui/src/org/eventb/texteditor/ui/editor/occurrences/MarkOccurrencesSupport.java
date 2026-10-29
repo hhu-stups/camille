@@ -53,6 +53,7 @@ public class MarkOccurrencesSupport {
 	private IDocument cachedDocument;
 	private long cachedStamp = IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	private EventBTokens cachedTokens;
+	private String cachedText;
 
 	/* avoids recomputation when the cursor moves inside of the same word */
 	private int markedStart = -1;
@@ -103,6 +104,7 @@ public class MarkOccurrencesSupport {
 		preferences.removePropertyChangeListener(preferenceListener);
 		removeAnnotations();
 		cachedTokens = null;
+		cachedText = null;
 		cachedDocument = null;
 	}
 
@@ -133,7 +135,8 @@ public class MarkOccurrencesSupport {
 		}
 
 		final EventBTokens tokens = getTokens(document, stamp);
-		final List<Position> positions = OccurrencesFinder.find(tokens,
+		final List<Position> positions = OccurrencesFinder.find(cachedText,
+				tokens,
 				offset);
 
 		markedStart = -1;
@@ -154,7 +157,8 @@ public class MarkOccurrencesSupport {
 		if (cachedTokens == null || document != cachedDocument
 				|| stamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP
 				|| stamp != cachedStamp) {
-			cachedTokens = new EventBTokens(document.get());
+			cachedText = document.get();
+			cachedTokens = new EventBTokens(cachedText);
 			cachedDocument = document;
 			cachedStamp = stamp;
 		}
