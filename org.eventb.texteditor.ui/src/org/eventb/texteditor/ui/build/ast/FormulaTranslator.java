@@ -187,6 +187,7 @@ public class FormulaTranslator {
 			final IDocument target, final List<Replacement> replacements) {
 		final int cursorOffset = editor.getCursorOffset();
 		int newCursorOffset = cursorOffset;
+		boolean changed = false;
 
 		/*
 		 * "{}" is translated to the empty set only when something follows it
@@ -239,16 +240,37 @@ public class FormulaTranslator {
 						continue;
 					}
 
-					target.replace(offset, length, translated);
+					/*
+					 * Replace only the changed part (e.g. "." by "\u00b7"),
+					 * not the whole formula. Replacing text around the cursor
+					 * moved the cursor to the end of the formula.
+					 */
+					int prefix = 0;
+					while (prefix < translated.length()
+							&& replacement.original.charAt(prefix) == translated
+									.charAt(prefix)) {
+						prefix++;
+					}
+					int suffix = 0;
+					while (suffix < translated.length() - prefix
+							&& replacement.original.charAt(length - 1 - suffix) == translated
+									.charAt(translated.length() - 1 - suffix)) {
+						suffix++;
+					}
+					final int start = offset + prefix;
+					final int oldEnd = offset + length - suffix;
+					final String newPart = translated.substring(prefix,
+							translated.length() - suffix);
+
+					target.replace(start, oldEnd - start, newPart);
+					changed = true;
 
 					// keep the cursor at the same position in the text
-					if (cursorOffset >= offset
-							&& cursorOffset <= offset + length) {
-						// inside the formula, like before
-						newCursorOffset = Math.min(cursorOffset, offset
-								+ translated.length());
-					} else if (cursorOffset > offset + length) {
-						newCursorOffset -= length - translated.length();
+					if (newCursorOffset >= oldEnd) {
+						newCursorOffset += newPart.length() - (oldEnd - start);
+					} else if (newCursorOffset > start) {
+						newCursorOffset = Math.min(newCursorOffset, start
+								+ newPart.length());
 					}
 				} catch (final BadLocationException e) {
 					// IGNORE, text changed in the meantime
@@ -260,7 +282,11 @@ public class FormulaTranslator {
 			}
 		}
 
-		if (newCursorOffset != cursorOffset) {
+		/*
+		 * Always restore the cursor: a replacement at the cursor moves it,
+		 * even if the length of the text did not change.
+		 */
+		if (changed) {
 			editor.setCurserOffset(newCursorOffset);
 		}
 	}
