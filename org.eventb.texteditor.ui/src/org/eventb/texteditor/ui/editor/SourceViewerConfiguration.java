@@ -8,6 +8,7 @@ package org.eventb.texteditor.ui.editor;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -69,6 +70,18 @@ public class SourceViewerConfiguration extends TextSourceViewerConfiguration {
 		assistant.setAutoActivationDelay(500);
 
 		return assistant;
+	}
+
+	@Override
+	public IAutoEditStrategy[] getAutoEditStrategies(
+			final ISourceViewer sourceViewer, final String contentType) {
+		final IAutoEditStrategy[] others = super.getAutoEditStrategies(
+				sourceViewer, contentType);
+		final IAutoEditStrategy[] result = new IAutoEditStrategy[others.length + 1];
+		System.arraycopy(others, 0, result, 0, others.length);
+		// closes brackets automatically
+		result[others.length] = new BracketAutoEditStrategy();
+		return result;
 	}
 
 	/**
