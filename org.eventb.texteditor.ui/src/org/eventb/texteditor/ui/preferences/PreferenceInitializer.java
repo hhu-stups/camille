@@ -58,6 +58,18 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(TextEditorPlugin.PREF_MARK_OCCURRENCES, true);
 
 		store.setDefault(TextEditorPlugin.PREF_PROOF_STATUS, true);
+		PreferenceConverter.setDefault(store,
+				TextEditorPlugin.PREF_PROOF_COLOR_DISCHARGED, new RGB(170, 230,
+						170));
+		PreferenceConverter.setDefault(store,
+				TextEditorPlugin.PREF_PROOF_COLOR_REVIEWED, new RGB(170, 200,
+						255));
+		PreferenceConverter.setDefault(store,
+				TextEditorPlugin.PREF_PROOF_COLOR_PARTIAL, new RGB(255, 235,
+						130));
+		PreferenceConverter.setDefault(store,
+				TextEditorPlugin.PREF_PROOF_COLOR_PENDING, new RGB(255, 170,
+						170));
 	}
 
 	private void setDefaultValues(final ESyntaxElement element,

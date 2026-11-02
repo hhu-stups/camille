@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -32,6 +33,18 @@ public class HighlightingPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	private final List<Field> fields = new ArrayList<Field>();
+
+	/** background colors of labels by the status of their proof obligations */
+	private static final String[][] PROOF_STATUS_COLORS = {
+			{ TextEditorPlugin.PREF_PROOF_COLOR_DISCHARGED,
+					"Labels: all proof obligations discharged" },
+			{ TextEditorPlugin.PREF_PROOF_COLOR_REVIEWED,
+					"Labels: all proof obligations discharged or reviewed" },
+			{ TextEditorPlugin.PREF_PROOF_COLOR_PARTIAL,
+					"Labels: some proof obligations discharged or reviewed" },
+			{ TextEditorPlugin.PREF_PROOF_COLOR_PENDING,
+					"Labels: no proof obligation discharged" } };
+	private final List<ColorSelector> proofStatusSelectors = new ArrayList<ColorSelector>();
 
 	public HighlightingPreferencePage() {
 		super();
@@ -53,14 +66,35 @@ public class HighlightingPreferencePage extends PreferencePage implements
 			createField(element, colorComposite);
 		}
 
+		createProofStatusFields(colorComposite);
+
 		loadPreferences();
 
 		colorComposite.layout(false);
 		return colorComposite;
 	}
 
+	private void createProofStatusFields(final Composite parent) {
+		final Group group = new Group(parent, SWT.NONE);
+		group.setText("Background of labels by the status of their proof obligations");
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setLayout(new GridLayout(2, false));
+
+		for (final String[] entry : PROOF_STATUS_COLORS) {
+			final Label label = new Label(group, SWT.NONE);
+			label.setText(entry[1]);
+			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			proofStatusSelectors.add(new ColorSelector(group));
+		}
+	}
+
 	private void savePreferences() {
 		final IPreferenceStore store = getPreferenceStore();
+
+		for (int i = 0; i < PROOF_STATUS_COLORS.length; i++) {
+			PreferenceConverter.setValue(store, PROOF_STATUS_COLORS[i][0],
+					proofStatusSelectors.get(i).getColorValue());
+		}
 
 		for (final Field f : fields) {
 			final ESyntaxElement element = f.element;
@@ -83,6 +117,12 @@ public class HighlightingPreferencePage extends PreferencePage implements
 	private void loadPreferences() {
 		final IPreferenceStore store = getPreferenceStore();
 
+		for (int i = 0; i < PROOF_STATUS_COLORS.length; i++) {
+			proofStatusSelectors.get(i).setColorValue(
+					PreferenceConverter.getColor(store,
+							PROOF_STATUS_COLORS[i][0]));
+		}
+
 		for (final Field f : fields) {
 			final ESyntaxElement element = f.element;
 			final RGB color = PreferenceConverter.getColor(store, element
@@ -95,6 +135,12 @@ public class HighlightingPreferencePage extends PreferencePage implements
 
 	private void loadDefaultPreferences() {
 		final IPreferenceStore store = getPreferenceStore();
+
+		for (int i = 0; i < PROOF_STATUS_COLORS.length; i++) {
+			proofStatusSelectors.get(i).setColorValue(
+					PreferenceConverter.getDefaultColor(store,
+							PROOF_STATUS_COLORS[i][0]));
+		}
 
 		for (final Field f : fields) {
 			final ESyntaxElement element = f.element;
