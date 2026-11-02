@@ -110,6 +110,11 @@
             id="org.eventb.texteditor.command.rename"
             name="Rename">
       </command>
+      <command
+            description="Shows or hides the proof status of the labels in the Camille editor"
+            id="org.eventb.texteditor.command.toggleProofStatus"
+            name="Toggle Proof Status of Labels">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
@@ -157,6 +162,7 @@
       </specification>
       <specification
             annotationType="org.eventb.texteditor.ui.proof.discharged"
+            includeOnPreferencePage="false"
             label="Event-B Labels: All Proof Obligations Discharged (Camille)"
             textPreferenceKey="camilleProofDischargedIndication"
             textPreferenceValue="false"
@@ -181,6 +187,7 @@
       </specification>
       <specification
             annotationType="org.eventb.texteditor.ui.proof.reviewed"
+            includeOnPreferencePage="false"
             label="Event-B Labels: Proof Obligations Reviewed (Camille)"
             textPreferenceKey="camilleProofReviewedIndication"
             textPreferenceValue="false"
@@ -205,6 +212,7 @@
       </specification>
       <specification
             annotationType="org.eventb.texteditor.ui.proof.partial"
+            includeOnPreferencePage="false"
             label="Event-B Labels: Some Proof Obligations Discharged (Camille)"
             textPreferenceKey="camilleProofPartialIndication"
             textPreferenceValue="false"
@@ -229,6 +237,7 @@
       </specification>
       <specification
             annotationType="org.eventb.texteditor.ui.proof.pending"
+            includeOnPreferencePage="false"
             label="Event-B Labels: No Proof Obligation Discharged (Camille)"
             textPreferenceKey="camilleProofPendingIndication"
             textPreferenceValue="false"
@@ -253,6 +262,15 @@
       </specification>
    </extension>
    <extension point="org.eclipse.ui.menus">
+    <!-- toolbar of the Camille editor (top right, next to the tabs) -->
+    <menuContribution locationURI="toolbar:org.eventb.texteditor.ui.texteditor">
+        <command
+              commandId="org.eventb.texteditor.command.toggleProofStatus"
+              icon="icons/proof_status.png"
+              style="toggle"
+              tooltip="Show Proof Status of Labels">
+        </command>
+    </menuContribution>
     <menuContribution locationURI="popup:#texteditor.context.menu?after=additions">
         <command
               commandId="org.eventb.texteditor.command.format"
@@ -310,6 +328,10 @@
                    </equals>
              </with>
           </activeWhen>
+      </handler>
+      <handler
+            class="org.eventb.texteditor.ui.editor.actions.ToggleProofStatusHandler"
+            commandId="org.eventb.texteditor.command.toggleProofStatus">
       </handler>
       <handler
             class="org.eventb.texteditor.ui.editor.actions.RenameHandler"

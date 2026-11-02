@@ -24,6 +24,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.ui.util.EditUIUtil;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -51,10 +54,13 @@ import org.eclipse.text.undo.DocumentUndoEvent;
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoListener;
 import org.eclipse.text.undo.IDocumentUndoManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -212,6 +218,7 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 
 	@Override
 	public void createPartControl(final Composite parent) {
+		createToolBar();
 		super.createPartControl(parent);
 
 		// display the four special operators (e.g. relational override)
@@ -227,6 +234,14 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		proofStatusSupport = new ProofStatusSupport(this, getPreferenceStore());
 		proofStatusSupport.install();
 		installFolding();
+
+		// the tab folder exists only after the editor has been created
+		parent.getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				keepToolBarInTabRow();
+			}
+		});
 
 		// select text and type "(", "[" or "{" to put it into brackets
 		final ISourceViewer viewer = getSourceViewer();
@@ -247,6 +262,61 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 					translatePendingEmptySets();
 				}
 			});
+		}
+	}
+
+	/**
+	 * Editors have no toolbar of their own (unlike views). This creates one
+	 * (shown at the top right of the editor area, next to the tabs); its
+	 * buttons are contributed in plugin.xml to
+	 * <code>toolbar:org.eventb.texteditor.ui.texteditor</code>.
+	 */
+	private void createToolBar() {
+		try {
+			final MPart part = getSite().getService(MPart.class);
+			if (part == null) {
+				return;
+			}
+			MToolBar toolBar = part.getToolbar();
+			if (toolBar == null) {
+				toolBar = MMenuFactory.INSTANCE.createToolBar();
+				toolBar.setElementId(TextEditorPlugin.TEXTEDITOR_ID);
+				part.setToolbar(toolBar);
+			} else {
+				// restored from the last session: contributions are added again
+				toolBar.getChildren().clear();
+			}
+		} catch (final RuntimeException e) {
+			TextEditorPlugin.getPlugin().getLog()
+					.warn("Could not create the editor toolbar", e);
+		}
+	}
+
+	/**
+	 * The toolbar is shown at the top right of the editor's tab folder. Eclipse
+	 * allows it to wrap below the tabs when there is not enough room (many
+	 * open editors), which costs a line of the editor. The editor tab folder
+	 * keeps it next to the minimize/maximize buttons instead; the tabs show
+	 * the chevron (&gt;&gt;) earlier.
+	 */
+	private void keepToolBarInTabRow() {
+		final ISourceViewer viewer = getSourceViewer();
+		if (viewer == null || viewer.getTextWidget() == null
+				|| viewer.getTextWidget().isDisposed()) {
+			return;
+		}
+		Composite composite = viewer.getTextWidget().getParent();
+		while (composite != null && !(composite instanceof CTabFolder)) {
+			composite = composite.getParent();
+		}
+		if (composite == null) {
+			return;
+		}
+		final CTabFolder folder = (CTabFolder) composite;
+		final Control topRight = folder.getTopRight();
+		if (topRight != null && !topRight.isDisposed()
+				&& (folder.getTopRightAlignment() & SWT.WRAP) != 0) {
+			folder.setTopRight(topRight, SWT.RIGHT);
 		}
 	}
 
@@ -903,6 +973,7 @@ public class EventBTextEditor extends TextEditor implements IGotoMarker {
 		public void partActivated(final IWorkbenchPart part) {
 			if (part == EventBTextEditor.this) {
 				handleActive();
+				keepToolBarInTabRow();
 			}
 		}
 

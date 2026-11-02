@@ -72,6 +72,19 @@ public final class TextEditorPlugin extends EMFPlugin {
 	/** Preference key: color labels by the status of their proof obligations */
 	public static final String PREF_PROOF_STATUS = PLUGIN_ID + ".proofStatus";
 
+	/**
+	 * Preference keys: background colors of labels by proof status. These are
+	 * the color keys of the annotation types (see plugin.xml), so the editor
+	 * uses them directly.
+	 */
+	public static final String PREF_PROOF_COLOR_DISCHARGED = "camilleProofDischargedIndicationColor";
+	public static final String PREF_PROOF_COLOR_REVIEWED = "camilleProofReviewedIndicationColor";
+	public static final String PREF_PROOF_COLOR_PARTIAL = "camilleProofPartialIndicationColor";
+	public static final String PREF_PROOF_COLOR_PENDING = "camilleProofPendingIndicationColor";
+
+	/** ID of the command that switches the proof status of labels on/off */
+	public static final String TOGGLE_PROOF_STATUS_COMMAND_ID = "org.eventb.texteditor.command.toggleProofStatus";
+
 	/** ID of the "Go to Matching Bracket" command */
 	public static final String GOTO_MATCHING_BRACKET_COMMAND_ID = "org.eventb.texteditor.command.gotoMatchingBracket";
 
