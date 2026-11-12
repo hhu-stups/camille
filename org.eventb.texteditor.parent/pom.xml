@@ -40,7 +40,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-				<version>5.0.2</version>
+				<version>5.0.4</version>
 				<configuration>
 					<executionEnvironment>JavaSE-21</executionEnvironment>
 				</configuration>
@@ -49,7 +49,7 @@
 				<!-- enable tycho build extension -->
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
-				<version>5.0.2</version>
+				<version>5.0.4</version>
 				<extensions>true</extensions>
 			</plugin>
 		</plugins>
