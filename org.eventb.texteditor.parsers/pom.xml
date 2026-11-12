@@ -27,9 +27,14 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>3.11.0</version>
 				<configuration>
-					<!-- Prevent copying all the Eclipse plugin jars into lib as well. -->
-					<!-- We only want the plain Maven dependencies above. -->
-					<excludeTypes>eclipse-plugin</excludeTypes>
+					<!-- Copy only jar files for our own dependencies, not ones belonging to Eclipse plug-ins. -->
+					<!-- This list should always match the dependencies declared above. -->
+					<graphRoots>
+						<graphRoot>
+							<groupId>de.hhu.stups</groupId>
+							<artifactId>eventbstruct</artifactId>
+						</graphRoot>
+					</graphRoots>
 					<outputDirectory>${project.basedir}/lib</outputDirectory>
 					<overWriteSnapshots>true</overWriteSnapshots>
 				</configuration>
