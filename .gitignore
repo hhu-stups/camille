@@ -1,4 +1,4 @@
 .tycho-consumer-pom.xml
-**/lib
-**/target
-**/bin
+bin
+lib
+target
