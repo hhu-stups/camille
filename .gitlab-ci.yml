@@ -13,28 +13,26 @@ build:
     paths:
       - org.eventb.texteditor.repository/target/repository
 
-deploy:nightly:
+deploy:
   stage: deploy
-  only:
-    - develop@general/stups/camille
+  rules:
+    - if: $CI_PROJECT_PATH == "general/stups/camille" && ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_TAG =~ /\d+\.\d+\..+/)
   image: alpine:3
   variables:
     GIT_STRATEGY: none
+    lftp_setup: "set cmd:fail-exit true; set sftp:auto-confirm true; open --user ${DEPLOY_USERNAME} --env-password sftp://${DEPLOY_HOST}/${DEPLOY_REMOTE_BASEDIR}/rodin/camille/"
   before_script:
     - apk update
     - apk add lftp openssh-client
   script:
-    - LFTP_PASSWORD="${DEPLOY_PASSWORD}" lftp -c "set cmd:fail-exit true; set sftp:auto-confirm true; open --user ${DEPLOY_USERNAME} --env-password sftp://${DEPLOY_HOST}/${DEPLOY_REMOTE_BASEDIR}/rodin/camille/develop/; mirror -vvv -R --delete org.eventb.texteditor.repository/target/repository ."
+    - |
+      if [ -z "${CI_COMMIT_TAG-}" ]
+      then
+        LFTP_PASSWORD="${DEPLOY_PASSWORD}" lftp -c "$lftp_setup; mirror -vvv -R --delete org.eventb.texteditor.repository/target/repository develop"
+      else
+        release_dir_name="release-${CI_COMMIT_TAG}"
+        echo "Uploading release to ${release_dir_name}..."
 
-deploy:release:
-  stage: deploy
-  only:
-    - master@general/stups/camille
-  image: alpine:3
-  variables:
-    GIT_STRATEGY: none
-  before_script:
-    - apk update
-    - apk add lftp openssh-client
-  script:
-    - LFTP_PASSWORD="${DEPLOY_PASSWORD}" lftp -c "set cmd:fail-exit true; set sftp:auto-confirm true; open --user ${DEPLOY_USERNAME} --env-password sftp://${DEPLOY_HOST}/${DEPLOY_REMOTE_BASEDIR}/rodin/camille/; mkdir release-next; mirror -vvv -R org.eventb.texteditor.repository/target/repository release-next; mv release release-prev; mv release-next release"
+        deployment/generate_htaccess.sh "${release_dir_name}" > .htaccess
+        LFTP_PASSWORD="${DEPLOY_PASSWORD}" lftp -c "$lftp_setup; mkdir release_temp; mirror -vvv -R org.eventb.texteditor.repository/target/repository release_temp; mv release_temp ${release_dir_name}; put .htaccess"
+      fi
